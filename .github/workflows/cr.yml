@@ -46,7 +46,7 @@ jobs:
       env:
         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
         LLM_API_TYPE: openai
-        MODEL: chatgpt-latest
+        MODEL: gpt-4.1
       run: |
         cd reviewer; python cr.py pr.patch
 
