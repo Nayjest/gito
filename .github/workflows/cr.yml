@@ -37,7 +37,7 @@ jobs:
       shell: bash
       run: |
         git fetch origin "${{ github.base_ref }}"
-        git diff "origin/${{ github.base_ref }}"...HEAD > pr.patch
+        git diff "origin/${{ github.base_ref }}"...HEAD > storage/pr.patch
         echo "Patch size: $(wc -l pr.patch) lines"
 
     # 5️⃣  Run the reviewer (writes reports to reviewer/out/)
