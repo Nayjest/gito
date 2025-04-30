@@ -62,22 +62,29 @@ jobs:
         MAX_COMMENT_BYTES: "65000"
       with:
         script: |
-          const fs = require('fs');
-          const dir = 'reviewer/storage/out';
-          if (!fs.existsSync(dir)) {
+          const fs   = require('fs');
+          const core = require('@actions/core');
+
+          const DIR = 'reviewer/storage/out';        // <-- make sure this matches your artifact path
+          if (!fs.existsSync(DIR)) {
             core.info('No review output produced.');
             return;
           }
+
           let body = '## 🤖 GPT-4 Code Review\n\n';
-          for (const file of fs.readdirSync(dir)) {
+          for (const file of fs.readdirSync(DIR)) {
             const title = file.replace('.txt', '');
-            let text = fs.readFileSync(`${dir}/${file}`, 'utf8');
-            if (text.length > process.env.MAX_COMMENT_BYTES) {
-              text = text.slice(0, process.env.MAX_COMMENT_BYTES) + '\n…(truncated)…';
+            let text    = fs.readFileSync(`${DIR}/${file}`, 'utf8');
+            if (text.length > +process.env.MAX_COMMENT_BYTES) {
+              text = text.slice(0, +process.env.MAX_COMMENT_BYTES) + '\n…(truncated)…';
             }
             body += `### ${title}\n\`\`\`\n${text}\n\`\`\`\n`;
           }
-          github.rest.issues.createComment({
+
+          // 🔑 include owner & repo (or just spread context.issue)
+          await github.rest.issues.createComment({
+            owner:   context.repo.owner,
+            repo:    context.repo.repo,
             issue_number: context.issue.number,
             body
           });
