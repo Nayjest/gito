@@ -86,7 +86,7 @@ jobs:
             body += `### ${title}\n\`\`\`\n${text}\n\`\`\`\n`;
           }
 
-          if (body.trim() === '## 🤖 GPT-4 Code Review') {
+          if (body.trim() === '## 🤖 AI Code Review') {
             core.info('Review output directory contains no files.');
             return;
           }
