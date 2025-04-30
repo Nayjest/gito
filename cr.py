@@ -29,6 +29,7 @@ configure(
 )
 
 diff_file_name = sys.argv[1] if sys.argv[1:] else "feature.patch"
+
 max_files_to_review = 10
 skip_first_n = 0
 skip_files = []

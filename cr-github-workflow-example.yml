@@ -1,3 +1,4 @@
+# Use this template as base for your own workflow.
 name: AI Code Review
 
 on:
