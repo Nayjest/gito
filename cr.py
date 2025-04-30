@@ -23,12 +23,13 @@ from microcore import llm
 CR_APP_ROOT = Path(__file__).resolve().parent
 configure(
     PROMPT_TEMPLATES_PATH=CR_APP_ROOT,
-    STORAGE_PATH=CR_APP_ROOT / "storage",
+    STORAGE_PTH=CR_APP_ROOT / "storage",
     USE_LOGGING=True,
     LLM_DEFAULT_ARGS={"temperature": 0.05},
 )
 
 diff_file_name = sys.argv[1] if sys.argv[1:] else "feature.patch"
+
 max_files_to_review = 10
 skip_first_n = 0
 skip_files = []
