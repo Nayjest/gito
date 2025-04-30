@@ -29,7 +29,7 @@ jobs:
     # 3️⃣  Clone the tool and install its pinned deps
     - name: Install AI Code Review tool
       run: |
-        git clone --depth 1 h--branch v0.1.0ttps://github.com/Nayjest/github-ai-code-review reviewer
+        git clone --depth 1 --branch v0.1.0 https://github.com/Nayjest/github-ai-code-review reviewer
         python -m pip install --upgrade pip
         pip install -r reviewer/requirements.txt
 
