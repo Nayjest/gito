@@ -1,4 +1,4 @@
-# AI Code Review Tool for GitHub
+# 🤖 AI Code Review Tool for GitHub
 
 ## 📝 License
 
