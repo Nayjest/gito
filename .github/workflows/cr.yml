@@ -48,7 +48,7 @@ jobs:
         LLM_API_TYPE: openai
         MODEL: chatgpt-latest
       run: |
-        python reviewer/cr.py pr.patch
+        cd reviewer; python cr.py pr.patch
 
     # 6️⃣  Upload full results so they’re downloadable
     - uses: actions/upload-artifact@v4
