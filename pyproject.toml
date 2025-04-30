@@ -1,0 +1,67 @@
+[tool.poetry]
+name = "aico-cli"
+version = "0.1.5"
+description = "AI coding assistant"
+authors = ["Nayjest <mail@vitaliy.in>"]
+readme = "README.md"
+license = "MIT"
+homepage = "https://github.com/Nayjest/aico"
+repository = "https://github.com/Nayjest/aico"
+keywords = ["ai", "coding", "assistant", "llm", "vibe-coding"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Code Generators",
+]
+packages = [
+    { include = "aico", from = "." },
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+ai-microcore = "^4.0.0.dev3"
+patch = "^1.16.0"
+flask = "^3.1.0"
+rich = "^13.9.4"
+typer = ">=0.15.1,<0.16"
+google-generativeai = "^0.8.5"
+anthropic = "^0.49.0"
+openai = "^1.75.0"
+colorama = "^0.4.6"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "*"
+black = "*"
+build = "*"
+twine = "*"
+pylint = "*"
+pdoc = "*"
+watchdog = "*"
+pyflakes = "*"
+poetry = "*"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.3"
+pytest-asyncio = ">=0.21.0"
+pytest-mock = "^3.12.0"
+pytest-cov = "^4.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+aico = "aico.main:app"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-vv --capture=no --log-cli-level=INFO"
+testpaths = [
+    "tests",
+]
