@@ -49,7 +49,7 @@ for diff_part in diff_by_files[skip_first_n : skip_first_n + max_files_to_review
     a, b = first_line.split(" ")
     fn = b.replace("b/", "") + ".txt"
     print(C.LIGHTYELLOW_EX + fn)
-    out = llm(tpl("code-review.j2", input=diff_part))
+    out = llm(tpl("cr-prompt.j2", input=diff_part))
     if len(out.strip()) < 10:
         continue
     try:
