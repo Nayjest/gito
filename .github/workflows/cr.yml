@@ -43,7 +43,7 @@ jobs:
     # 5️⃣  Run the reviewer (writes reports to reviewer/out/)
     - name: Run AI code review
       env:
-        LLM_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
         LLM_API_TYPE: openai
         MODEL: chatgpt-latest
       run: |
