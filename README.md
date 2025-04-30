@@ -1,1 +1,1 @@
-# github-ai-code-review
+# AI Code Review Tool for GitHub
