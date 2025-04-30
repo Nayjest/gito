@@ -72,7 +72,7 @@ jobs:
             return;
           }
 
-          let body = '## 🤖 GPT-4 Code Review\n\n';
+          let body = '## 🤖 AI Code Review\n\n';
 
           for (const entry of fs.readdirSync(DIR, { withFileTypes: true })) {
             if (entry.isDirectory()) continue;                // skip folders
