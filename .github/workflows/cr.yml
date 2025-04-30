@@ -37,6 +37,7 @@ jobs:
       shell: bash
       run: |
         git fetch origin "${{ github.base_ref }}"
+        mkdir storage
         git diff "origin/${{ github.base_ref }}"...HEAD > storage/pr.patch
         echo "Patch size: $(wc -l pr.patch) lines"
 

@@ -20,8 +20,10 @@ from colorama import Fore as C
 from microcore import tpl, storage, configure
 from microcore import llm
 
+CR_APP_ROOT = Path(__file__).resolve().parent
 configure(
-    PROMPT_TEMPLATES_PATH=Path(__file__).resolve().parent,
+    PROMPT_TEMPLATES_PATH=CR_APP_ROOT,
+    STORAGE_PATH=CR_APP_ROOT / "storage",
     USE_LOGGING=True,
     LLM_DEFAULT_ARGS={"temperature": 0.05},
 )
