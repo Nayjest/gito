@@ -21,7 +21,7 @@ from microcore import tpl, storage, configure
 from microcore import llm
 
 configure(
-    PROMPT_TEMPLATES_PATH=Path(__file__).resolve().parent / "tpl",
+    PROMPT_TEMPLATES_PATH=Path(__file__).resolve().parent,
     USE_LOGGING=True,
     LLM_DEFAULT_ARGS={"temperature": 0.05},
 )
