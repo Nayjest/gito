@@ -1,0 +1,83 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write   # to leave the summary comment
+
+    steps:
+    # 1️⃣  Check out the repo (full history for git diff)
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # 2️⃣  Minimal Python setup (cache pip to speed repeats)
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+        cache: "pip"
+
+    # 3️⃣  Clone the tool and install its pinned deps
+    - name: Install AI Code Review tool
+      run: |
+        git clone --depth 1 https://github.com/Nayjest/github-ai-code-review reviewer
+        python -m pip install --upgrade pip
+        pip install -r reviewer/requirements.txt
+
+    # 4️⃣  Build a patch of the PR versus its base branch
+    - name: Generate patch file
+      shell: bash
+      run: |
+        git fetch origin "${{ github.base_ref }}"
+        git diff "origin/${{ github.base_ref }}"...HEAD > pr.patch
+        echo "Patch size: $(wc -l pr.patch) lines"
+
+    # 5️⃣  Run the reviewer (writes reports to reviewer/out/)
+    - name: Run AI code review
+      env:
+        LLM_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        LLM_API_TYPE: openai
+        MODEL: chatgpt-latest
+      run: |
+        python reviewer/app.py pr.patch
+
+    # 6️⃣  Upload full results so they’re downloadable
+    - uses: actions/upload-artifact@v4
+      with:
+        name: gpt4-review-results
+        path: reviewer/out/
+
+    # 7️⃣  Post a readable summary to the pull-request
+    - name: Comment on PR with review
+      uses: actions/github-script@v7
+      env:
+        MAX_COMMENT_BYTES: "65000"
+      with:
+        script: |
+          const fs = require('fs');
+          const dir = 'reviewer/out';
+          if (!fs.existsSync(dir)) {
+            core.info('No review output produced.');
+            return;
+          }
+          let body = '## 🤖 GPT-4 Code Review\n\n';
+          for (const file of fs.readdirSync(dir)) {
+            const title = file.replace('.txt', '');
+            let text = fs.readFileSync(`${dir}/${file}`, 'utf8');
+            if (text.length > process.env.MAX_COMMENT_BYTES) {
+              text = text.slice(0, process.env.MAX_COMMENT_BYTES) + '\n…(truncated)…';
+            }
+            body += `### ${title}\n\`\`\`\n${text}\n\`\`\`\n`;
+          }
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            body
+          });
