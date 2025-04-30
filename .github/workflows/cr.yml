@@ -62,34 +62,38 @@ jobs:
         MAX_COMMENT_BYTES: "65000"
       with:
         script: |
-          const fs = require('fs');
+          const fs   = require('fs');
           const path = require('path');
-    
+
           const DIR = 'reviewer/storage/out';
           if (!fs.existsSync(DIR)) {
             core.info('No review output produced.');
             return;
           }
-    
+
           let body = '## 🤖 GPT-4 Code Review\n\n';
-    
-          // ── iterate entries & ignore directories ──
+
           for (const entry of fs.readdirSync(DIR, { withFileTypes: true })) {
-            if (entry.isDirectory()) continue;                 // ← skip folders
+            if (entry.isDirectory()) continue;                // skip folders
             const filePath = path.join(DIR, entry.name);
             let text = fs.readFileSync(filePath, 'utf8');
-    
+
             if (text.length > +process.env.MAX_COMMENT_BYTES) {
               text = text.slice(0, +process.env.MAX_COMMENT_BYTES) + '\n…(truncated)…';
             }
-    
+
             const title = entry.name.replace(/\.txt$/, '');
             body += `### ${title}\n\`\`\`\n${text}\n\`\`\`\n`;
           }
-    
+
           if (body.trim() === '## 🤖 GPT-4 Code Review') {
             core.info('Review output directory contains no files.');
             return;
           }
-    
-          await github.rest.issues.createComment({ ...context.issue, body });
+
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo:  context.repo.repo,
+            issue_number: context.issue.number,   // ✅ correct param name
+            body
+          });
