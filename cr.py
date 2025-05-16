@@ -53,7 +53,7 @@ def main():
             continue
 
         _, b = first_line.split(" ")
-        fn = b.replace("b/", "") + ".txt"
+        fn = b.replace("b/", "").replace("/", "_") + ".txt"
         print(C.LIGHTYELLOW_EX + fn)
         out = llm(tpl("cr-prompt.j2", input=diff_part))
         if len(out.strip()) < 10:
