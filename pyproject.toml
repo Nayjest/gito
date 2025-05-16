@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "github-ai-code-review"
+name = "ai-code-review"
 version = "0.1.0"
 description = "LLM-agnostic GitHub AI Code Review Tool with integration to GitHub actions"
 authors = ["Nayjest <mail@vitaliy.in>"]
@@ -13,7 +13,7 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Topic :: Software Development :: Code Review",
+    "Topic :: Software Development",
 ]
 packages = [
     { include = "*", from = "." },

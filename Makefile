@@ -2,7 +2,6 @@ cs:
 	flake8 .
 black:
 	black .
-# ============== [ Tests ] ==============
 
 
 install:
@@ -18,6 +17,6 @@ cln-dist: clean-dist
 clr-dist: clean-dist
 
 publish:
-	python publish.py
+	python -c "import os;t=os.getenv('PYPI_TOKEN');__import__('subprocess').run(f'python -m twine upload dist/* -u __token__ -p {t}',shell=True)"
 
 upload: publish
