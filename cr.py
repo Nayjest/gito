@@ -1,5 +1,5 @@
 """
-Make code review of changes using GPT-4 (any programming language):
+Run LLM-based code review from a diff patch file (any programming languages).
 
 Usage:
 
@@ -10,15 +10,11 @@ git diff main -- '*.py'> storage/feature.patch
 
 2. Run this app:
 python cr.py <full-path-to-patch-file>
-
 """
-
-import json
 import sys
+import json
 from pathlib import Path
-from colorama import Fore as C
-from microcore import tpl, storage, configure
-from microcore import llm
+from microcore import tpl, storage, configure, llm, ui
 
 CR_APP_ROOT = Path(__file__).resolve().parent
 
@@ -37,7 +33,6 @@ def split_diff_by_files(file_name: str) -> list[str]:
 
 
 def main():
-    """Entry-point"""
     diff_file_name = sys.argv[1] if sys.argv[1:] else "feature.patch"
 
     max_files_to_review = 20
@@ -47,14 +42,13 @@ def main():
     diff_by_files = split_diff_by_files(diff_file_name)
     parts = diff_by_files[skip_first_n: skip_first_n + max_files_to_review]
     for diff_part in parts:
-        first_line = diff_part.split("\n")[0].replace("diff --git", "").strip()
+        header = diff_part.split("\n")[0].replace("diff --git", "").strip()
 
-        if len(first_line) == 0 or any(s in first_line for s in skip_files):
+        if len(header) == 0 or any(s in header for s in skip_files):
             continue
 
-        _, b = first_line.split(" ")
-        fn = b.replace("b/", "").replace("/", "_") + ".txt"
-        print(C.LIGHTYELLOW_EX + fn)
+        fn = header.split(" ")[1].replace("b/", "").replace("/", "_") + ".txt"
+        print(ui.yellow(fn))
         out = llm(tpl("cr-prompt.j2", input=diff_part))
         if len(out.strip()) < 10:
             continue
