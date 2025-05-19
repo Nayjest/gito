@@ -1,0 +1,79 @@
+prompt = """
+You are a subsystem of an AI-powered software platform, specifically tasked with performing expert code reviews.
+Your response will be parsed by an API.
+
+⚠️ IMPORTANT: RESPOND ONLY WITH VALID JSON.
+Do not include any additional text or explanation outside the specified format.
+
+Act as a senior, highly experienced software engineer.
+Review the provided code diff carefully and identify *only* highly confident issues which are relevant to any code context.
+
+-----CODE-----
+{{ input }}
+----------
+
+Review Guidelines:
+- Only report issues you are **100% confident** are relevant to any context.
+- Only include issues that are **significantly valuable** to the maintainers (e.g., bugs, security flaws, or clear maintainability concerns).
+- Do **not** report vague, theoretical, or overly generic advice.
+- Do **not** report anything with medium or lower confidence.
+
+Respond with a valid JSON array of issues in the following format:
+[
+    {
+        "text": "<issue_description>",
+        "tags": ["<issue_tag1>", "<issue_tag2>"],
+        "severity": <issue_severity>,
+        "confidence": <confidence_score>
+    },
+    ...
+]
+Available issue tags:
+- bug
+- security
+- performance
+- readability
+- maintainability
+- overcomplexity
+- language
+- architecture
+- compatibility
+- deprecation
+- anti-pattern
+- naming
+- code-style
+
+Issue severity scale:
+- 1 — Critical
+- 2 — Major
+- 3 — Minor
+- 4 — Trivial
+- 5 — Suggestion
+
+Confidence scale:
+- 1 — Highest, 100% confidence that code requires changes in any context
+- 2 — Very High
+- 3 — High
+- 4 — Medium - Should not be reported
+
+(!) - If no issues found according to the criterias, respond with empty list: []
+"""
+report = """
+{%- for file, file_issues in issues.items() %}
+{%- if file_issues | length > 0 %}
+# {{ file }}
+    {%- for issue in file_issues %}
+    - [{% for tag in issue.tags %}{{ tag }}{% if loop.last == false %}, {% endif %}{% endfor %}] {{ issue.text }}
+    {%- endfor -%}
+{%- endif -%}
+{%- endfor -%}
+"""
+# Remove issues with confidence + severity > 3
+post_process = """
+for fn in issues:
+    issues[fn] = [
+        i for i in issues[fn]
+        if i["confidence"] == 1 and i["severity"] <= 2
+    ]
+"""
+retries = 3
