@@ -1,21 +1,21 @@
-# 🤖 AI Code Review Tool for GitHub
+# 🤖 AI Code Review Tool
 
-A GitHub-integrated AI-powered code review tool that uses LLMs to analyze pull requests and highlight only high-confidence, valuable issues (security, bugs, maintainability, etc).
+An AI-powered code review tool for GitHub that uses LLMs to analyze pull requests and highlight only high-confidence and high-impact issues (e.g., security, bugs, maintainability).
 
 ## ✨ Features
 
-- Runs on GitHub Actions automatically on PRs
-- Supports OpenAI and other LLMs via `ai-microcore`
-- Reports only high-confidence and valuable issues
-- Generates markdown summary of results
-- Optional AI-generated awards for high-quality code
-- Works locally or on remote URLs
+- Automatic GitHub PR reviews via GitHub Actions
+- Filters only significant issues (e.g., bugs, security concerns)
+- Posts results as comments in PRs
+- Supports both local and remote repositories
+- Optional humorous AI-generated code awards
+- Customizable via `.ai-code-review.toml`
 
 ## 🚀 Quickstart
 
-### 1. GitHub Actions Setup
+### 1. GitHub PR Review (via GitHub Actions)
 
-Add to `.github/workflows/ai-code-review.yml`:
+Create `.github/workflows/ai-code-review.yml`:
 
 ```yaml
 name: AI Code Review
@@ -30,34 +30,24 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: 3.11
-
-      - name: Install AI Code Review
-        run: pip install ai-code-review==0.2.1
-
-      - name: Run Review
+          python-version: "3.11"
+      - run: pip install ai-code-review==0.2.1
+      - name: Run AI review
         env:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_API_TYPE: openai
         run: ai-code-review
-
-      - name: Attach Report
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: ai-code-review-results
           path: code-review-report.txt
-
-      - name: Comment on PR
-        uses: actions/github-script@v7
+      - uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
@@ -72,42 +62,44 @@ jobs:
             });
 ```
 
-Set LLM_API_KEY value in GitHub secrets.
+> ⚠️ Make sure `LLM_API_KEY` is set in your repo's GitHub secrets.
 
-### 2. Local Usage
+### 2. Local Review
+
+Install and run the tool:
 
 ```bash
-pip install ai-code-review==0.2.1
-ai-code-review setup        # interactive setup
-ai-code-review              # run in current Git repo
+pip install ai-code-review
+ai-code-review setup
+ai-code-review
 ```
 
-Review remote code:
+To review a remote repo:
 
 ```bash
-ai-code-review remote --url https://github.com/owner/repo --branch MY_BRANCH
+ai-code-review remote --url https://github.com/owner/repo --branch branch-name
 ```
 
 ## 🔧 Configuration
 
-Tool is configured with `.ai-code-review.toml`, including:
+Review behavior is defined in `.ai-code-review.toml`, including:
 
 - LLM prompts
-- issue filtering
-- custom summary and report render
-- award definitions
+- Filtering by severity and confidence
+- Award descriptions
+- Markdown output formatting
 
-See example in `ai_code_review/.ai-code-review.toml`.
+You may override this configuration by placing a `.ai-code-review.toml` file in your project root.
 
-## 🛠 Development
+## 💻 Development
 
-Install dependencies:
+Set up your environment:
 
 ```bash
 make install
 ```
 
-Run style checks:
+Run code checks and formatting:
 
 ```bash
 make cs
@@ -122,7 +114,7 @@ pytest
 
 ## 🤝 Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md)
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## 📝 License
 
