@@ -1,3 +1,6 @@
-ai-microcore==4.0.0.dev3
+ai-microcore==4.0.0.dev9
 anthropic>=0.19.1,<=0.50.0
 google-generativeai>=0.7.2,<1
+GitPython==3.1.44
+unidiff==0.7.5
+async-typer==0.1.8

@@ -1,0 +1,56 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write   # to leave the summary comment
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+    - name: Install AI Code Review tool
+      run: |
+        pip install ai-code-review==0.2.1
+    - name: Run AI code review
+      env:
+        LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+        LLM_API_TYPE: openai
+        MODEL: "gpt-4.1"
+      run: |
+        ai-code-review
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ai-code-review-results
+        path: code-review-report.txt
+    - name: Comment on PR with review
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+      
+          const reportFile = 'code-review-report.txt';
+          if (!fs.existsSync(reportFile)) {
+            core.info('No review report found.');
+            return;
+          }
+    
+          const body = fs.readFileSync(reportFile, 'utf8');
+    
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            body
+          });
