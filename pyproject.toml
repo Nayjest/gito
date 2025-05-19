@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ai-code-review"
-version = "0.2.0"
+version = "0.2.1"
 description = "LLM-agnostic GitHub AI Code Review Tool with integration to GitHub actions"
 authors = ["Nayjest <mail@vitaliy.in>"]
 readme = "README.md"
@@ -15,12 +15,8 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Software Development",
 ]
-include = [
-    ".github",
-    "*.py",
-    ".ai-code-review.toml",
-    "README.md",
-    "LICENSE",
+packages = [
+    { include = "ai_code_review" }
 ]
 
 [tool.poetry.dependencies]
@@ -53,7 +49,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-ai-code-review = "cli:app"
+ai-code-review = "ai_code_review.cli:app"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
