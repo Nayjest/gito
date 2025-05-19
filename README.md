@@ -14,6 +14,8 @@ An AI-powered GitHub code review tool that uses LLMs to detect high-confidence, 
 - Extremely fast, parallel LLM usage
 - Model-agnostic (OpenAI, Anthropic, Google, local PyTorch inference, etc.)
 
+See code review in action: [example](https://github.com/Nayjest/github-ai-code-review/pull/28#issuecomment-2891611236)
+
 ## 🚀 Quickstart
 
 ### 1. Review Pull Requests via GitHub Actions
