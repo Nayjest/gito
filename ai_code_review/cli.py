@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import sys
 import os
 import shutil
@@ -9,10 +10,11 @@ import typer
 from .core import review
 from .report_struct import Report
 from git import Repo
+import requests
 
 from .constants import ENV_CONFIG_FILE
 from .bootstrap import bootstrap
-
+from .project_config import _detect_github_env, ProjectConfig
 
 app = async_typer.AsyncTyper(
     pretty_exceptions_show_locals=False,
@@ -53,33 +55,34 @@ async def remote(url=typer.Option(), branch=typer.Option()):
     finally:
         os.chdir(prev_dir)
 
-@app.async_command(
-    help="Leave a comment with the review (from latest code-review-report.txt) on the current GitHub PR, if environment is detected."
-)
+@app.async_command(help="Leave a GitHub PR comment with the review.")
 async def github_comment(
     token: str = typer.Option(
         os.environ.get("GITHUB_TOKEN", ""), help="GitHub token (or set GITHUB_TOKEN env var)"
     ),
-    repo: str = typer.Option("", help="GitHub repo (owner/name, auto-detected if not provided)"),
-    pr: int = typer.Option(0, help="GitHub PR number (auto-detected if not provided)"),
-    file: str = typer.Option("code-review-report.txt", help="File to post as comment"),
 ):
     """
-    Leaves a comment with the review on the current pull request.
+    Leaves a comment with the review on the current GitHub pull request.
     """
-    import requests
-    from ai_code_review.project_config import _detect_github_env
+    file = "code-review-report.txt"
+    if not os.path.exists(file):
+        print(f"Review file not found: {file}")
+        raise typer.Exit(4)
+
+    with open(file, "r", encoding="utf-8") as f:
+        body = f.read()
 
     if not token:
         print("GitHub token is required (--token or GITHUB_TOKEN env var).")
         raise typer.Exit(1)
 
-    github_env = _detect_github_env()
-    repo = repo or github_env.get("github_repo", "")
+    github_env = ProjectConfig.load().prompt_vars["github_env"]
+    repo = github_env.get("github_repo", "")
     pr_env_val = github_env.get("github_pr_number", "")
+    logging.info(f"github_pr_number = {pr_env_val}")
     parsed_pr = 0
     # Try to parse PR number robustly
-    if not pr and pr_env_val:
+    if pr_env_val:
         # e.g. could be "refs/pull/123/merge" or a direct number
         if "/" in pr_env_val and "pull" in pr_env_val:
             # refs/pull/123/merge
@@ -94,22 +97,7 @@ async def github_comment(
                 parsed_pr = int(pr_env_val)
             except Exception:
                 parsed_pr = 0
-    pr = pr or parsed_pr
-
-    if not repo:
-        print("Unable to detect GitHub repo. Use --repo option.")
-        raise typer.Exit(2)
-    if not pr:
-        print("Unable to detect GitHub PR number. Use --pr option.")
-        raise typer.Exit(3)
-
-    path = file
-    if not os.path.exists(path):
-        print(f"Review file not found: {path}")
-        raise typer.Exit(4)
-
-    with open(path, "r", encoding="utf-8") as f:
-        body = f.read()
+    pr = parsed_pr
 
     api_url = f"https://api.github.com/repos/{repo}/issues/{pr}/comments"
     headers = {
@@ -120,7 +108,7 @@ async def github_comment(
 
     resp = requests.post(api_url, headers=headers, json=data)
     if 200 <= resp.status_code < 300:
-        print(f"Posted review comment to PR #{pr} in {repo}")
+        logging.info(f"Posted review comment to PR #{pr} in {repo}")
     else:
-        print(f"Failed to post comment: {resp.status_code} {resp.reason}\n{resp.text}")
+        logging.error(f"Failed to post comment: {resp.status_code} {resp.reason}\n{resp.text}")
         raise typer.Exit(5)

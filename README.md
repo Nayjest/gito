@@ -12,7 +12,7 @@ An AI-powered GitHub code review tool that uses LLMs to detect high-confidence, 
 
 - Automatically reviews pull requests via GitHub Actions
 - Focuses on critical issues (e.g., bugs, security risks, design flaws)
-- **Posts review results as a comment on your PR — now available via CLI or as a workflow step!**
+- Posts review results as a comment on your PR
 - Can be used locally; works with both local and remote Git repositories
 - Optional, fun AI-generated code awards 🏆
 - Easily configurable via [`.ai-code-review.toml`](ai_code_review/.ai-code-review.toml)
@@ -47,23 +47,15 @@ jobs:
         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
         LLM_API_TYPE: openai
         MODEL: "gpt-4.1"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         ai-code-review
-    - uses: actions/upload-artifact@v4
-      with: { name: ai-code-review-results, path: code-review-report.txt }
-    - name: Comment on PR with review
-      run: |
         ai-code-review github-comment --token ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/upload-artifact@v4
+      with: { name: ai-code-review-results, path: code-review-report.txt,code-review-report.json }
 ```
 
-> ⚠️ Make sure to add `LLM_API_KEY` and `GITHUB_TOKEN` to your repository’s GitHub secrets.
-
-**To leave a review comment manually or locally, you can now use:**
-```bash
-ai-code-review github-comment --token <GITHUB_TOKEN>
-# Or, with all options available:
-ai-code-review github-comment --repo owner/repo --pr <NUMBER> --file code-review-report.txt
-```
+> ⚠️ Make sure to add `LLM_API_KEY` to your repository’s GitHub secrets.
 
 ### 2. Run Locally
 
