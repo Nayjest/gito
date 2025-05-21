@@ -20,3 +20,6 @@ publish:
 	python -c "import os;t=os.getenv('PYPI_TOKEN');__import__('subprocess').run(f'python -m twine upload dist/* -u __token__ -p {t}',shell=True)"
 
 upload: publish
+test:
+	pytest --log-cli-level=INFO
+tests: test
