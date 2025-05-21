@@ -58,12 +58,14 @@ class Report:
 
     def save(self, file_name: str = ""):
         file_name = file_name or JSON_REPORT_FILE_NAME
-        json.dump(asdict(self), open(file_name, "w"), indent=4)
+        with open(file_name, "w") as f:
+            json.dump(asdict(self), f, indent=4)
         logging.info(f"Report saved to {mc.utils.file_link(file_name)}")
 
     @staticmethod
     def load(file_name: str = ""):
-        data = json.load(open(file_name or JSON_REPORT_FILE_NAME, "r"))
+        with open(file_name or JSON_REPORT_FILE_NAME, "r") as f:
+            data = json.load(f)
         data.pop("total_issues", None)
         return Report(**data)
 
