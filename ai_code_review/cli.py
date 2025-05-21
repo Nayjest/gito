@@ -81,24 +81,21 @@ async def github_comment(
     repo = github_env.get("github_repo", "")
     pr_env_val = github_env.get("github_pr_number", "")
     logging.info(f"github_pr_number = {pr_env_val}")
-    parsed_pr = 0
-    # Try to parse PR number robustly
-    if pr_env_val:
-        # e.g. could be "refs/pull/123/merge" or a direct number
-        if "/" in pr_env_val and "pull" in pr_env_val:
-            # refs/pull/123/merge
-            try:
-                pr_num_candidate = pr_env_val.strip("/").split("/")
-                idx = pr_num_candidate.index("pull")
-                parsed_pr = int(pr_num_candidate[idx + 1])
-            except Exception:
-                parsed_pr = 0
-        else:
-            try:
-                parsed_pr = int(pr_env_val)
-            except Exception:
-                parsed_pr = 0
-    pr = parsed_pr
+
+    # e.g. could be "refs/pull/123/merge" or a direct number
+    if "/" in pr_env_val and "pull" in pr_env_val:
+        # refs/pull/123/merge
+        try:
+            pr_num_candidate = pr_env_val.strip("/").split("/")
+            idx = pr_num_candidate.index("pull")
+            pr = int(pr_num_candidate[idx + 1])
+        except Exception:
+            pr = 0
+    else:
+        try:
+            pr = int(pr_env_val)
+        except Exception:
+            pr = 0
 
     api_url = f"https://api.github.com/repos/{repo}/issues/{pr}/comments"
     headers = {
