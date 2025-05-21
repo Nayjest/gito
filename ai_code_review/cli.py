@@ -14,7 +14,7 @@ import requests
 
 from .constants import ENV_CONFIG_FILE
 from .bootstrap import bootstrap
-from .project_config import _detect_github_env, ProjectConfig
+from .project_config import ProjectConfig
 
 app = async_typer.AsyncTyper(
     pretty_exceptions_show_locals=False,

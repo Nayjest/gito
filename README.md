@@ -52,7 +52,7 @@ jobs:
         ai-code-review
         ai-code-review github-comment --token ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/upload-artifact@v4
-      with: { name: ai-code-review-results, path: code-review-report.txt,code-review-report.json }
+      with: { name: ai-code-review-results, path: code-review-report.txt, code-review-report.json }
 ```
 
 > ⚠️ Make sure to add `LLM_API_KEY` to your repository’s GitHub secrets.

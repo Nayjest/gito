@@ -27,4 +27,4 @@ jobs:
         ai-code-review
         ai-code-review github-comment --token "$GITHUB_TOKEN"
     - uses: actions/upload-artifact@v4
-      with: { name: ai-code-review-results, path: code-review-report.txt,code-review-report.json }
+      with: { name: ai-code-review-results, path: code-review-report.txt, code-review-report.json }
