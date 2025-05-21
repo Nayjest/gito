@@ -55,6 +55,7 @@ async def remote(url=typer.Option(), branch=typer.Option()):
     finally:
         os.chdir(prev_dir)
 
+
 @app.async_command(help="Leave a GitHub PR comment with the review.")
 async def github_comment(
     token: str = typer.Option(
