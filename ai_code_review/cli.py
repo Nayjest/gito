@@ -52,3 +52,60 @@ async def remote(url=typer.Option(), branch=typer.Option()):
         await review()
     finally:
         os.chdir(prev_dir)
+
+@app.async_command(
+    help="Leave a comment with the review (from latest code-review-report.txt) on the current GitHub PR, if environment is detected."
+)
+async def github_comment(
+    token: str = typer.Option(
+        os.environ.get("GITHUB_TOKEN", ""), help="GitHub token (or set GITHUB_TOKEN env var)"
+    ),
+    repo: str = typer.Option("", help="GitHub repo (owner/name, auto-detected if not provided)"),
+    pr: int = typer.Option(0, help="GitHub PR number (auto-detected if not provided)"),
+    file: str = typer.Option("code-review-report.txt", help="File to post as comment"),
+):
+    """
+    Leaves a comment with the review on the current pull request.
+    """
+    import requests
+    from ai_code_review.project_config import _detect_github_env
+
+    if not token:
+        print("GitHub token is required (--token or GITHUB_TOKEN env var).")
+        raise typer.Exit(1)
+
+    github_env = _detect_github_env()
+    repo = repo or github_env.get("github_repo", "")
+    pr = pr or (
+        int(github_env.get("github_pr_number", "0").split("/")[-1])  # PR refs: refs/pull/12/merge
+        if "pull" in github_env.get("github_pr_number", "")
+        else 0
+    )
+    if not repo:
+        print("Unable to detect GitHub repo. Use --repo option.")
+        raise typer.Exit(2)
+    if not pr:
+        print("Unable to detect GitHub PR number. Use --pr option.")
+        raise typer.Exit(3)
+
+    path = file
+    if not os.path.exists(path):
+        print(f"Review file not found: {path}")
+        raise typer.Exit(4)
+
+    with open(path, "r", encoding="utf-8") as f:
+        body = f.read()
+
+    api_url = f"https://api.github.com/repos/{repo}/issues/{pr}/comments"
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github+json",
+    }
+    data = {"body": body}
+
+    resp = requests.post(api_url, headers=headers, json=data)
+    if resp.status_code >= 200 and resp.status_code < 300:
+        print(f"Posted review comment to PR #{pr} in {repo}")
+    else:
+        print(f"Failed to post comment: {resp.status_code} {resp.reason}\n{resp.text}")
+        raise typer.Exit(5)
