@@ -61,6 +61,7 @@ env.bak/
 venv.bak/
 
 .idea
-.aico
+.aico/*
+!.aico/project.json
 storage
 code-review-report.*

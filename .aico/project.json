@@ -1,0 +1,23 @@
+{
+    "src_folder": ".",
+    "work_folder": ".aico",
+    "ignore": [
+        ".aico",
+        ".git",
+        "__pycache__",
+        ".idea",
+        "venv",
+        ".pytest_cache",
+        ".coverage",
+        "coverage.xml",
+        ".pylintrc",
+        ".diff",
+        ".patch",
+        "node_modules",
+        "package-lock.json",
+        "dist",
+        "poetry.lock",
+        "storage"
+    ],
+    "bot_personality": ""
+}
