@@ -1,3 +1,12 @@
+<a href="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml" target="_blank">
+<img src="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml/badge.svg" alt="Pylint">
+</a>
+<a href="https://github.com/Nayjest/ai-code-review/actions/workflows/tests.yml" target="_blank">
+<img src="https://github.com/Nayjest/ai-code-review/actions/workflows/tests.yml/badge.svg" alt="Tests">
+</a>
+<a href="https://github.com/Nayjest/ai-code-review/blob/main/LICENSE" target="_blank">
+<img src="https://img.shields.io/static/v1?label=license&message=MIT&color=d08aff" alt="License">
+</a>
 # 🤖 AI Code Review Tool
 
 An AI-powered GitHub code review tool that uses LLMs to detect high-confidence, high-impact issues—such as security vulnerabilities, bugs, and maintainability concerns.

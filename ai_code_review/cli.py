@@ -49,6 +49,9 @@ async def remote(url=typer.Option(), branch=typer.Option()):
     if os.path.exists("reviewed-repo"):
         shutil.rmtree("reviewed-repo")
     Repo.clone_from(url, branch=branch, to_path="reviewed-repo")
-    os.chdir("reviewed-repo")
-    await review()
-    os.chdir("../")
+    prev_dir = os.getcwd()
+    try:
+        os.chdir("reviewed-repo")
+        await review()
+    finally:
+        os.chdir(prev_dir)

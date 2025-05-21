@@ -8,6 +8,7 @@ import microcore as mc
 
 from .constants import JSON_REPORT_FILE_NAME
 from .project_config import ProjectConfig
+from .utils import syntax_hint
 
 
 @dataclass
@@ -19,6 +20,10 @@ class Issue:
         file: str = field(default="")
         proposal: str = field(default="")
         affected_code: str = field(default="")
+
+        @property
+        def syntax_hint(self) -> str:
+            return syntax_hint(self.file)
 
     id: str = field()
     title: str = field()
@@ -61,7 +66,7 @@ class Report:
             self.issues[file] = [
                 Issue(
                     **{
-                        "id":(issue_id := issue_id+1),
+                        "id": (issue_id := issue_id+1),
                         "file": file,
                     } | issue
                 ) for issue in self.issues[file]
