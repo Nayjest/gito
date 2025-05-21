@@ -1,25 +1,15 @@
 name: AI Code Review
-
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-
+on: { pull_request: { types: [opened, synchronize, reopened] } }
 jobs:
   review:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      pull-requests: write   # to leave the summary comment
-
+    permissions: { contents: read, pull-requests: write } # 'write' for leaving the summary comment
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      with: { fetch-depth: 0 }
     - name: Set up Python 3.11
       uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
+      with: { python-version: "3.13" }
     - name: Install AI Code Review tool
       run: |
         pip install poetry
@@ -35,9 +25,7 @@ jobs:
       run: |
         ai-code-review
     - uses: actions/upload-artifact@v4
-      with:
-        name: ai-code-review-results
-        path: code-review-report.txt
+      with: { name: ai-code-review-results, path: code-review-report.txt }
     - name: Comment on PR with review
       uses: actions/github-script@v7
       with:
