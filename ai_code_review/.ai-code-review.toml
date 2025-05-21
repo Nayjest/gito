@@ -5,6 +5,19 @@ report_template_md = """
 {%- if report.total_issues > 0 -%}
 **⚠️ Total issues: `{{ report.total_issues }}`**{{"\n"}}
 
+{# --- Added section: Changed files and links --- #}
+{% if report.issues %}
+<details>
+<summary><b>Changed files in this PR</b></summary>
+
+{% for file in report.issues.keys() %}
+- [`{{ file }}`](https://github.com/{{ prompt_vars.github_repo }}/blob/{{ prompt_vars.github_pr_sha_or_branch }}/{{ file }})
+{% endfor %}
+
+</details>
+{% endif %}
+{# --------------------------------------------- #}
+
     {%- for issue in report.plain_issues -%}
         {{"\n"}}## `#{{ issue.id}}`  {{ issue.title -}}
         {{ "\n"}}**File**: <ins>{{ issue.file }}</ins>{{' '}}
@@ -131,6 +144,10 @@ json_requirements = """
 - ⚠️ IMPORTANT: RESPOND ONLY WITH VALID JSON, YOUR RESPONSE WILL BE PARSED PROGRAMMATICALLY.
 - Do not include any additional text or explanation outside the specified format.
 """
+github_repo = ""
+github_pr_sha = ""
+github_branch = ""
+github_pr_sha_or_branch = ""
 awards = """
 ## 🧙‍♂️ "Refactoring Archmage"
 **For:** Elegantly transforming complex code into simple code without losing functionality.
