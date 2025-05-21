@@ -16,7 +16,6 @@ An AI-powered GitHub code review tool that uses LLMs to detect high-confidence, 
 - Can be used locally; works with both local and remote Git repositories
 - Optional, fun AI-generated code awards 🏆
 - Easily configurable via [`.ai-code-review.toml`](ai_code_review/.ai-code-review.toml)
-- Simple and minimal core logic—only 19 lines of code! ([main()](ai_code_review/ai_code_review.py))
 - Extremely fast, parallel LLM usage
 - Model-agnostic (OpenAI, Anthropic, Google, local PyTorch inference, etc.)
 
