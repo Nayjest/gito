@@ -24,10 +24,7 @@ if sys.platform == "win32":
 
 
 @app.callback(invoke_without_command=True)
-def cli(
-    ctx: typer.Context,
-    filters=typer.Option("", "--filter", "-f", "--filters")
-):
+def cli(ctx: typer.Context, filters=typer.Option("", "--filter", "-f", "--filters")):
     if ctx.invoked_subcommand != "setup":
         bootstrap()
     if not ctx.invoked_subcommand:

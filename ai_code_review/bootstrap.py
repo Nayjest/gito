@@ -33,4 +33,4 @@ def bootstrap():
         USE_LOGGING=True,
         EMBEDDING_DB_TYPE=mc.EmbeddingDbType.NONE,
     )
-    mc.logging.LoggingConfig.STRIP_REQUEST_LINES = [350, 15]
+    mc.logging.LoggingConfig.STRIP_REQUEST_LINES = [100, 15]

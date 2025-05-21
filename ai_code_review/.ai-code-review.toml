@@ -1,31 +1,37 @@
 report_template_md = """
 # 🤖 I've Reviewed the Code
 
-{% if report.summary %}{{ report.summary }}{% else %}{% if report.total_issues == 0 %}No issues found.{% endif %}{% endif %}
-{%- if report.total_issues > 0 -%}
-**⚠️ Total issues: `{{ report.total_issues }}`**{{"\n"}}
+{% if report.summary -%}
+    {{ report.summary }}
+{%- endif %}
 
-    {%- for issue in report.plain_issues -%}
-        {{"\n"}}## `#{{ issue.id}}`  {{ issue.title -}}
-        {{ "\n"}}**File**: <ins>{{ issue.file }}</ins>{{' '}}
+**
+{%- if report.total_issues > 0 %}⚠️{% endif -%}
+Total issues: `{{ report.total_issues }}`**
+{{- ' ' -}}
+**reviewed files: `{{ report.issues | count }}`**
 
-        {%- if issue.affected_lines -%}
-        **Lines**: `
-            {%- for i in issue.affected_lines -%}
-            {{ i.start_line }}{%- if i.end_line != i.start_line -%}-{{ i.end_line }}{%- endif -%}
-            {%- if loop.last == false -%}, {%- endif -%}
-            {%- endfor -%}
-        `
-        {%- endif -%}
-        {{"\n"}}{{ issue.details -}}
-        {{"\n"}}**Tags: {{ ', '.join(issue.tags) }}**
+{%- for issue in report.plain_issues -%}
+    {{"\n"}}## `#{{ issue.id}}`  {{ issue.title -}}
+    {{ "\n"}}[{{ issue.file }}{{' '}}
+
+    {%- if issue.affected_lines -%}
         {%- for i in issue.affected_lines -%}
-            {%- if i.affected_code %}\n**Affected code:**\n```{{ i.syntax_hint }}\n{{ i.affected_code }}\n```{%- endif -%}
-            {%- if i.proposal %}\n**Proposed change:**\n```{{ i.syntax_hint }}\n{{ i.proposal }}\n```{%- endif -%}
+        L{{ i.start_line }}{%- if i.end_line != i.start_line -%}-L{{ i.end_line }}{%- endif -%}
+        {%- if loop.last == false -%}, {%- endif -%}
         {%- endfor -%}
-        {{ "\n" }}
+    {%- endif -%}
+    ]({{ issue.github_code_link(github_env) }})
+
+    {{"\n"}}{{ issue.details -}}
+    {{"\n"}}**Tags: {{ ', '.join(issue.tags) }}**
+    {%- for i in issue.affected_lines -%}
+        {%- if i.affected_code %}\n**Affected code:**\n```{{ i.syntax_hint }}\n{{ i.affected_code }}\n```{%- endif -%}
+        {%- if i.proposal %}\n**Proposed change:**\n```{{ i.syntax_hint }}\n{{ i.proposal }}\n```{%- endif -%}
     {%- endfor -%}
-{%- endif -%}
+    {{ "\n" }}
+{%- endfor -%}
+
 """
 retries = 3
 prompt = """

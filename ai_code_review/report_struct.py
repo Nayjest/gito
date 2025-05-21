@@ -40,6 +40,18 @@ class Issue:
             for i in self.affected_lines
         ]
 
+    def github_code_link(self, github_env: dict) -> str:
+        url = (
+            f"https://github.com/{github_env['github_repo']}"
+            f"/blob/{github_env['github_pr_sha_or_branch']}"
+            f"/{self.file}"
+        )
+        if self.affected_lines:
+            url += f"#L{self.affected_lines[0].start_line}"
+            if self.affected_lines[0].end_line:
+                url += f"-L{self.affected_lines[0].end_line}"
+        return url
+
 
 @dataclass
 class Report:
@@ -66,10 +78,11 @@ class Report:
             self.issues[file] = [
                 Issue(
                     **{
-                        "id": (issue_id := issue_id+1),
+                        "id": (issue_id := issue_id + 1),
                         "file": file,
                     } | issue
-                ) for issue in self.issues[file]
+                )
+                for issue in self.issues[file]
             ]
         self.total_issues = issue_id
 
