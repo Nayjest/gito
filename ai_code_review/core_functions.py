@@ -14,7 +14,7 @@ def get_diff(repo: Repo = None, against: str = 'HEAD') -> PatchSet | list[Patche
 def filter_diff(
     patch_set: PatchSet | Iterable[PatchedFile],
     filters: str | list[str]
-) -> list[PatchedFile]:
+) -> PatchSet | Iterable[PatchedFile]:
     """
     Filter the diff files by the given fnmatch filters.
     """

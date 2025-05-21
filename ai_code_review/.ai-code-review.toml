@@ -6,20 +6,20 @@ report_template_md = """
 *⚠️ Total issues*: `{{ report.total_issues }}`{{"\n"}}
 
     {%- for issue in report.plain_issues -%}
-        {{"\n"}}## #{{ issue.id}} at {{ issue.file }} {{''}}
+        {{"\n"}}## <sub>#{{ issue.id}}</sub> _at_ <ins>{{ issue.file }}</ins> {{''}}
         {%- if issue.affected_lines -%}
-        `[LN: {{''}}
+        <sub>`[LN: {{''}}
             {%- for i in issue.affected_lines -%}
             {{ i.start_line }}{%- if i.end_line != i.start_line -%}-{{ i.end_line }}{%- endif -%}
             {%- if loop.last == false -%}, {%- endif -%}
             {%- endfor -%}
-        ]` *{{ issue.title }}*
+        ]`</sub> {{ issue.title }}
         {%- endif -%}
         {{"\n"}}{{ issue.details -}}
-        {{"\n"}}*Tags:* {{ ', '.join(issue.tags) }}
+        {{"\n"}}**Tags: {{ ', '.join(issue.tags) }}**
         {%- for i in issue.affected_lines -%}
-            {%- if i.affected_code %}\nAffected code: \n```\n{{ i.affected_code }}\n```{%- endif -%}
-            {%- if i.proposal %}\nProposed code:\n```\n{{ i.proposal }}\n```{%- endif -%}
+            {%- if i.affected_code %}\n**Affected code:**\n```\n{{ i.affected_code }}\n```{%- endif -%}
+            {%- if i.proposal %}\n**Proposed change:**\n```\n{{ i.proposal }}\n```{%- endif -%}
         {%- endfor -%}
         {{ "\n" }}
     {%- endfor -%}

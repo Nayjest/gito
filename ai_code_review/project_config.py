@@ -18,10 +18,12 @@ class ProjectConfig:
 
     @staticmethod
     def load():
-        config = tomllib.load(open(PROJECT_CONFIG_DEFAULTS_FILE, "rb"))
+        with open(PROJECT_CONFIG_DEFAULTS_FILE, "rb") as f:
+            config = tomllib.load(f)
         if PROJECT_CONFIG_FILE.exists():
             default_prompt_vars = config["prompt_vars"]
-            config.update(tomllib.load(open(PROJECT_CONFIG_FILE, "rb")))
+            with open(PROJECT_CONFIG_FILE, "rb") as f:
+                config.update(tomllib.load(f))
             # overriding prompt_vars config section will not empty default values
             config["prompt_vars"] = default_prompt_vars | config["prompt_vars"]
 

@@ -1,7 +1,7 @@
 import json
 import logging
 from enum import StrEnum
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 import microcore as mc
 from git import Repo
 
@@ -59,7 +59,7 @@ class Report:
 
     def save(self, file_name: str = ""):
         file_name = file_name or JSON_REPORT_FILE_NAME
-        json.dump(self, open(file_name, "w"), indent=4)
+        json.dump(asdict(self), open(file_name, "w"), indent=4)
         logging.info(f"Report saved to {mc.utils.file_link(file_name)}")
 
     @staticmethod
@@ -108,8 +108,8 @@ async def review(filter: str = ""):
         for issue in file_issues:
             for i in issue.get("affected_lines", []):
                 if lines[file]:
-                    f_lines = lines[file].splitlines()
-                    i["affected_code"] = '\n'.join(f_lines[i["start_line"] - 1:i["end_line"] - 1])
+                    f_lines = [""] + lines[file].splitlines()
+                    i["affected_code"] = '\n'.join(f_lines[i["start_line"]:i["end_line"]])
     exec(cfg.post_process, {"mc": mc, **locals()})
     summary = mc.prompt(
         cfg.summary_prompt,
