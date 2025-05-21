@@ -97,6 +97,3 @@ class ProjectConfig:
             logging.info(f"Config file {config_file} not found, using defaults")
 
         return ProjectConfig(**config)
-
-
-print("DEBUG")  # @todo temp, delete me!!
