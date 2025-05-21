@@ -39,7 +39,6 @@ class Report:
 
     @property
     def plain_issues(self):
-        issue_id: int = 0
         return [
             {
                 "file": file,
@@ -117,7 +116,7 @@ async def review(filter: str = ""):
                 if lines[file]:
                     f_lines = [""] + lines[file].splitlines()
                     i["affected_code"] = "\n".join(
-                        f_lines[i["start_line"] : i["end_line"]]
+                        f_lines[i["start_line"]: i["end_line"]]
                     )
     exec(cfg.post_process, {"mc": mc, **locals()})
     summary = (

@@ -7,7 +7,6 @@ import microcore as mc
 import async_typer
 import typer
 from .ai_code_review import Report
-from .project_config import ProjectConfig
 from git import Repo
 
 from .ai_code_review import review
