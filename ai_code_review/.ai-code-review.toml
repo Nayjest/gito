@@ -1,7 +1,7 @@
 report_template_md = """
 # 🤖 I've Reviewed the Code
 
-{% if summary %}{{ summary }}{% else %}{% if report.total_issues == 0 %}No issues found.{% endif %}{% endif %}
+{% if report.summary %}{{ report.summary }}{% else %}{% if report.total_issues == 0 %}No issues found.{% endif %}{% endif %}
 {%- if report.total_issues > 0 -%}
 **⚠️ Total issues: `{{ report.total_issues }}`**{{"\n"}}
 
