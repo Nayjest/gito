@@ -37,30 +37,22 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with: { fetch-depth: 0 }
-    - name: Set up Python 3.11
+    - name: Set up Python
       uses: actions/setup-python@v5
       with: { python-version: "3.13" }
     - name: Install AI Code Review tool
-      run: pip install ai-code-review==0.3.4
+      run: pip install ai-code-review==0.4.0
     - name: Run AI code review
       env:
         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
         LLM_API_TYPE: openai
         MODEL: "gpt-4.1"
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         ai-code-review
+        ai-code-review github-comment --token ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/upload-artifact@v4
-      with: { name: ai-code-review-results, path: code-review-report.txt }
-    - name: Comment on PR with review
-      uses: actions/github-script@v7
-      with:
-        script: |
-          await github.rest.issues.createComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: context.issue.number,
-            body: require('fs').readFileSync('code-review-report.txt', 'utf8')
-          });
+      with: { name: ai-code-review-results, path: code-review-report.txt, code-review-report.json }
 ```
 
 > ⚠️ Make sure to add `LLM_API_KEY` to your repository’s GitHub secrets.
