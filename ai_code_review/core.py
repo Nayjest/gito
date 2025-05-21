@@ -103,7 +103,7 @@ async def review(filters: str | list[str] = ""):
                 if lines[file]:
                     f_lines = [""] + lines[file].splitlines()
                     i["affected_code"] = "\n".join(
-                        f_lines[i["start_line"]: i["end_line"]]
+                        f_lines[i["start_line"]: i["end_line"]+1]
                     )
     exec(cfg.post_process, {"mc": mc, **locals()})
     report = Report(issues=issues)
