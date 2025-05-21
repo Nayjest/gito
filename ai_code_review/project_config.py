@@ -1,5 +1,9 @@
+import logging
 import tomllib
 from dataclasses import dataclass, field
+from pathlib import Path
+
+import microcore as mc
 
 from .constants import PROJECT_CONFIG_FILE, PROJECT_CONFIG_DEFAULTS_FILE
 
@@ -17,14 +21,19 @@ class ProjectConfig:
     prompt_vars: dict = field(default_factory=dict)
 
     @staticmethod
-    def load():
+    def load(custom_config_file: str | Path | None = None) -> "ProjectConfig":
+        config_file = Path(custom_config_file or PROJECT_CONFIG_FILE)
         with open(PROJECT_CONFIG_DEFAULTS_FILE, "rb") as f:
             config = tomllib.load(f)
-        if PROJECT_CONFIG_FILE.exists():
+        if config_file.exists():
+            logging.info(
+                f"Loading project-specific configuration from {mc.utils.file_link(config_file)}...")
             default_prompt_vars = config["prompt_vars"]
-            with open(PROJECT_CONFIG_FILE, "rb") as f:
+            with open(config_file, "rb") as f:
                 config.update(tomllib.load(f))
             # overriding prompt_vars config section will not empty default values
             config["prompt_vars"] = default_prompt_vars | config["prompt_vars"]
+        else:
+            logging.info(f"Config file {config_file} not found, using defaults")
 
         return ProjectConfig(**config)
