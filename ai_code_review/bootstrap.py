@@ -9,7 +9,7 @@ from .constants import ENV_CONFIG_FILE
 def setup_logging():
     class CustomFormatter(logging.Formatter):
         def format(self, record):
-            dt = datetime.fromtimestamp(record.created).strftime('%Y-%m-%d %H:%M:%S')
+            dt = datetime.fromtimestamp(record.created).strftime("%Y-%m-%d %H:%M:%S")
             message, level_name = record.getMessage(), record.levelname
             if record.levelno == logging.WARNING:
                 message = mc.ui.yellow(message)

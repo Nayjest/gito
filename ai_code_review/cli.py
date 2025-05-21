@@ -20,26 +20,27 @@ app = async_typer.AsyncTyper(
 )
 
 
-if sys.platform == 'win32':
+if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 @app.callback(invoke_without_command=True)
-def cli(ctx: typer.Context, filter = ""):
-    if ctx.invoked_subcommand != 'setup':
+def cli(ctx: typer.Context, filter=""):
+    if ctx.invoked_subcommand != "setup":
         bootstrap()
     if not ctx.invoked_subcommand:
         asyncio.run(review(filter=filter))
-
 
 
 @app.async_command(help="Configure LLM for local usage interactively")
 async def setup():
     mc.interactive_setup(ENV_CONFIG_FILE)
 
+
 @app.async_command()
 async def render(format: str = Report.Format.MARKDOWN):
     print(Report.load().render(format=format))
+
 
 @app.async_command(help="Review remote code")
 async def remote(url=typer.Option(), branch=typer.Option()):

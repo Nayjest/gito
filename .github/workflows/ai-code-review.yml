@@ -22,7 +22,7 @@ jobs:
         python-version: "3.11"
     - name: Install AI Code Review tool
       run: |
-        pip install ai-code-review==0.3.0
+        pip install ai-code-review==0.3.1
     - name: Run AI code review
       env:
         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}

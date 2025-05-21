@@ -21,7 +21,7 @@ def file_lines(repo: Repo, file: str, max_tokens: int = None) -> str:
             lines.append(
                 f"(!) DISPLAYING ONLY FIRST {len(lines)} LINES DUE TO LARGE FILE SIZE\n"
             )
-    return ''.join(lines)
+    return "".join(lines)
 
 
 class ReportFormat(StrEnum):
@@ -68,7 +68,9 @@ class Report:
         data.pop("total_issues", None)
         return Report(**data)
 
-    def render(self, cfg: ProjectConfig = None, format: Format = Format.MARKDOWN) -> str:
+    def render(
+        self, cfg: ProjectConfig = None, format: Format = Format.MARKDOWN
+    ) -> str:
         cfg = cfg or ProjectConfig.load()
         template = getattr(cfg, f"report_template_{format}")
         return mc.prompt(template, report=self, **cfg.prompt_vars)
@@ -76,18 +78,23 @@ class Report:
 
 async def review(filter: str = ""):
     cfg = ProjectConfig.load()
-    repo = Repo('.')
-    diff = get_diff(repo=repo, against='HEAD')
+    repo = Repo(".")
+    diff = get_diff(repo=repo, against="HEAD")
     diff = filter_diff(diff, filter)
     if not diff:
         logging.error("Nothing to review")
         return
     lines = {
-        file_diff.path: file_lines(
-            repo,
-            file_diff.path,
-            cfg.max_code_tokens - mc.tokenizing.num_tokens_from_string(str(file_diff))
-        ) if file_diff.target_file != DEV_NULL else ""
+        file_diff.path: (
+            file_lines(
+                repo,
+                file_diff.path,
+                cfg.max_code_tokens
+                - mc.tokenizing.num_tokens_from_string(str(file_diff)),
+            )
+            if file_diff.target_file != DEV_NULL
+            else ""
+        )
         for file_diff in diff
     }
     responses = await mc.llm_parallel(
@@ -96,12 +103,12 @@ async def review(filter: str = ""):
                 cfg.prompt,
                 input=file_diff,
                 file_lines=lines[file_diff.path],
-                **cfg.prompt_vars
+                **cfg.prompt_vars,
             )
             for file_diff in diff
         ],
         retries=cfg.retries,
-        parse_json=True
+        parse_json=True,
     )
     issues = {file.path: issues for file, issues in zip(diff, responses) if issues}
     for file, file_issues in issues.items():
@@ -109,18 +116,21 @@ async def review(filter: str = ""):
             for i in issue.get("affected_lines", []):
                 if lines[file]:
                     f_lines = [""] + lines[file].splitlines()
-                    i["affected_code"] = '\n'.join(f_lines[i["start_line"]:i["end_line"]])
+                    i["affected_code"] = "\n".join(
+                        f_lines[i["start_line"] : i["end_line"]]
+                    )
     exec(cfg.post_process, {"mc": mc, **locals()})
-    summary = mc.prompt(
-        cfg.summary_prompt,
-        diff=mc.tokenizing.fit_to_token_size(diff, cfg.max_code_tokens)[0],
-        issues=issues,
-        **cfg.prompt_vars
-    ).to_llm() if cfg.summary_prompt else ""
-    report = Report(
-        issues=issues,
-        summary=summary
+    summary = (
+        mc.prompt(
+            cfg.summary_prompt,
+            diff=mc.tokenizing.fit_to_token_size(diff, cfg.max_code_tokens)[0],
+            issues=issues,
+            **cfg.prompt_vars,
+        ).to_llm()
+        if cfg.summary_prompt
+        else ""
     )
+    report = Report(issues=issues, summary=summary)
     report.save()
     report_text = report.render(cfg, Report.Format.MARKDOWN)
     print(mc.ui.yellow(report_text))
