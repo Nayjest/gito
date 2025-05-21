@@ -13,7 +13,9 @@ from .report_struct import Report
 
 def get_diff(repo: Repo = None, against: str = "HEAD") -> PatchSet | list[PatchedFile]:
     repo = repo or Repo(".")
-    diff_content = repo.git.diff(repo.remotes.origin.refs.HEAD.reference.name, against)
+    base = repo.remotes.origin.refs.HEAD.reference.name
+    logging.info(f"{base}...{against}")
+    diff_content = repo.git.diff(base, against)
     diff = PatchSet.from_string(diff_content)
     return diff
 

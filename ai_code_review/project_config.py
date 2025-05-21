@@ -99,4 +99,4 @@ class ProjectConfig:
         return ProjectConfig(**config)
 
 
-print("DEBUG")  # @todo temp, delete me!
+print("DEBUG")  # @todo temp, delete me!!
