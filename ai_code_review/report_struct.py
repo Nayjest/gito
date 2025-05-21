@@ -36,8 +36,7 @@ class Issue:
 
     def __post_init__(self):
         self.affected_lines = [
-            Issue.AffectedCode(**dict(file=self.file) | i)
-            for i in self.affected_lines
+            Issue.AffectedCode(**dict(file=self.file) | i) for i in self.affected_lines
         ]
 
 
@@ -49,16 +48,14 @@ class Report:
     issues: dict = field(default_factory=dict)
     summary: str = field(default="")
     total_issues: int = field(init=False)
-    created_at: str = field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    created_at: str = field(
+        default_factory=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    )
     model: str = field(default_factory=lambda: mc.config().MODEL)
 
     @property
     def plain_issues(self):
-        return [
-            issue
-            for file, issues in self.issues.items()
-            for issue in issues
-        ]
+        return [issue for file, issues in self.issues.items() for issue in issues]
 
     def __post_init__(self):
         issue_id: int = 0
@@ -66,10 +63,12 @@ class Report:
             self.issues[file] = [
                 Issue(
                     **{
-                        "id": (issue_id := issue_id+1),
+                        "id": (issue_id := issue_id + 1),
                         "file": file,
-                    } | issue
-                ) for issue in self.issues[file]
+                    }
+                    | issue
+                )
+                for issue in self.issues[file]
             ]
         self.total_issues = issue_id
 

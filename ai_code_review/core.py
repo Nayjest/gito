@@ -52,12 +52,16 @@ def file_lines(repo: Repo, file: str, max_tokens: int = None) -> str:
 
 
 def make_cr_summary(cfg: ProjectConfig, report: Report, diff):
-    return mc.prompt(
-        cfg.summary_prompt,
-        diff=mc.tokenizing.fit_to_token_size(diff, cfg.max_code_tokens)[0],
-        issues=report.issues,
-        **cfg.prompt_vars,
-    ).to_llm() if cfg.summary_prompt else ""
+    return (
+        mc.prompt(
+            cfg.summary_prompt,
+            diff=mc.tokenizing.fit_to_token_size(diff, cfg.max_code_tokens)[0],
+            issues=report.issues,
+            **cfg.prompt_vars,
+        ).to_llm()
+        if cfg.summary_prompt
+        else ""
+    )
 
 
 async def review(filters: str | list[str] = ""):

@@ -20,11 +20,12 @@ def _detect_github_env() -> dict:
     pr_number = os.environ.get("GITHUB_REF", "")
     branch = ""
     ref = os.environ.get("GITHUB_REF", "")
-    # Try to resolve PR head SHA if available. On PRs, GITHUB_HEAD_REF/BASE_REF contain branch names.
+    # Try to resolve PR head SHA if available.
+    # On PRs, GITHUB_HEAD_REF/BASE_REF contain branch names.
     if "GITHUB_HEAD_REF" in os.environ:
         branch = os.environ["GITHUB_HEAD_REF"]
     elif ref.startswith("refs/heads/"):
-        branch = ref[len("refs/heads/") :]
+        branch = ref[len("refs/heads/"):]
     elif ref.startswith("refs/pull/"):
         # for pull_request events
         branch = ref
@@ -51,9 +52,7 @@ def _detect_github_env() -> dict:
                 d["github_repo"] = f"{match.group(1)}/{match.group(2)}"
             d["github_pr_sha"] = git.head.commit.hexsha
             d["github_branch"] = (
-                git.active_branch.name
-                if hasattr(git, "active_branch")
-                else ""
+                git.active_branch.name if hasattr(git, "active_branch") else ""
             )
         except Exception:
             pass
@@ -66,6 +65,7 @@ def _detect_github_env() -> dict:
         d["github_pr_sha_or_branch"] = "main"
     return d
 
+print("DEBUG")
 
 @dataclass
 class ProjectConfig:
@@ -96,7 +96,11 @@ class ProjectConfig:
             custom_prompt_vars = loaded.get("prompt_vars", {})
             config.update(loaded)
             # overriding prompt_vars config section will not empty default values
-            config["prompt_vars"] = {**default_prompt_vars, **custom_prompt_vars, **github_env}
+            config["prompt_vars"] = {
+                **default_prompt_vars,
+                **custom_prompt_vars,
+                **github_env,
+            }
         else:
             logging.info(f"Config file {config_file} not found, using defaults")
             config["prompt_vars"] = {**config.get("prompt_vars", {}), **github_env}
