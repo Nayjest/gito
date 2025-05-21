@@ -6,10 +6,10 @@ import shutil
 import microcore as mc
 import async_typer
 import typer
-from .ai_code_review import Report
+from .core import review
+from .report_struct import Report
 from git import Repo
 
-from .ai_code_review import review
 from .constants import ENV_CONFIG_FILE
 from .bootstrap import bootstrap
 

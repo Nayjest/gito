@@ -1,15 +1,42 @@
-import json
+import fnmatch
 import logging
-from enum import StrEnum
-from dataclasses import dataclass, field, asdict
+from typing import Iterable
+
 import microcore as mc
 from git import Repo
-
+from unidiff import PatchSet, PatchedFile
 from unidiff.constants import DEV_NULL
 
 from .project_config import ProjectConfig
-from .core_functions import get_diff, filter_diff
-from .constants import JSON_REPORT_FILE_NAME
+from .report_struct import Report
+
+
+def get_diff(repo: Repo = None, against: str = "HEAD") -> PatchSet | list[PatchedFile]:
+    repo = repo or Repo(".")
+    diff_content = repo.git.diff(repo.remotes.origin.refs.HEAD.reference.name, against)
+    diff = PatchSet.from_string(diff_content)
+    return diff
+
+
+def filter_diff(
+    patch_set: PatchSet | Iterable[PatchedFile], filters: str | list[str]
+) -> PatchSet | Iterable[PatchedFile]:
+    """
+    Filter the diff files by the given fnmatch filters.
+    """
+    print([f.path for f in patch_set])
+    assert isinstance(filters, (list, str))
+    if not isinstance(filters, list):
+        filters = [f.strip() for f in filters.split(",") if f.strip()]
+    if not filters:
+        return patch_set
+    files = [
+        file
+        for file in patch_set
+        if any(fnmatch.fnmatch(file.path, pattern) for pattern in filters)
+    ]
+    print([f.path for f in files])
+    return files
 
 
 def file_lines(repo: Repo, file: str, max_tokens: int = None) -> str:
@@ -24,57 +51,13 @@ def file_lines(repo: Repo, file: str, max_tokens: int = None) -> str:
     return "".join(lines)
 
 
-class ReportFormat(StrEnum):
-    MARKDOWN = "md"
-
-
-@dataclass
-class Report:
-    class Format(StrEnum):
-        MARKDOWN = "md"
-
-    issues: dict
-    summary: str
-    total_issues: int = field(init=False)
-
-    @property
-    def plain_issues(self):
-        return [
-            {
-                "file": file,
-                **issue,
-            }
-            for file, issues in self.issues.items()
-            for issue in issues
-        ]
-
-    def __post_init__(self):
-        issue_id: int = 0
-        for file, file_issues in self.issues.items():
-            for i in file_issues:
-                issue_id += 1
-                i["id"] = issue_id
-        self.total_issues = issue_id
-
-    def save(self, file_name: str = ""):
-        file_name = file_name or JSON_REPORT_FILE_NAME
-        with open(file_name, "w") as f:
-            json.dump(asdict(self), f, indent=4)
-        logging.info(f"Report saved to {mc.utils.file_link(file_name)}")
-
-    @staticmethod
-    def load(file_name: str = ""):
-        with open(file_name or JSON_REPORT_FILE_NAME, "r") as f:
-            data = json.load(f)
-        data.pop("total_issues", None)
-        return Report(**data)
-
-    def render(
-        self, cfg: ProjectConfig = None, format: Format = Format.MARKDOWN
-    ) -> str:
-        cfg = cfg or ProjectConfig.load()
-        template = getattr(cfg, f"report_template_{format}")
-        return mc.prompt(template, report=self, **cfg.prompt_vars)
+def make_cr_summary(cfg: ProjectConfig, report: Report, diff):
+    return mc.prompt(
+        cfg.summary_prompt,
+        diff=mc.tokenizing.fit_to_token_size(diff, cfg.max_code_tokens)[0],
+        issues=report.issues,
+        **cfg.prompt_vars,
+    ).to_llm() if cfg.summary_prompt else ""
 
 
 async def review(filters: str | list[str] = ""):
@@ -121,17 +104,8 @@ async def review(filters: str | list[str] = ""):
                         f_lines[i["start_line"]: i["end_line"]]
                     )
     exec(cfg.post_process, {"mc": mc, **locals()})
-    summary = (
-        mc.prompt(
-            cfg.summary_prompt,
-            diff=mc.tokenizing.fit_to_token_size(diff, cfg.max_code_tokens)[0],
-            issues=issues,
-            **cfg.prompt_vars,
-        ).to_llm()
-        if cfg.summary_prompt
-        else ""
-    )
-    report = Report(issues=issues, summary=summary)
+    report = Report(issues=issues)
+    report.summary = make_cr_summary(cfg, report, diff)
     report.save()
     report_text = report.render(cfg, Report.Format.MARKDOWN)
     print(mc.ui.yellow(report_text))
