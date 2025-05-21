@@ -5,7 +5,7 @@ black:
 
 
 install:
-	pip install -r requirements.txt
+	pip install -e .
 
 pkg:
 	python -m poetry build
