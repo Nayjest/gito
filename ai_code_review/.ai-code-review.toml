@@ -1,19 +1,21 @@
 report_template_md = """
-# 🤖 AI Code Review
+# 🤖 I've Reviewed the Code
 
 {% if summary %}{{ summary }}{% else %}{% if report.total_issues == 0 %}No issues found.{% endif %}{% endif %}
 {%- if report.total_issues > 0 -%}
-*⚠️ Total issues*: `{{ report.total_issues }}`{{"\n"}}
+**⚠️ Total issues: `{{ report.total_issues }}`**{{"\n"}}
 
     {%- for issue in report.plain_issues -%}
-        {{"\n"}}## <sub>#{{ issue.id}}</sub> _at_ <ins>{{ issue.file }}</ins> {{''}}
+        {{"\n"}}## `#{{ issue.id}}`  {{ issue.title -}}
+        {{ "\n"}}**File**: <ins>{{ issue.file }}</ins>{{' '}}
+
         {%- if issue.affected_lines -%}
-        <sub>`[LN: {{''}}
+        **Lines**: `
             {%- for i in issue.affected_lines -%}
             {{ i.start_line }}{%- if i.end_line != i.start_line -%}-{{ i.end_line }}{%- endif -%}
             {%- if loop.last == false -%}, {%- endif -%}
             {%- endfor -%}
-        ]`</sub> {{ issue.title }}
+        `
         {%- endif -%}
         {{"\n"}}{{ issue.details -}}
         {{"\n"}}**Tags: {{ ', '.join(issue.tags) }}**
