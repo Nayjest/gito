@@ -20,16 +20,16 @@ report_template_md = """
 
     {%- for issue in report.plain_issues -%}
         {{"\n"}}## `#{{ issue.id}}`  {{ issue.title -}}
-        {{ "\n"}}**File**: <ins>{{ issue.file }}</ins>{{' '}}
+        {{ "\n"}}[{{ issue.file }}{{' '}}
 
         {%- if issue.affected_lines -%}
-        **Lines**: `
             {%- for i in issue.affected_lines -%}
-            {{ i.start_line }}{%- if i.end_line != i.start_line -%}-{{ i.end_line }}{%- endif -%}
+            L{{ i.start_line }}{%- if i.end_line != i.start_line -%}-L{{ i.end_line }}{%- endif -%}
             {%- if loop.last == false -%}, {%- endif -%}
             {%- endfor -%}
-        `
         {%- endif -%}
+        ]({{ issue.github_code_link(github_env) }})
+
         {{"\n"}}{{ issue.details -}}
         {{"\n"}}**Tags: {{ ', '.join(issue.tags) }}**
         {%- for i in issue.affected_lines -%}

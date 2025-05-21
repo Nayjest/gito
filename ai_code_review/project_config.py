@@ -84,24 +84,17 @@ class ProjectConfig:
         with open(PROJECT_CONFIG_DEFAULTS_FILE, "rb") as f:
             config = tomllib.load(f)
         github_env = _detect_github_env()
+        github_env["github_env"] = github_env
         if config_file.exists():
             logging.info(
-                f"Loading project-specific configuration from {mc.utils.file_link(config_file)}..."
-            )
-            default_prompt_vars = config.get("prompt_vars", {}) or {}
+                f"Loading project-specific configuration from {mc.utils.file_link(config_file)}...")
+            default_prompt_vars = config["prompt_vars"]
             with open(config_file, "rb") as f:
-                loaded = tomllib.load(f)
-            # safeguard: ensure key exists
-            custom_prompt_vars = loaded.get("prompt_vars", {}) or {}
-            config.update(loaded)
+                config.update(tomllib.load(f))
             # overriding prompt_vars config section will not empty default values
-            config["prompt_vars"] = {
-                **default_prompt_vars,
-                **custom_prompt_vars,
-                **github_env,
-            }
+            config["prompt_vars"] = default_prompt_vars | github_env | config["prompt_vars"]
         else:
-            config["prompt_vars"] = {**(config.get("prompt_vars", {}) or {}), **github_env}
+            logging.info(f"Config file {config_file} not found, using defaults")
 
         return ProjectConfig(**config)
 
