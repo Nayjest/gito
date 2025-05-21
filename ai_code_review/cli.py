@@ -76,11 +76,26 @@ async def github_comment(
 
     github_env = _detect_github_env()
     repo = repo or github_env.get("github_repo", "")
-    pr = pr or (
-        int(github_env.get("github_pr_number", "0").split("/")[-1])  # PR refs: refs/pull/12/merge
-        if "pull" in github_env.get("github_pr_number", "")
-        else 0
-    )
+    pr_env_val = github_env.get("github_pr_number", "")
+    parsed_pr = 0
+    # Try to parse PR number robustly
+    if not pr and pr_env_val:
+        # e.g. could be "refs/pull/123/merge" or a direct number
+        if "/" in pr_env_val and "pull" in pr_env_val:
+            # refs/pull/123/merge
+            try:
+                pr_num_candidate = pr_env_val.strip("/").split("/")
+                idx = pr_num_candidate.index("pull")
+                parsed_pr = int(pr_num_candidate[idx + 1])
+            except Exception:
+                parsed_pr = 0
+        else:
+            try:
+                parsed_pr = int(pr_env_val)
+            except Exception:
+                parsed_pr = 0
+    pr = pr or parsed_pr
+
     if not repo:
         print("Unable to detect GitHub repo. Use --repo option.")
         raise typer.Exit(2)
@@ -104,7 +119,7 @@ async def github_comment(
     data = {"body": body}
 
     resp = requests.post(api_url, headers=headers, json=data)
-    if resp.status_code >= 200 and resp.status_code < 300:
+    if 200 <= resp.status_code < 300:
         print(f"Posted review comment to PR #{pr} in {repo}")
     else:
         print(f"Failed to post comment: {resp.status_code} {resp.reason}\n{resp.text}")
