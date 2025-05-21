@@ -1,34 +1,46 @@
-report = """
+report_template_md = """
 # 🤖 AI Code Review
 
-{% set ns = namespace(total_issues=0) %}
-{%- for file_issues in issues.values() %}
-  {%- set ns.total_issues = ns.total_issues + (file_issues | length) %}
-{%- endfor %}
-{% if summary %}{{ summary }}{% else %}{% if ns.total_issues == 0 %}No issues found.{% endif %}{% endif %}
-{%- if ns.total_issues > 0 %}
+{% if summary %}{{ summary }}{% else %}{% if report.total_issues == 0 %}No issues found.{% endif %}{% endif %}
+{%- if report.total_issues > 0 -%}
+*⚠️ Total issues*: `{{ report.total_issues }}`{{"\n"}}
 
-*⚠️ Total issues: {{ ns.total_issues }}*
-    {%- for file, file_issues in issues.items() %}
-        {%- if file_issues | length > 0 -%}
-        {{ "\n\n" }}## {{ file }}
-            {%- for issue in file_issues -%}
-            {{ "\n" }}- [{% for tag in issue.tags %}{{ tag }}{% if loop.last == false %}, {% endif %}{% endfor %}] {{ issue.text }}
+    {%- for issue in report.plain_issues -%}
+        {{"\n"}}## #{{ issue.id}} at {{ issue.file }} {{''}}
+        {%- if issue.affected_lines -%}
+        `[LN: {{''}}
+            {%- for i in issue.affected_lines -%}
+            {{ i.start_line }}{%- if i.end_line != i.start_line -%}-{{ i.end_line }}{%- endif -%}
+            {%- if loop.last == false -%}, {%- endif -%}
             {%- endfor -%}
+        ]` *{{ issue.title }}*
         {%- endif -%}
+        {{"\n"}}{{ issue.details -}}
+        {{"\n"}}*Tags:* {{ ', '.join(issue.tags) }}
+        {%- for i in issue.affected_lines -%}
+            {%- if i.affected_code %}\nAffected code: \n```\n{{ i.affected_code }}\n```{%- endif -%}
+            {%- if i.proposal %}\nProposed code:\n```\n{{ i.proposal }}\n```{%- endif -%}
+        {%- endfor -%}
+        {{ "\n" }}
     {%- endfor -%}
 {%- endif -%}
 """
 retries = 3
 prompt = """
 {{ self_id }}
+----TASK----
 Review the provided code diff carefully and identify *only* highly confident issues which are relevant to any code context.
 
------CODE-----
+----CODE----
 {{ input }}
-----------
+--------
 
-Review Guidelines:
+{% if file_lines -%}
+----ADDITIONAL CONTEXT----
+{{ file_lines }}
+{%- endif %}
+
+----TASK GUIDELINES----
 - Only report issues you are **100% confident** are relevant to any context.
 - Only include issues that are **significantly valuable** to the maintainers (e.g., bugs, security flaws, or clear maintainability concerns).
 - Do **not** report vague, theoretical, or overly generic advice.
@@ -38,10 +50,19 @@ Review Guidelines:
 Respond with a valid JSON array of issues in the following format:
 [
     {
-        "text": "<issue_description>",
+        "title": "<issue_title>",
+        "details": "<issue_description>",
         "tags": ["<issue_tag1>", "<issue_tag2>"],
         "severity": <issue_severity>,
         "confidence": <confidence_score>
+        "affected_lines": [ // optional; list of affected lines
+            {
+                "start_line": <start_line:int>,
+                "end_line": <end_line:int>
+                "proposal": "<proposed code to replace the affected lines (optional)>"
+            },
+            ...
+        ]
     },
     ...
 ]
@@ -87,17 +108,16 @@ summary_prompt = """
 {{ self_id }}
 Summarize the code review in one sentence.
 --Reviewed Changes--
-{{ report }}
-{{ diff }}
+{% for part in diff %}{{ part }}\n{% endfor %}
 --Detected Issues--
-{{ issues }}
+{{ issues | tojson(indent=2) }}
 ---
 If code changs contains exceptional achievements, you may additionally present the award in summary text.
 --Available Awards--
 {{ awards }}
 ---
 Your response will be parsed programmatically, so do not include any additional text.
-Use markdown syntax.
+Use Markdown formatting in your response.
 """
 
 [prompt_vars]
