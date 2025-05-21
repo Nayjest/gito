@@ -25,6 +25,7 @@ def setup_logging():
 
 
 def bootstrap():
+    """Bootstrap the application with the environment configuration."""
     setup_logging()
     logging.info("Bootstrapping...")
     mc.configure(
