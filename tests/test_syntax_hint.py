@@ -1,5 +1,6 @@
 from ai_code_review.utils import syntax_hint
 
+
 def test_extensions():
     assert syntax_hint("main.py") == "python"
     assert syntax_hint("script.PY") == "python"
@@ -17,6 +18,7 @@ def test_extensions():
     assert syntax_hint("foo.go") == "go"
     assert syntax_hint("code.cpp") == "cpp"
     assert syntax_hint("folder.1\\file.hello.cxx") == "cpp"
+
 
 def test_unknown_extension():
     assert syntax_hint("thing.qqq") == "qqq"

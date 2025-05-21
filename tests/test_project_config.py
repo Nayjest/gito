@@ -13,11 +13,13 @@ def test_load_defaults(monkeypatch):
 
 
 def test_prompt_vars_merging(tmp_path):
-    sample = textwrap.dedent("""
+    sample = textwrap.dedent(
+        """
     retries = 7
     [prompt_vars]
     foo = "bar"
-    """)
+    """
+    )
     toml_path = tmp_path / ".ai-code-review.toml"
     toml_path.write_text(sample)
     logging.info(f"Writing to {toml_path}")

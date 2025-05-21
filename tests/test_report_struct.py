@@ -57,7 +57,7 @@ def test_report_save_load(tmp_path):
                 }
             ]
         },
-        "summary": "SUMMARY"
+        "summary": "SUMMARY",
     }
     file_name = tmp_path / "report.json"
     report = Report(**data)
@@ -89,7 +89,7 @@ def test_issue_affected_lines_init():
                 "affected_code": "code",
                 # file field should be auto set to parent file!
             }
-        ]
+        ],
     }
     issue = Issue(**D)
     line = issue.affected_lines[0]
