@@ -3,24 +3,15 @@ report_template_md = """
 
 {% if report.summary %}{{ report.summary }}{% else %}{% if report.total_issues == 0 %}No issues found.{% endif %}{% endif %}
 {%- if report.total_issues > 0 -%}
-**⚠️ Total issues: `{{ report.total_issues }}`**{{"\n"}}
+**⚠️ Total issues: `{{ report.total_issues }}`**, **reviewed files: `{{ report.issues | count }}`**{{"\n"}}
 
-{# --- Added section: Changed files and links --- #}
-{% if report.issues %}
-<details>
-<summary><b>Changed files in this PR</b></summary>
-
-{% for file in report.issues.keys() %}
-- [`{{ file }}`](https://github.com/{{ github_repo }}/blob/{{ github_pr_sha_or_branch }}/{{ file }})
-{% endfor %}
-
-</details>
-{% endif %}
-{# --------------------------------------------- #}
 
     {%- for issue in report.plain_issues -%}
+    {{- '\n<details>' -}}
+        {{- '\n<summary>' -}}
         {{"\n"}}## `#{{ issue.id}}`  {{ issue.title -}}
         {{ "\n"}}[{{ issue.file }}{{' '}}
+
 
         {%- if issue.affected_lines -%}
             {%- for i in issue.affected_lines -%}
@@ -29,14 +20,14 @@ report_template_md = """
             {%- endfor -%}
         {%- endif -%}
         ]({{ issue.github_code_link(github_env) }})
-
+        {{- '\n</summary>\n' -}}
         {{"\n"}}{{ issue.details -}}
         {{"\n"}}**Tags: {{ ', '.join(issue.tags) }}**
         {%- for i in issue.affected_lines -%}
             {%- if i.affected_code %}\n**Affected code:**\n```{{ i.syntax_hint }}\n{{ i.affected_code }}\n```{%- endif -%}
             {%- if i.proposal %}\n**Proposed change:**\n```{{ i.syntax_hint }}\n{{ i.proposal }}\n```{%- endif -%}
         {%- endfor -%}
-        {{ "\n" }}
+    {{- '\n</details>\n' -}}
     {%- endfor -%}
 {%- endif -%}
 """

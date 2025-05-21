@@ -40,8 +40,12 @@ class Issue:
             for i in self.affected_lines
         ]
 
-    def github_code_link(self, git_env) -> str:
-        url = f"https://github.com/{git_env['github_repo']}/blob/{git_env['github_pr_sha_or_branch']}/{self.file}"
+    def github_code_link(self, github_env: dict) -> str:
+        url = (
+            f"https://github.com/{github_env['github_repo']}"
+            f"/blob/{github_env['github_pr_sha_or_branch']}"
+            f"/{self.file}"
+        )
         if self.affected_lines:
             url += f"#L{self.affected_lines[0].start_line}"
             if self.affected_lines[0].end_line:
