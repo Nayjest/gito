@@ -75,11 +75,11 @@ class Report:
         return mc.prompt(template, report=self, **cfg.prompt_vars)
 
 
-async def review(filter: str = ""):
+async def review(filters: str | list[str] = ""):
     cfg = ProjectConfig.load()
     repo = Repo(".")
     diff = get_diff(repo=repo, against="HEAD")
-    diff = filter_diff(diff, filter)
+    diff = filter_diff(diff, filters)
     if not diff:
         logging.error("Nothing to review")
         return
