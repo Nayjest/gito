@@ -5,7 +5,8 @@ report_template_md = """
     {{ report.summary }}
 {%- endif %}
 
-**Reviewed files: `{{ diff | count }}
+**
+Reviewed files: `{{ diff | count }}
 {%- if report.total_issues > 0 %}⚠️{% endif -%}
 Total issues: `{{ report.total_issues }}`
 {{- ' ' -}}
