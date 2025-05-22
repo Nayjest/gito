@@ -61,7 +61,8 @@ jobs:
 
 > ⚠️ Make sure to add `LLM_API_KEY` to your repository’s GitHub secrets.
 
-Done! PRs will now receive code reviews automatically 💪🍾.
+💪 Done!
+PRs to your repository will now receive AI code reviews automatically. ✨
 
 ### 2. Run Locally
 
