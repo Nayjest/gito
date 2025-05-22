@@ -5,11 +5,11 @@ report_template_md = """
     {{ report.summary }}
 {%- endif %}
 
-**
+**Reviewed files: `{{ diff | count }}**
 {%- if report.total_issues > 0 %}⚠️{% endif -%}
-Total issues: `{{ report.total_issues }}`**
+**Total issues: `{{ report.total_issues }}`**
 {{- ' ' -}}
-**reviewed files: `{{ report.issues | count }}`**
+**in `{{ report.issues | count }}` files**
 
 {%- for issue in report.plain_issues -%}
     {{"\n"}}## `#{{ issue.id}}`  {{ issue.title -}}
