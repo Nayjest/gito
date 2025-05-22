@@ -5,11 +5,11 @@ report_template_md = """
     {{ report.summary }}
 {%- endif %}
 
-**Reviewed files: `{{ diff | count }}**
+**Reviewed files: `{{ diff | count }}
 {%- if report.total_issues > 0 %}⚠️{% endif -%}
-**Total issues: `{{ report.total_issues }}`**
+Total issues: `{{ report.total_issues }}`
 {{- ' ' -}}
-**in `{{ report.issues | count }}` files**
+in `{{ report.issues | count }}` files**
 
 {%- for issue in report.plain_issues -%}
     {{"\n"}}## `#{{ issue.id}}`  {{ issue.title -}}
@@ -66,7 +66,7 @@ Respond with a valid JSON array of issues in the following format:
         "affected_lines": [ // optional; list of affected lines
             {
                 "start_line": <start_line:int>,
-                "end_line": <end_line:int>
+                "end_line": <end_line:int>,
                 "proposal": "<proposed code to replace the affected lines (optional)>"
             },
             ...
