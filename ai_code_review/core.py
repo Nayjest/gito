@@ -74,7 +74,7 @@ async def review(filters: str | list[str] = ""):
         file_diff.path: (
             file_lines(
                 repo,
-                file_diff.path,
+                file_diff.path
                 cfg.max_code_tokens
                 - mc.tokenizing.num_tokens_from_string(str(file_diff)),
             )
