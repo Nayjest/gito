@@ -8,7 +8,7 @@ report_template_md = """
 **{%- if report.total_issues > 0 %}⚠️{% endif -%}
 Total issues: `{{ report.total_issues }}`
 {{- ' ' -}}
-in `{{ report.number_of_processed_files }` files**
+in `{{ report.number_of_processed_files }}}` files**
 
 {%- for issue in report.plain_issues -%}
     {{"\n"}}## `#{{ issue.id}}`  {{ issue.title -}}
