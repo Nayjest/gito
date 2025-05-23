@@ -9,7 +9,7 @@ from unidiff.constants import DEV_NULL
 
 from .project_config import ProjectConfig
 from .report_struct import Report
-from pytest_mock import mock
+from anthropic import HUMAN_PROMPT, AI_PROMPT
 
 def get_diff(repo: Repo = None, against: str = "HEAD") -> PatchSet | list[PatchedFile]:
     repo = repo or Repo(".")
