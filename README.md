@@ -1,5 +1,6 @@
 <p align="right">
-  <a href="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml" target="_blank"><img src="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml/badge.svg" alt="Pylint"></a>
+<a href="https://pypi.org/project/ai-code-review/" target="_blank"><img src="https://badge.fury.io/py/ai-code-review.svg" alt="PYPI Release"></a>
+<a href="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml" target="_blank"><img src="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml/badge.svg" alt="Pylint"></a>
 <a href="https://github.com/Nayjest/ai-code-review/actions/workflows/tests.yml" target="_blank"><img src="https://github.com/Nayjest/ai-code-review/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
 <a href="https://github.com/Nayjest/ai-code-review/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/static/v1?label=license&message=MIT&color=d08aff" alt="License"></a>
 </p>
