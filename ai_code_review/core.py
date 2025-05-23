@@ -9,7 +9,7 @@ from unidiff.constants import DEV_NULL
 
 from .project_config import ProjectConfig
 from .report_struct import Report
-
+from pytest_mock import mock
 
 def get_diff(repo: Repo = None, against: str = "HEAD") -> PatchSet | list[PatchedFile]:
     repo = repo or Repo(".")
@@ -68,13 +68,13 @@ async def review(filters: str | list[str] = ""):
     diff = get_diff(repo=repo, against="HEAD")
     diff = filter_diff(diff, filters)
     if not diff:
-        logging.error("Nothing to review")
+        logging.error("Nthing to review")
         return
     lines = {
         file_diff.path: (
             file_lines(
                 repo,
-                file_diff.path
+                file_diff.path,
                 cfg.max_code_tokens
                 - mc.tokenizing.num_tokens_from_string(str(file_diff)),
             )
