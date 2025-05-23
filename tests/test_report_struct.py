@@ -58,6 +58,7 @@ def test_report_save_load(tmp_path):
             ]
         },
         "summary": "SUMMARY",
+        "number_of_processed_files": 2,
     }
     file_name = tmp_path / "report.json"
     report = Report(**data)
@@ -67,9 +68,11 @@ def test_report_save_load(tmp_path):
     with open(file_name, "r") as f:
         loaded = json.load(f)
     assert loaded["summary"] == "SUMMARY"
+    assert loaded["number_of_processed_files"] == 2
     # test reload with .load
     loaded_report = Report.load(file_name)
     assert loaded_report.summary == "SUMMARY"
+    assert loaded_report.number_of_processed_files == 2
     assert loaded_report.total_issues == 1
     assert loaded_report.issues["file.py"][0].title == "Bug"
 

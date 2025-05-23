@@ -106,7 +106,7 @@ async def review(filters: str | list[str] = ""):
                         f_lines[i["start_line"]: i["end_line"]+1]
                     )
     exec(cfg.post_process, {"mc": mc, **locals()})
-    report = Report(issues=issues)
+    report = Report(issues=issues, number_of_processed_files=len(diff))
     report.summary = make_cr_summary(cfg, report, diff)
     report.save()
     report_text = report.render(cfg, Report.Format.MARKDOWN)
