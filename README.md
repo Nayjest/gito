@@ -16,7 +16,7 @@ An AI-powered GitHub code review tool that uses LLMs to detect high-confidence, 
 - Posts review results as a comment on your PR
 - Can be used locally; works with both local and remote Git repositories
 - Optional, fun AI-generated code awards 🏆
-- Easily configurable via [`.ai-code-review.toml`](ai_code_review/.ai-code-review.toml)
+- Easily configurable via [`.ai-code-review.toml`](https://github.com/Nayjest/ai-code-review/blob/main/ai_code_review/.ai-code-review.toml) in your repository root
 - Extremely fast, parallel LLM usage
 - Model-agnostic (OpenAI, Anthropic, Google, local PyTorch inference, etc.)
 
@@ -43,7 +43,7 @@ jobs:
       with: { python-version: "3.13" }
     - name: Install AI Code Review tool
       run: pip install ai-code-review==0.4.1
-    - name: Run AI code review
+    - name: Run AI code analysis
       env:
         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
         LLM_API_TYPE: openai
@@ -65,7 +65,7 @@ jobs:
 💪 Done!  
 PRs to your repository will now receive AI code reviews automatically. ✨
 
-### 2. Run Locally
+### 2. Run Code Analysis Locally
 
 Install and run:
 
@@ -98,7 +98,7 @@ Change behavior via `.ai-code-review.toml`:
 You can override the default config by placing `.ai-code-review.toml` in your repo root.
 
 
-See default configuration [here](ai_code_review/.ai-code-review.toml).
+See default configuration [here](https://github.com/Nayjest/ai-code-review/blob/main/ai_code_review/.ai-code-review.toml).
 
 ## 💻 Development Setup
 
@@ -123,10 +123,10 @@ pytest
 
 ## 🤝 Contributing
 
-We ❤️ contributions! See [CONTRIBUTING.md](CONTRIBUTING.md).
+We ❤️ contributions! See [CONTRIBUTING.md](https://github.com/Nayjest/ai-code-review/blob/main/CONTRIBUTING.md).
 
 ## 📝 License
 
-Licensed under the [MIT License](LICENSE).
+Licensed under the [MIT License](https://github.com/Nayjest/ai-code-review/blob/main/LICENSE).
 
 © 2025 [Vitalii Stepanenko](mailto:mail@vitaliy.in)

@@ -8,13 +8,12 @@ install:
 	pip install -e .
 
 pkg:
-	python -m poetry build
+	python multi-build.py
+build: pkg
 
-clean-dist:
+clear-dist:
 	python -c "import shutil, os; shutil.rmtree('dist', ignore_errors=True); os.makedirs('dist', exist_ok=True)"
-clear-dist: clean-dist
-cln-dist: clean-dist
-clr-dist: clean-dist
+clr-dist: clear-dist
 
 publish:
 	python -c "import os;t=os.getenv('PYPI_TOKEN');__import__('subprocess').run(f'python -m twine upload dist/* -u __token__ -p {t}',shell=True)"
