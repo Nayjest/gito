@@ -14,7 +14,6 @@ NAMES = [
 ]
 FILES = [
     "pyproject.toml",
-#    "README.md",
 ]
 
 
@@ -36,7 +35,7 @@ def replace_name(old_names: list[str], new_names: list[str], files: list[str] = 
 
 
 prev = NAMES[0]
-for nxt in NAMES[1:]+[NAMES[0]]:
+for nxt in NAMES[1:] + [NAMES[0]]:
     print(f"Building for project name: {nxt[0]}...")
     replace_name(prev, nxt)
     subprocess.run(["poetry", "build"], check=True)
