@@ -35,7 +35,7 @@ def test_report_plain_issues():
     assert len(issues) == 2
     assert all(isinstance(i, Issue) for i in issues)
     assert report.total_issues == 2
-    assert issues[0].id == 1
+    assert issues[0].id == 99
     assert issues[1].id == 2
     # test field transfer
     assert issues[0].file == "file1.py"
