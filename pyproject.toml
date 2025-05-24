@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "ai-code-review"
-version = "0.4.4"
+version = "0.4.5"
 description = "LLM-agnostic GitHub AI Code Review Tool with integration to GitHub actions"
 authors = ["Nayjest <mail@vitaliy.in>"]
 readme = "README.md"
 license = "MIT"
 homepage = "https://github.com/Nayjest/github-ai-code-review"
 repository = "https://github.com/Nayjest/github-ai-code-review"
-keywords = ["ai", "coding", "assistant", "llm", "code review", "github", "automation", "devops", "developer tools", "github actions", "workflows"]
+keywords = ["static code analysis", "code review", "code quality", "ai", "coding", "assistant", "llm", "github", "automation", "devops", "developer tools", "github actions", "workflows", "git"]
 classifiers = [
     "Environment :: Console",
     "Intended Audience :: Developers",

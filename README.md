@@ -43,7 +43,7 @@ jobs:
       with: { python-version: "3.13" }
     - name: Install AI Code Review tool
       run: pip install ai-code-review==0.4.1
-    - name: Run AI code review
+    - name: Run AI code analysis
       env:
         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
         LLM_API_TYPE: openai
@@ -65,7 +65,7 @@ jobs:
 💪 Done!  
 PRs to your repository will now receive AI code reviews automatically. ✨
 
-### 2. Run Locally
+### 2. Run Code Analysis Locally
 
 Install and run:
 
