@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ai-code-review"
-version = "0.4.7"
+version = "0.4.8"
 description = "LLM-agnostic GitHub AI Code Review Tool with integration to GitHub actions"
 authors = ["Nayjest <mail@vitaliy.in>"]
 readme = "README.md"

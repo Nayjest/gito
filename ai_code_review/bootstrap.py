@@ -1,7 +1,9 @@
 import logging
+import os
 from datetime import datetime
 
 import microcore as mc
+from ai_code_review.utils import is_running_in_github_action
 
 from .constants import ENV_CONFIG_FILE
 
@@ -28,10 +30,30 @@ def bootstrap():
     """Bootstrap the application with the environment configuration."""
     setup_logging()
     logging.info("Bootstrapping...")
-    mc.configure(
-        DOT_ENV_FILE=ENV_CONFIG_FILE,
-        VALIDATE_CONFIG=False,
-        USE_LOGGING=True,
-        EMBEDDING_DB_TYPE=mc.EmbeddingDbType.NONE,
-    )
+    try:
+        mc.configure(
+            DOT_ENV_FILE=ENV_CONFIG_FILE,
+            USE_LOGGING=True,
+            EMBEDDING_DB_TYPE=mc.EmbeddingDbType.NONE,
+        )
+    except mc.LLMConfigError as e:
+        msg = str(e)
+        if is_running_in_github_action():
+            ref = os.getenv("GITHUB_WORKFLOW_REF", "")
+            if ref:
+                ref = f" ({ref})"
+            msg += (
+                f"\nPlease check your GitHub Action Secrets "
+                f"and `env` configuration section of the corresponding workflow step{ref}."
+            )
+        else:
+            msg += (
+                "\nPlease run 'ai-code-review setup' "
+                "to configure LLM API access (API keys, model, etc)."
+            )
+        print(mc.ui.red(msg))
+        raise SystemExit(2)
+    except Exception as e:
+        logging.error(f"Unexpected configuration error: {e}")
+        raise SystemExit(3)
     mc.logging.LoggingConfig.STRIP_REQUEST_LINES = [100, 15]
