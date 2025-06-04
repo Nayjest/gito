@@ -123,7 +123,7 @@ pytest
 
 ## 🤝 Contributing
 
-**Looking for a specific feature or having trouble?**
+**Looking for a specific feature or having trouble?**  
 Contributions are welcome! ❤️  
 See [CONTRIBUTING.md](https://github.com/Nayjest/ai-code-review/blob/main/CONTRIBUTING.md) for details.
 
