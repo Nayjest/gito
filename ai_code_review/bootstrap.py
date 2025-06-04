@@ -41,7 +41,10 @@ def bootstrap():
         if is_running_in_github_action():
             ref = os.getenv("GITHUB_WORKFLOW_REF", "")
             if ref:
-                ref = f" ({ref})"
+                # example value: 'owner/repo/.github/workflows/ai-code-review.yml@refs/pull/1/merge'
+                ref = ref.split("@")[0]
+                ref = ref.split(".github/workflows/")[-1]
+                ref = f" (.github/workflows/{ref})"
             msg += (
                 f"\nPlease check your GitHub Action Secrets "
                 f"and `env` configuration section of the corresponding workflow step{ref}."
