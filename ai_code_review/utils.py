@@ -61,11 +61,20 @@ _EXT_TO_HINT: dict[str, str] = {
 }
 
 
-def syntax_hint(file_name: str) -> str:
+def syntax_hint(file_path: str | Path) -> str:
     """
-    Get the syntax hint for a file based on its extension.
+    Returns a syntax highlighting hint based on the file's extension or name.
+
+    This can be used to annotate code blocks for rendering with syntax highlighting,
+    e.g., using Markdown-style code blocks: ```<syntax_hint>\n<code>\n```.
+
+    Args:
+      file_path (str | Path): Path to the file.
+
+    Returns:
+      str: A syntax identifier suitable for code highlighting (e.g., 'python', 'json').
     """
-    p = Path(file_name)
+    p = Path(file_path)
     ext = p.suffix.lower()
     if not ext:
         name = p.name.lower()
