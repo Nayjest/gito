@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 _EXT_TO_HINT: dict[str, str] = {
@@ -82,3 +83,7 @@ def syntax_hint(file_path: str | Path) -> str:
             return "dockerfile"
         return ""
     return _EXT_TO_HINT.get(ext, ext.lstrip("."))
+
+
+def is_running_in_github_action():
+    return os.getenv("GITHUB_ACTIONS") == "true"
