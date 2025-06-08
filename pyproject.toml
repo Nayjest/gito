@@ -49,7 +49,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-ai-code-review = "ai_code_review.cli:app"
+ai-code-review = "ai_code_review.cli:main"
 
 [tool.pytest.ini_options]
 minversion = "6.0"

@@ -11,11 +11,18 @@ from .project_config import ProjectConfig
 from .report_struct import Report
 
 
-def get_diff(repo: Repo = None, against: str = "HEAD") -> PatchSet | list[PatchedFile]:
+def get_diff(
+    repo: Repo = None,
+    what: str = None,
+    against: str = None
+) -> PatchSet | list[PatchedFile]:
     repo = repo or Repo(".")
-    base = repo.remotes.origin.refs.HEAD.reference.name
-    logging.info(f"{base}...{against}")
-    diff_content = repo.git.diff(base, against)
+    if not against:
+        against = repo.remotes.origin.refs.HEAD.reference.name  # origin/main
+    if not what:
+        what = None  # working copy
+    logging.info(f"Reviewing {mc.ui.green(what or 'working copy')} vs {mc.ui.yellow(against)}")
+    diff_content = repo.git.diff(against, what)
     diff = PatchSet.from_string(diff_content)
     return diff
 
@@ -62,10 +69,14 @@ def make_cr_summary(cfg: ProjectConfig, report: Report, diff):
     ).to_llm() if cfg.summary_prompt else ""
 
 
-async def review(filters: str | list[str] = ""):
+async def review(
+    what: str = None,
+    against: str = None,
+    filters: str | list[str] = ""
+):
     cfg = ProjectConfig.load()
     repo = Repo(".")
-    diff = get_diff(repo=repo, against="HEAD")
+    diff = get_diff(repo=repo, what=what, against=against)
     diff = filter_diff(diff, filters)
     if not diff:
         logging.error("Nothing to review")
@@ -78,7 +89,7 @@ async def review(filters: str | list[str] = ""):
                 cfg.max_code_tokens
                 - mc.tokenizing.num_tokens_from_string(str(file_diff)),
             )
-            if file_diff.target_file != DEV_NULL
+            if file_diff.target_file != DEV_NULL and not file_diff.is_added_file
             else ""
         )
         for file_diff in diff
