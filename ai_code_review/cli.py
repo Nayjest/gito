@@ -71,7 +71,7 @@ async def cmd_review(
     if _against:
         if against:
             raise typer.BadParameter(
-                "You cannot specify both 'refs' <WHAT>..<AGAINST> and '--what'. Use one of them."
+                "You cannot specify both 'refs' <WHAT>..<AGAINST> and '--against'. Use one of them."
             )
     else:
         _against = against
