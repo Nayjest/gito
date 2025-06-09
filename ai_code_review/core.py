@@ -21,7 +21,7 @@ def get_diff(
         against = repo.remotes.origin.refs.HEAD.reference.name  # origin/main
     if not what:
         what = None  # working copy
-    logging.info(f"Reviewing {mc.ui.green(what or 'working copy')} vs {mc.ui.yellow(against)}")
+    logging.info(f"Making diff: {mc.ui.green(what or 'INDEX')} vs {mc.ui.yellow(against)}")
     diff_content = repo.git.diff(against, what)
     diff = PatchSet.from_string(diff_content)
     return diff
@@ -33,7 +33,6 @@ def filter_diff(
     """
     Filter the diff files by the given fnmatch filters.
     """
-    print([f.path for f in patch_set])
     assert isinstance(filters, (list, str))
     if not isinstance(filters, list):
         filters = [f.strip() for f in filters.split(",") if f.strip()]
@@ -44,7 +43,6 @@ def filter_diff(
         for file in patch_set
         if any(fnmatch.fnmatch(file.path, pattern) for pattern in filters)
     ]
-    print([f.path for f in files])
     return files
 
 

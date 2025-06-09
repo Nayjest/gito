@@ -92,7 +92,7 @@ def is_running_in_github_action():
     return os.getenv("GITHUB_ACTIONS") == "true"
 
 
-def is_app_command_invocation(app: typer.Typer) -> bool:
+def no_subcommand(app: typer.Typer) -> bool:
     """
     Checks if the current script is being invoked as a command in a target Typer application.
     """
@@ -106,7 +106,7 @@ def is_app_command_invocation(app: typer.Typer) -> bool:
     )
 
 
-def parse_refs_pair(refs: str):
+def parse_refs_pair(refs: str) -> tuple[str | None, str | None]:
     SEPARATOR = '..'
     if not refs:
         return None, None
