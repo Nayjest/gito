@@ -1,5 +1,8 @@
+import sys
 import os
 from pathlib import Path
+import typer
+
 
 _EXT_TO_HINT: dict[str, str] = {
     # scripting & languages
@@ -87,3 +90,27 @@ def syntax_hint(file_path: str | Path) -> str:
 
 def is_running_in_github_action():
     return os.getenv("GITHUB_ACTIONS") == "true"
+
+
+def is_app_command_invocation(app: typer.Typer) -> bool:
+    """
+    Checks if the current script is being invoked as a command in a target Typer application.
+    """
+    return (
+        (first_arg := next((a for a in sys.argv[1:] if not a.startswith('-')), None))
+        and first_arg in (
+            cmd.name or cmd.callback.__name__.replace('_', '-')
+            for cmd in app.registered_commands
+        )
+        or '--help' in sys.argv
+    )
+
+
+def parse_refs_pair(refs: str):
+    SEPARATOR = '..'
+    if not refs:
+        return None, None
+    if SEPARATOR not in refs:
+        return refs, None
+    what, against = refs.split(SEPARATOR)
+    return what or None, against or None

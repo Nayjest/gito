@@ -65,3 +65,4 @@ venv.bak/
 !.aico/project.json
 storage
 code-review-report.*
+*.zip
