@@ -187,7 +187,7 @@ def files(
 ):
     _what, _against = args_to_target(refs, what, against)
     repo = Repo(".")
-    patch_set = get_diff(repo=repo, what=what, against=against)
+    patch_set = get_diff(repo=repo, what=_what, against=_against)
     patch_set = filter_diff(patch_set, filters)
     print(
         f"Changed files: "
