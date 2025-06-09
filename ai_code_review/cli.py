@@ -79,7 +79,7 @@ def arg_filters() -> typer.Option:
 
 
 def arg_against() -> typer.Option:
-    typer.Option(
+    return typer.Option(
         None,
         "--against", "-vs", "--vs",
         help="Git ref to compare against"
