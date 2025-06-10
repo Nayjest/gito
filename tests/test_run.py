@@ -12,7 +12,7 @@ def test_review_command_calls_review(monkeypatch):
         ["review", "--what", "HEAD", "--against", "HEAD~1"],
     )
     assert result.exit_code == 0
-    mock_review.assert_awaited_once_with(what="HEAD", against="HEAD~1", filters="")
+    mock_review.assert_awaited_once_with(what="HEAD", against="HEAD~1", filters="", out_folder=None)
 
 
 def test_calls_review(monkeypatch):
@@ -23,4 +23,4 @@ def test_calls_review(monkeypatch):
         ["HEAD", "--filters", "*.py,*.md"],
     )
     assert result.exit_code == 0
-    mock_review.assert_awaited_once_with(what="HEAD", against=None, filters="*.py,*.md")
+    mock_review.assert_awaited_once_with(what="HEAD", against=None, filters="*.py,*.md", out_folder=None)
