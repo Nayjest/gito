@@ -59,4 +59,4 @@ def bootstrap():
     except Exception as e:
         logging.error(f"Unexpected configuration error: {e}")
         raise SystemExit(3)
-    mc.logging.LoggingConfig.STRIP_REQUEST_LINES = [100, 15]
+    mc.logging.LoggingConfig.STRIP_REQUEST_LINES = [300, 15]
