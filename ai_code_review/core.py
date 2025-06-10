@@ -124,7 +124,7 @@ async def review(
     out_folder.mkdir(parents=True, exist_ok=True)
     report = Report(issues=issues, number_of_processed_files=len(diff))
     report.summary = make_cr_summary(cfg, report, diff)
-    report.save(file_name= out_folder / JSON_REPORT_FILE_NAME)
+    report.save(file_name=out_folder / JSON_REPORT_FILE_NAME)
     report_text = report.render(cfg, Report.Format.MARKDOWN)
     print(mc.ui.yellow(report_text))
     text_report_path = out_folder / "code-review-report.md"

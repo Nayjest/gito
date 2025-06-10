@@ -2,7 +2,6 @@ import asyncio
 import logging
 import sys
 import os
-import shutil
 import textwrap
 import tempfile
 import requests
@@ -77,12 +76,14 @@ def arg_filters() -> typer.Option:
             """,
     )
 
+
 def arg_out() -> typer.Option:
     return typer.Option(
         None,
         "--out", "-o", "--output",
         help="Output folder for the code review report"
     )
+
 
 def arg_against() -> typer.Option:
     return typer.Option(

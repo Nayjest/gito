@@ -23,4 +23,6 @@ def test_calls_review(monkeypatch):
         ["HEAD", "--filters", "*.py,*.md"],
     )
     assert result.exit_code == 0
-    mock_review.assert_awaited_once_with(what="HEAD", against=None, filters="*.py,*.md", out_folder=None)
+    mock_review.assert_awaited_once_with(
+        what="HEAD", against=None, filters="*.py,*.md", out_folder=None
+    )
