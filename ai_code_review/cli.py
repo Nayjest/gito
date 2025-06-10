@@ -147,7 +147,7 @@ def github_comment(
     """
     Leaves a comment with the review on the current GitHub pull request.
     """
-    file = "code-review-report.txt"
+    file = "code-review-report.md"
     if not os.path.exists(file):
         print(f"Review file not found: {file}")
         raise typer.Exit(4)
