@@ -4,7 +4,7 @@ import sys
 import os
 import shutil
 import textwrap
-
+import tempfile
 import requests
 
 import microcore as mc
@@ -77,6 +77,12 @@ def arg_filters() -> typer.Option:
             """,
     )
 
+def arg_out() -> typer.Option:
+    return typer.Option(
+        None,
+        "--out", "-o", "--output",
+        help="Output folder for the code review report"
+    )
 
 def arg_against() -> typer.Option:
     return typer.Option(
@@ -92,10 +98,11 @@ def cmd_review(
     refs: str = arg_refs(),
     what: str = arg_what(),
     against: str = arg_against(),
-    filters: str = arg_filters()
+    filters: str = arg_filters(),
+    out: str = arg_out()
 ):
     _what, _against = args_to_target(refs, what, against)
-    asyncio.run(review(what=_what, against=_against, filters=filters))
+    asyncio.run(review(what=_what, against=_against, filters=filters, out_folder=out))
 
 
 @app.command(help="Configure LLM for local usage interactively")
@@ -109,16 +116,26 @@ def render(format: str = Report.Format.MARKDOWN):
 
 
 @app.command(help="Review remote code")
-async def remote(url=typer.Option(), branch=typer.Option()):
-    if os.path.exists("reviewed-repo"):
-        shutil.rmtree("reviewed-repo")
-    Repo.clone_from(url, branch=branch, to_path="reviewed-repo")
-    prev_dir = os.getcwd()
-    try:
-        os.chdir("reviewed-repo")
-        asyncio.run(review())
-    finally:
-        os.chdir(prev_dir)
+def remote(
+    url: str = typer.Argument(..., help="Git repository URL"),
+    refs: str = arg_refs(),
+    what: str = arg_what(),
+    against: str = arg_against(),
+    filters: str = arg_filters(),
+    out: str = arg_out()
+):
+    _what, _against = args_to_target(refs, what, against)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        logging.info(f"Cloning [{mc.ui.green(url)}] to {mc.utils.file_link(temp_dir)} ...")
+        repo = Repo.clone_from(url, branch=_what, to_path=temp_dir)
+        asyncio.run(review(
+            repo=repo,
+            what=_what,
+            against=_against,
+            filters=filters,
+            out_folder=out or '.',
+        ))
+        repo.close()
 
 
 @app.command(help="Leave a GitHub PR comment with the review.")

@@ -1,6 +1,8 @@
 import fnmatch
 import logging
+from os import PathLike
 from typing import Iterable
+from pathlib import Path
 
 import microcore as mc
 from git import Repo
@@ -9,6 +11,7 @@ from unidiff.constants import DEV_NULL
 
 from .project_config import ProjectConfig
 from .report_struct import Report
+from .constants import JSON_REPORT_FILE_NAME
 
 
 def get_diff(
@@ -68,12 +71,15 @@ def make_cr_summary(cfg: ProjectConfig, report: Report, diff):
 
 
 async def review(
+    repo: Repo = None,
     what: str = None,
     against: str = None,
-    filters: str | list[str] = ""
+    filters: str | list[str] = "",
+    out_folder: PathLike | None = None
 ):
     cfg = ProjectConfig.load()
-    repo = Repo(".")
+    repo = repo or Repo(".")
+    out_folder = Path(out_folder or repo.working_tree_dir)
     diff = get_diff(repo=repo, what=what, against=against)
     diff = filter_diff(diff, filters)
     if not diff:
@@ -112,12 +118,14 @@ async def review(
                 if lines[file]:
                     f_lines = [""] + lines[file].splitlines()
                     i["affected_code"] = "\n".join(
-                        f_lines[i["start_line"]: i["end_line"]+1]
+                        f_lines[i["start_line"]: i["end_line"] + 1]
                     )
     exec(cfg.post_process, {"mc": mc, **locals()})
+    out_folder.mkdir(parents=True, exist_ok=True)
     report = Report(issues=issues, number_of_processed_files=len(diff))
     report.summary = make_cr_summary(cfg, report, diff)
-    report.save()
+    report.save(file_name= out_folder / JSON_REPORT_FILE_NAME)
     report_text = report.render(cfg, Report.Format.MARKDOWN)
     print(mc.ui.yellow(report_text))
-    open("code-review-report.txt", "w", encoding="utf-8").write(report_text)
+    text_report_path = out_folder / "code-review-report.md"
+    text_report_path.write_text(report_text, encoding="utf-8")
