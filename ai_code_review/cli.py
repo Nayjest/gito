@@ -31,7 +31,6 @@ def main():
         app()
 
 
-
 @app.callback(invoke_without_command=True)
 def cli(ctx: typer.Context):
     if ctx.invoked_subcommand != "setup":

@@ -3,6 +3,7 @@ import typer
 
 from ai_code_review.utils import no_subcommand  # Adjust import as needed
 
+
 def test_no_subcommand():
     app = typer.Typer()
     app.command(name="test-cmd")(lambda: None)
