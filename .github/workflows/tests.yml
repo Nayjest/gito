@@ -55,7 +55,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git fetch origin --no-guess
+        git fetch origin
         git checkout ${{ github.head_ref || github.ref_name }} --
         git add coverage.svg
         git commit -m "Update coverage badge [skip ci]" || echo "No changes to commit"
