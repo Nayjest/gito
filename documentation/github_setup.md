@@ -85,7 +85,7 @@ jobs:
 Whenever a PR is opened or updated, you'll see an **AI-generated code review comment** in the PR discussion.
 
 **Tips:**
-- To trigger a review for existing PRs, merge there `main` branch containing `.github/workflows/ai-code-review.yml`
+- To trigger a review for older existing PRs, merge the `main` branch containing `.github/workflows/ai-code-review.yml`
 - You may close and reopen the PR to trigger the review again.
 - Download full review artifacts from the corresponding GitHub Actions workflow run.
 
