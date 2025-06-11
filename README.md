@@ -63,7 +63,8 @@ jobs:
 > ⚠️ Make sure to add `LLM_API_KEY` to your repository’s GitHub secrets.
 
 💪 Done!  
-PRs to your repository will now receive AI code reviews automatically. ✨
+PRs to your repository will now receive AI code reviews automatically. ✨  
+See [GitHub Setup Guide](https://github.com/Nayjest/ai-code-review/blob/main/documentation/github_setup.md) for more details.
 
 ### 2. Run Code Analysis Locally
 
