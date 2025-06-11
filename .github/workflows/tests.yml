@@ -27,9 +27,39 @@ jobs:
         poetry install
         echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
     - name: Test with pytest
+      if: matrix.python-version != '3.13'
       env:
         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
         LLM_API_TYPE: openai
         MODEL: "gpt-4.1"
       run: |
         pytest
+
+    - name: Test with pytest +coverage
+      if: matrix.python-version == '3.13'
+      env:
+        LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+        LLM_API_TYPE: openai
+        MODEL: "gpt-4.1"
+      run: |
+        pytest --cov=./ --cov-report=xml
+        
+
+    - name: Generate coverage badge
+      if: matrix.python-version == '3.13'  # Run badge generation only once
+      uses: tj-actions/coverage-badge-py@v2
+      with:
+        output: 'coverage.svg'
+    - name: Commit coverage badge
+      if: matrix.python-version == '3.13'  # Commit only once
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git fetch origin
+        git checkout ${{ github.head_ref || github.ref_name }}
+        git add coverage.svg
+        git commit -m "Update coverage badge [skip ci]" || echo "No changes to commit"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
