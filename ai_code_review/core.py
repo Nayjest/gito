@@ -14,6 +14,24 @@ from .report_struct import Report
 from .constants import JSON_REPORT_FILE_NAME
 
 
+def is_binary_file(repo: Repo, file_path: str) -> bool:
+    """
+    Check if a file is binary by attempting to read it as text.
+    Returns True if the file is binary, False otherwise.
+    """
+    try:
+        # Attempt to read the file content from the repository tree
+        content = repo.tree()[file_path].data_stream.read()
+        # Try decoding as UTF-8; if it fails, it's likely binary
+        content.decode('utf-8')
+        return False
+    except (UnicodeDecodeError, KeyError):
+        return True
+    except Exception as e:
+        logging.warning(f"Error checking if file {file_path} is binary: {e}")
+        return True  # Conservatively treat errors as binary to avoid issues
+
+
 def get_diff(
     repo: Repo = None,
     what: str = None,
@@ -43,7 +61,18 @@ def get_diff(
     logging.info(f"Making diff: {mc.ui.green(what or 'INDEX')} vs {mc.ui.yellow(against)}")
     diff_content = repo.git.diff(against, what)
     diff = PatchSet.from_string(diff_content)
-    return diff
+    diff = PatchSet.from_string(diff_content)
+
+    # Filter out binary files
+    non_binary_diff = PatchSet([])
+    for patched_file in diff:
+        # Check if the file is binary using the source or target file path
+        file_path = patched_file.target_file if patched_file.target_file != DEV_NULL else patched_file.source_file
+        if file_path == DEV_NULL or is_binary_file(repo, file_path.lstrip("b/")):
+            logging.info(f"Skipping binary file: {patched_file.path}")
+            continue
+        non_binary_diff.append(patched_file)
+    return non_binary_diff
 
 
 def filter_diff(
