@@ -80,7 +80,7 @@ jobs:
 
 ---
 
-## 3. See AI Review Results on Pull Requests
+## Done! See AI Review Results on Pull Requests
 
 Whenever a PR is opened or updated, you'll see an **AI-generated code review comment** in the PR discussion.
 
@@ -91,14 +91,13 @@ Whenever a PR is opened or updated, you'll see an **AI-generated code review com
 
 ---
 
-## 4. Customize Review or Troubleshoot
+## Customize Review if Needed
 
-### Customizing
 
 - Create a `.ai-code-review.toml` file at your repository root to override [default configuration](https://github.com/Nayjest/ai-code-review/blob/main/ai_code_review/.ai-code-review.toml).
 - You can adjust prompts, filtering, report templates, issue criteria, and more.
 
-### Troubleshooting
+## Troubleshooting
 
 - **Not seeing a PR comment?**
   1. On the PR page, click the status icon near the latest commit hash.
