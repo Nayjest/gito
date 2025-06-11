@@ -2,14 +2,14 @@
 
 [[package]]
 name = "ai-microcore"
-version = "4.0.0.dev18"
+version = "4.0.0.dev19"
 description = "# Minimalistic Foundation for AI Applications"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "ai_microcore-4.0.0.dev18-py3-none-any.whl", hash = "sha256:4e40ff8954c497547c4ec9f3bf10e974bf3d10c6d1cb18b9b55580c5dc6e739b"},
-    {file = "ai_microcore-4.0.0.dev18.tar.gz", hash = "sha256:aa861343cdd4357b2de6f830d38ce81bd4da7c3d85a701fa27b7d97310cd92c8"},
+    {file = "ai_microcore-4.0.0.dev19-py3-none-any.whl", hash = "sha256:5fc57ffbb4772c9b70ea8b8f34cdbb95649f5f5ae2eb6f701f951266d538db0c"},
+    {file = "ai_microcore-4.0.0.dev19.tar.gz", hash = "sha256:d0623fd481a8b39f4d034d44cfdce4ab4753a3798add86d07eaae80e3895396d"},
 ]
 
 [package.dependencies]
@@ -3317,4 +3317,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "6a8776fde2dec106d70af7e5785595e2717bb44a8659edac7aaf6f7ddb08f14d"
+content-hash = "2db70adae3795cd9a093db4fbf063c409ecf7eb3b25b932cc1f6cba838cdb2bf"

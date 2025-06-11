@@ -100,10 +100,17 @@ def cmd_review(
     what: str = arg_what(),
     against: str = arg_against(),
     filters: str = arg_filters(),
+    merge_base: bool = typer.Option(default=True, help="Use merge base for comparison"),
     out: str = arg_out()
 ):
     _what, _against = args_to_target(refs, what, against)
-    asyncio.run(review(what=_what, against=_against, filters=filters, out_folder=out))
+    asyncio.run(review(
+        what=_what,
+        against=_against,
+        filters=filters,
+        use_merge_base=merge_base,
+        out_folder=out,
+    ))
 
 
 @app.command(help="Configure LLM for local usage interactively")
@@ -123,6 +130,7 @@ def remote(
     what: str = arg_what(),
     against: str = arg_against(),
     filters: str = arg_filters(),
+    merge_base: bool = typer.Option(default=True, help="Use merge base for comparison"),
     out: str = arg_out()
 ):
     _what, _against = args_to_target(refs, what, against)
@@ -134,6 +142,7 @@ def remote(
             what=_what,
             against=_against,
             filters=filters,
+            use_merge_base=merge_base,
             out_folder=out or '.',
         ))
         repo.close()
@@ -201,11 +210,12 @@ def files(
     what: str = arg_what(),
     against: str = arg_against(),
     filters: str = arg_filters(),
+    merge_base: bool = typer.Option(default=True, help="Use merge base for comparison"),
     diff: bool = typer.Option(default=False, help="Show diff content")
 ):
     _what, _against = args_to_target(refs, what, against)
     repo = Repo(".")
-    patch_set = get_diff(repo=repo, what=_what, against=_against)
+    patch_set = get_diff(repo=repo, what=_what, against=_against, use_merge_base=merge_base)
     patch_set = filter_diff(patch_set, filters)
     print(
         f"Changed files: "
