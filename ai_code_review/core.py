@@ -23,7 +23,7 @@ def is_binary_file(repo: Repo, file_path: str) -> bool:
         # Attempt to read the file content from the repository tree
         content = repo.tree()[file_path].data_stream.read()
         # Try decoding as UTF-8; if it fails, it's likely binary
-        content.decode('utf-8')
+        content.decode("utf-8")
         return False
     except (UnicodeDecodeError, KeyError):
         return True
@@ -36,7 +36,7 @@ def get_diff(
     repo: Repo = None,
     what: str = None,
     against: str = None,
-    use_merge_base: bool = True
+    use_merge_base: bool = True,
 ) -> PatchSet | list[PatchedFile]:
     repo = repo or Repo(".")
     if not against:
@@ -50,7 +50,9 @@ def get_diff(
             except TypeError:
                 # In detached HEAD state, use HEAD directly
                 current_ref = "HEAD"
-                logging.info("Detected detached HEAD state, using HEAD as current reference")
+                logging.info(
+                    "Detected detached HEAD state, using HEAD as current reference"
+                )
         else:
             current_ref = what
         merge_base = repo.merge_base(current_ref or repo.active_branch.name, against)[0]
@@ -58,7 +60,9 @@ def get_diff(
         logging.info(
             f"Using merge base: {mc.ui.cyan(merge_base.hexsha[:8])} ({merge_base.summary})"
         )
-    logging.info(f"Making diff: {mc.ui.green(what or 'INDEX')} vs {mc.ui.yellow(against)}")
+    logging.info(
+        f"Making diff: {mc.ui.green(what or 'INDEX')} vs {mc.ui.yellow(against)}"
+    )
     diff_content = repo.git.diff(against, what)
     diff = PatchSet.from_string(diff_content)
     diff = PatchSet.from_string(diff_content)
@@ -67,7 +71,11 @@ def get_diff(
     non_binary_diff = PatchSet([])
     for patched_file in diff:
         # Check if the file is binary using the source or target file path
-        file_path = patched_file.target_file if patched_file.target_file != DEV_NULL else patched_file.source_file
+        file_path = (
+            patched_file.target_file
+            if patched_file.target_file != DEV_NULL
+            else patched_file.source_file
+        )
         if file_path == DEV_NULL or is_binary_file(repo, file_path.lstrip("b/")):
             logging.info(f"Skipping binary file: {patched_file.path}")
             continue
@@ -107,12 +115,16 @@ def file_lines(repo: Repo, file: str, max_tokens: int = None) -> str:
 
 
 def make_cr_summary(cfg: ProjectConfig, report: Report, diff):
-    return mc.prompt(
-        cfg.summary_prompt,
-        diff=mc.tokenizing.fit_to_token_size(diff, cfg.max_code_tokens)[0],
-        issues=report.issues,
-        **cfg.prompt_vars,
-    ).to_llm() if cfg.summary_prompt else ""
+    return (
+        mc.prompt(
+            cfg.summary_prompt,
+            diff=mc.tokenizing.fit_to_token_size(diff, cfg.max_code_tokens)[0],
+            issues=report.issues,
+            **cfg.prompt_vars,
+        ).to_llm()
+        if cfg.summary_prompt
+        else ""
+    )
 
 
 async def review(
@@ -121,12 +133,14 @@ async def review(
     against: str = None,
     filters: str | list[str] = "",
     use_merge_base: bool = True,
-    out_folder: str | PathLike | None = None
+    out_folder: str | PathLike | None = None,
 ):
     cfg = ProjectConfig.load()
     repo = repo or Repo(".")
     out_folder = Path(out_folder or repo.working_tree_dir)
-    diff = get_diff(repo=repo, what=what, against=against, use_merge_base=use_merge_base)
+    diff = get_diff(
+        repo=repo, what=what, against=against, use_merge_base=use_merge_base
+    )
     diff = filter_diff(diff, filters)
     if not diff:
         logging.error("Nothing to review")
