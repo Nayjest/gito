@@ -2,35 +2,33 @@ import asyncio
 import logging
 import sys
 import os
-import shutil
+import textwrap
+import tempfile
 import requests
 
 import microcore as mc
-import async_typer
 import typer
-from ai_code_review.utils import parse_refs_pair
 from git import Repo
 
-from .core import review
+from .core import review, get_diff, filter_diff
 from .report_struct import Report
 from .constants import ENV_CONFIG_FILE
 from .bootstrap import bootstrap
 from .project_config import ProjectConfig
-from .utils import is_app_command_invocation
+from .utils import no_subcommand, parse_refs_pair
 
-
-app = async_typer.AsyncTyper(pretty_exceptions_show_locals=False)
-default_command_app = async_typer.AsyncTyper(pretty_exceptions_show_locals=False)
-if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+app = typer.Typer(pretty_exceptions_show_locals=False)
+app_no_subcommand = typer.Typer(pretty_exceptions_show_locals=False)
 
 
 def main():
-    if is_app_command_invocation(app):
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    if no_subcommand(app):
         app()
     else:
         bootstrap()
-        default_command_app()
+        app_no_subcommand()
 
 
 @app.callback(invoke_without_command=True)
@@ -39,27 +37,7 @@ def cli(ctx: typer.Context):
         bootstrap()
 
 
-@default_command_app.async_command(name="review", help="Perform code review")
-@app.async_command(name="review", help="Perform code review")
-async def cmd_review(
-    refs: str = typer.Argument(
-        default=None,
-        help="Git refs to review, [what]..[against] e.g. 'HEAD..HEAD~1'"
-    ),
-    what: str = typer.Option(None, "--what", "-w", help="Git ref to review"),
-    against: str = typer.Option(
-        None,
-        "--against", "-vs", "--vs",
-        help="Git ref to compare against"
-    ),
-    filters: str = typer.Option(
-        "", "--filter", "-f", "--filters",
-        help="""
-        filter reviewed files by glob / fnmatch pattern(s),
-        e.g. 'src/**/*.py', may be comma-separated
-        """,
-    )
-):
+def args_to_target(refs, what, against) -> tuple[str | None, str | None]:
     _what, _against = parse_refs_pair(refs)
     if _what:
         if what:
@@ -75,34 +53,94 @@ async def cmd_review(
             )
     else:
         _against = against
-    await review(what=_what, against=_against, filters=filters)
+    return _what, _against
 
 
-@app.async_command(help="Configure LLM for local usage interactively")
-async def setup():
+def arg_refs() -> typer.Argument:
+    return typer.Argument(
+        default=None,
+        help="Git refs to review, [what]..[against] e.g. 'HEAD..HEAD~1'"
+    )
+
+
+def arg_what() -> typer.Option:
+    return typer.Option(None, "--what", "-w", help="Git ref to review")
+
+
+def arg_filters() -> typer.Option:
+    return typer.Option(
+        "", "--filter", "-f", "--filters",
+        help="""
+            filter reviewed files by glob / fnmatch pattern(s),
+            e.g. 'src/**/*.py', may be comma-separated
+            """,
+    )
+
+
+def arg_out() -> typer.Option:
+    return typer.Option(
+        None,
+        "--out", "-o", "--output",
+        help="Output folder for the code review report"
+    )
+
+
+def arg_against() -> typer.Option:
+    return typer.Option(
+        None,
+        "--against", "-vs", "--vs",
+        help="Git ref to compare against"
+    )
+
+
+@app_no_subcommand.command(name="review", help="Perform code review")
+@app.command(name="review", help="Perform code review")
+def cmd_review(
+    refs: str = arg_refs(),
+    what: str = arg_what(),
+    against: str = arg_against(),
+    filters: str = arg_filters(),
+    out: str = arg_out()
+):
+    _what, _against = args_to_target(refs, what, against)
+    asyncio.run(review(what=_what, against=_against, filters=filters, out_folder=out))
+
+
+@app.command(help="Configure LLM for local usage interactively")
+def setup():
     mc.interactive_setup(ENV_CONFIG_FILE)
 
 
-@app.async_command()
-async def render(format: str = Report.Format.MARKDOWN):
+@app.command()
+def render(format: str = Report.Format.MARKDOWN):
     print(Report.load().render(format=format))
 
 
-@app.async_command(help="Review remote code")
-async def remote(url=typer.Option(), branch=typer.Option()):
-    if os.path.exists("reviewed-repo"):
-        shutil.rmtree("reviewed-repo")
-    Repo.clone_from(url, branch=branch, to_path="reviewed-repo")
-    prev_dir = os.getcwd()
-    try:
-        os.chdir("reviewed-repo")
-        await review()
-    finally:
-        os.chdir(prev_dir)
+@app.command(help="Review remote code")
+def remote(
+    url: str = typer.Argument(..., help="Git repository URL"),
+    refs: str = arg_refs(),
+    what: str = arg_what(),
+    against: str = arg_against(),
+    filters: str = arg_filters(),
+    out: str = arg_out()
+):
+    _what, _against = args_to_target(refs, what, against)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        logging.info(f"Cloning [{mc.ui.green(url)}] to {mc.utils.file_link(temp_dir)} ...")
+        repo = Repo.clone_from(url, branch=_what, to_path=temp_dir)
+        asyncio.run(review(
+            repo=repo,
+            what=_what,
+            against=_against,
+            filters=filters,
+            out_folder=out or '.',
+        ))
+        repo.close()
 
 
-@app.async_command(help="Leave a GitHub PR comment with the review.")
-async def github_comment(
+@app.command(help="Leave a GitHub PR comment with the review.")
+def github_comment(
     token: str = typer.Option(
         os.environ.get("GITHUB_TOKEN", ""), help="GitHub token (or set GITHUB_TOKEN env var)"
     ),
@@ -110,7 +148,7 @@ async def github_comment(
     """
     Leaves a comment with the review on the current GitHub pull request.
     """
-    file = "code-review-report.txt"
+    file = "code-review-report.md"
     if not os.path.exists(file):
         print(f"Review file not found: {file}")
         raise typer.Exit(4)
@@ -155,3 +193,34 @@ async def github_comment(
     else:
         logging.error(f"Failed to post comment: {resp.status_code} {resp.reason}\n{resp.text}")
         raise typer.Exit(5)
+
+
+@app.command(help="List files in the diff. Might be useful to check what will be reviewed.")
+def files(
+    refs: str = arg_refs(),
+    what: str = arg_what(),
+    against: str = arg_against(),
+    filters: str = arg_filters(),
+    diff: bool = typer.Option(default=False, help="Show diff content")
+):
+    _what, _against = args_to_target(refs, what, against)
+    repo = Repo(".")
+    patch_set = get_diff(repo=repo, what=_what, against=_against)
+    patch_set = filter_diff(patch_set, filters)
+    print(
+        f"Changed files: "
+        f"{mc.ui.green(_what or 'INDEX')} vs "
+        f"{mc.ui.yellow(_against or repo.remotes.origin.refs.HEAD.reference.name)}"
+        f"{' filtered by '+mc.ui.cyan(filters) if filters else ''}"
+    )
+
+    for patch in patch_set:
+        if patch.is_added_file:
+            color = mc.ui.green
+        elif patch.is_removed_file:
+            color = mc.ui.red
+        else:
+            color = mc.ui.blue
+        print(f"- {color(patch.path)}")
+        if diff:
+            print(mc.ui.gray(textwrap.indent(str(patch), "  ")))
