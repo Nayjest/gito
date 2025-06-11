@@ -25,10 +25,10 @@ def main():
     if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     if no_subcommand(app):
-        app()
-    else:
         bootstrap()
         app_no_subcommand()
+    else:
+        app()
 
 
 @app.callback(invoke_without_command=True)

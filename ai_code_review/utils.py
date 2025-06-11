@@ -96,7 +96,7 @@ def no_subcommand(app: typer.Typer) -> bool:
     """
     Checks if the current script is being invoked as a command in a target Typer application.
     """
-    return (
+    return not (
         (first_arg := next((a for a in sys.argv[1:] if not a.startswith('-')), None))
         and first_arg in (
             cmd.name or cmd.callback.__name__.replace('_', '-')

@@ -26,7 +26,16 @@ def get_diff(
     if not what:
         what = None  # working copy
     if use_merge_base:
-        merge_base = repo.merge_base(what or repo.active_branch.name, against)[0]
+        if what is None:
+            try:
+                current_ref = repo.active_branch.name
+            except TypeError:
+                # In detached HEAD state, use HEAD directly
+                current_ref = "HEAD"
+                logging.info("Detected detached HEAD state, using HEAD as current reference")
+        else:
+            current_ref = what
+        merge_base = repo.merge_base(current_ref or repo.active_branch.name, against)[0]
         against = merge_base.hexsha
         logging.info(
             f"Using merge base: {mc.ui.cyan(merge_base.hexsha[:8])} ({merge_base.summary})"
