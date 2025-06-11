@@ -17,13 +17,20 @@ from .constants import JSON_REPORT_FILE_NAME
 def get_diff(
     repo: Repo = None,
     what: str = None,
-    against: str = None
+    against: str = None,
+    use_merge_base: bool = True
 ) -> PatchSet | list[PatchedFile]:
     repo = repo or Repo(".")
     if not against:
         against = repo.remotes.origin.refs.HEAD.reference.name  # origin/main
     if not what:
         what = None  # working copy
+    if use_merge_base:
+        merge_base = repo.merge_base(what or repo.active_branch.name, against)[0]
+        against = merge_base.hexsha
+        logging.info(
+            f"Using merge base: {mc.ui.cyan(merge_base.hexsha[:8])} ({merge_base.summary})"
+        )
     logging.info(f"Making diff: {mc.ui.green(what or 'INDEX')} vs {mc.ui.yellow(against)}")
     diff_content = repo.git.diff(against, what)
     diff = PatchSet.from_string(diff_content)
@@ -75,12 +82,13 @@ async def review(
     what: str = None,
     against: str = None,
     filters: str | list[str] = "",
-    out_folder: PathLike | None = None
+    use_merge_base: bool = True,
+    out_folder: str | PathLike | None = None
 ):
     cfg = ProjectConfig.load()
     repo = repo or Repo(".")
     out_folder = Path(out_folder or repo.working_tree_dir)
-    diff = get_diff(repo=repo, what=what, against=against)
+    diff = get_diff(repo=repo, what=what, against=against, use_merge_base=use_merge_base)
     diff = filter_diff(diff, filters)
     if not diff:
         logging.error("Nothing to review")
