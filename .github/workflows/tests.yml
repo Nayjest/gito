@@ -6,9 +6,12 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: write
+
 jobs:
   build:
-
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -34,7 +37,6 @@ jobs:
         MODEL: "gpt-4.1"
       run: |
         pytest
-
     - name: Test with pytest +coverage
       if: matrix.python-version == '3.13'
       env:
@@ -43,8 +45,6 @@ jobs:
         MODEL: "gpt-4.1"
       run: |
         pytest --cov=./ --cov-report=xml
-        
-
     - name: Generate coverage badge
       if: matrix.python-version == '3.13'  # Run badge generation only once
       uses: tj-actions/coverage-badge-py@v2
