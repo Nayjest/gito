@@ -75,7 +75,8 @@ Install and run:
 # Prerequisites: Python 3.11+
 pip install ai-code-review
 
-# One-time setup using interactive wizard (saves configuration in ~/.env.ai-code-review)
+# One-time setup using an interactive wizard (saves configuration in ~/.env.ai-code-review)
+# You will be prompted to enter LLM configuration details (API type, API key, etc.)
 ai-code-review setup
 
 # Run review on committed changes in current branch vs main
@@ -85,7 +86,11 @@ ai-code-review
 To review a remote repository:
 
 ```bash
-ai-code-review remote --url https://github.com/owner/repo --branch feature-branch
+ai-code-review remote git@github.com:owner/repo.git <FEATURE_BRANCH>..<MAIN_BRANCH>
+```
+Use interactive help for details:
+```bash
+ai-code-review remote --help
 ```
 
 ## 🔧 Configuration
