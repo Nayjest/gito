@@ -43,7 +43,7 @@ jobs:
       uses: actions/setup-python@v5
       with: { python-version: "3.13" }
     - name: Install AI Code Review tool
-      run: pip install ai-code-review==0.6.0
+      run: pip install ai-code-review~=1.0
     - name: Run AI code analysis
       env:
         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
