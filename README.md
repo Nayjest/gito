@@ -133,6 +133,8 @@ You can override the default config by placing `.ai-code-review.toml` in your re
 
 See default configuration [here](https://github.com/Nayjest/ai-code-review/blob/main/ai_code_review/.ai-code-review.toml).
 
+More details can be found in [📖 Configuration Cookbook](https://github.com/Nayjest/ai-code-review/blob/main/documentation/config_cookbook.md)
+
 ## 💻 Development Setup
 
 Install dependencies:
