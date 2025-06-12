@@ -98,7 +98,7 @@ ai-code-review setup
 
 #### Perform your first AI code review locally
 
-**Step1:** Naviage to your repository root directory.  
+**Step1:** Navigate to your repository root directory.  
 **Step2:** Switch to the branch you want to review.  
 **Step3:** Run following command
 ```bash
