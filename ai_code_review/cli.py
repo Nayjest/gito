@@ -32,7 +32,9 @@ def main():
 
 
 @app.callback(invoke_without_command=True)
-def cli(ctx: typer.Context):
+def cli(ctx: typer.Context, verbose: bool = typer.Option(default=False)):
+    if verbose:
+        mc.logging.LoggingConfig.STRIP_REQUEST_LINES = None
     if ctx.invoked_subcommand != "setup":
         bootstrap()
 

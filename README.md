@@ -67,23 +67,49 @@ jobs:
 PRs to your repository will now receive AI code reviews automatically. ✨  
 See [GitHub Setup Guide](https://github.com/Nayjest/ai-code-review/blob/main/documentation/github_setup.md) for more details.
 
-### 2. Run Code Analysis Locally
+### 2. Running Code Analysis Locally
 
-Install and run:
+#### Initial Local Setup
+
+**Prerequisites:** [Python](https://www.python.org/downloads/) 3.11 / 3.12 / 3.13  
+
+**Step1:** Install [ai-code-review](https://github.com/Nayjest/ai-code-review) using [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)).
+```bash
+pip install ai-code-review
+```
+
+> **Troubleshooting:**  
+> pip may be also available via cli as `pip3` depending on your Python installation.
+
+**Step2:** Perform initial setup
+
+The following command will perform one-time setup using an interactive wizard.
+You will be prompted to enter LLM configuration details (API type, API key, etc).
+Configuration will be saved to ~/.env.ai-code-review.
 
 ```bash
-# Prerequisites: Python 3.11+
-pip install ai-code-review
-
-# One-time setup using an interactive wizard (saves configuration in ~/.env.ai-code-review)
-# You will be prompted to enter LLM configuration details (API type, API key, etc.)
 ai-code-review setup
+```
 
-# Run review on committed changes in current branch vs main
+> **Troubleshooting:**  
+> On some systems, `ai-code-review` command may not became available immediately after installation.  
+> Try restarting your terminal or running `python -m ai_code_review` instead.
+
+
+#### Perform your first AI code review locally
+
+**Step1:** Navigate to your repository root directory.  
+**Step2:** Switch to the branch you want to review.  
+**Step3:** Run following command
+```bash
 ai-code-review
 ```
 
-To review a remote repository:
+> **Note:** This will analyze the current branch against the repository main branch by default.  
+> Files that are not staged for commit will be ignored.  
+> See `ai-code-review --help` for more options.
+
+**Reviewing remote repository**
 
 ```bash
 ai-code-review remote git@github.com:owner/repo.git <FEATURE_BRANCH>..<MAIN_BRANCH>
@@ -106,6 +132,8 @@ You can override the default config by placing `.ai-code-review.toml` in your re
 
 
 See default configuration [here](https://github.com/Nayjest/ai-code-review/blob/main/ai_code_review/.ai-code-review.toml).
+
+More details can be found in [📖 Configuration Cookbook](https://github.com/Nayjest/ai-code-review/blob/main/documentation/config_cookbook.md)
 
 ## 💻 Development Setup
 
