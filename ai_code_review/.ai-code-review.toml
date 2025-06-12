@@ -38,12 +38,12 @@ prompt = """
 ----TASK----
 Review the provided code diff carefully and identify *only* highly confident issues which are relevant to any code context.
 
-----CODE----
+----CODEBASE CHANGES TO REVIEW----
 {{ input }}
 --------
 
 {% if file_lines -%}
-----ADDITIONAL CONTEXT----
+----ADDITIONAL CONTEXT: FULL FILE CONTENT AFTER APPLYING REVIEWED CHANGES----
 {{ file_lines }}
 {%- endif %}
 
@@ -54,6 +54,7 @@ Review the provided code diff carefully and identify *only* highly confident iss
 - Do **not** report vague, theoretical, or overly generic advice.
 - Do **not** report anything with medium or lower confidence.
 - Typographical errors have highest severity.
+{{ requirements -}}
 {{ json_requirements }}
 
 Respond with a valid JSON array of issues in the following format:
@@ -125,8 +126,9 @@ If code changes contains exceptional achievements, you may additionally present 
 --Available Awards--
 {{ awards }}
 ---
-Your response will be parsed programmatically, so do not include any additional text.
-Use Markdown formatting in your response.
+- Your response will be parsed programmatically, so do not include any additional text.
+- Use Markdown formatting in your response.
+{{ summary_requirements -}}
 """
 
 [prompt_vars]
@@ -305,3 +307,5 @@ decorators add depth and texture, and observer masterfully completes the composi
 The Gang of Four gives a standing ovation from the stalls."
 ```
 """
+requirements = ""
+summary_requirements = ""
