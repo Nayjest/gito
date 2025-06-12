@@ -58,7 +58,7 @@ jobs:
         with:
           name: ai-code-review-results
           path: |
-            code-review-report.txt
+            code-review-report.md
             code-review-report.json
 ```
 
