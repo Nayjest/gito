@@ -49,10 +49,11 @@ Review the provided code diff carefully and identify *only* highly confident iss
 
 ----TASK GUIDELINES----
 - Only report issues you are **100% confident** are relevant to any context.
+- Never report issues about using software versions that have not yet been released.
 - Only include issues that are **significantly valuable** to the maintainers (e.g., bugs, security flaws, or clear maintainability concerns).
 - Do **not** report vague, theoretical, or overly generic advice.
 - Do **not** report anything with medium or lower confidence.
-- Typographical errors have highest severity
+- Typographical errors have highest severity.
 {{ json_requirements }}
 
 Respond with a valid JSON array of issues in the following format:
