@@ -1,5 +1,5 @@
 <p align="right">
-<a href="https://pypi.org/project/ai-code-review/" target="_blank"><img src="https://badge.fury.io/py/ai-code-review.svg" alt="PYPI Release"></a>
+<a href="https://pypi.org/project/ai-code-review/" target="_blank"><img src="https://img.shields.io/pypi/v/ai-code-review" alt="PYPI Release"></a>
 <a href="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml" target="_blank"><img src="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml/badge.svg" alt="Pylint"></a>
 <a href="https://github.com/Nayjest/ai-code-review/actions/workflows/tests.yml" target="_blank"><img src="https://github.com/Nayjest/ai-code-review/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
 <img src="https://github.com/Nayjest/ai-code-review/blob/main/coverage.svg" alt="Code Coverage">
