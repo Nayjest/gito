@@ -1,14 +1,16 @@
 <p align="right">
-<a href="https://pypi.org/project/ai-code-review/" target="_blank"><img src="https://badge.fury.io/py/ai-code-review.svg" alt="PYPI Release"></a>
+<a href="https://pypi.org/project/ai-code-review/" target="_blank"><img src="https://img.shields.io/pypi/v/ai-code-review" alt="PYPI Release"></a>
 <a href="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml" target="_blank"><img src="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml/badge.svg" alt="Pylint"></a>
 <a href="https://github.com/Nayjest/ai-code-review/actions/workflows/tests.yml" target="_blank"><img src="https://github.com/Nayjest/ai-code-review/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
 <img src="https://github.com/Nayjest/ai-code-review/blob/main/coverage.svg" alt="Code Coverage">
 <a href="https://github.com/Nayjest/ai-code-review/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/static/v1?label=license&message=MIT&color=d08aff" alt="License"></a>
 </p>
 
-# 🤖 AI Code Review Tool
+# 🤖 AI Code Review
 
-An AI-powered GitHub code review tool that uses LLMs to detect high-confidence, high-impact issues—such as security vulnerabilities, bugs, and maintainability concerns.
+An AI-powered GitHub code review tool that automatically detects issues in pull requests or local changes. Uses language models to provide instant, comprehensive analysis human reviewers may overlook.
+
+Get consistent, thorough code reviews in seconds—no waiting for human availability.
 
 ## ✨ Features
 
