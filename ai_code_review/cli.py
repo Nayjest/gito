@@ -24,6 +24,10 @@ app_no_subcommand = typer.Typer(pretty_exceptions_show_locals=False)
 def main():
     if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    # Help subcommand alias: if 'help' appears as first non-option arg, replace it with '--help'
+    if len(sys.argv) > 1 and sys.argv[1] == "help":
+        sys.argv = [sys.argv[0]] + sys.argv[2:] + ["--help"]
+
     if no_subcommand(app):
         bootstrap()
         app_no_subcommand()
