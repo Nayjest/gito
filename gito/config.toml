@@ -64,7 +64,7 @@ Respond with a valid JSON array of issues in the following format:
         "details": "<issue_description>",
         "tags": ["<issue_tag1>", "<issue_tag2>"],
         "severity": <issue_severity>,
-        "confidence": <confidence_score>
+        "confidence": <confidence_score>,
         "affected_lines": [ // optional; list of affected lines
             {
                 "start_line": <start_line:int>,
