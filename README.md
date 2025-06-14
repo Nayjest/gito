@@ -6,7 +6,7 @@
 <a href="https://github.com/Nayjest/ai-code-review/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/static/v1?label=license&message=MIT&color=d08aff" alt="License"></a>
 </p>
 
-# 🤖 Gito `AI Code Reviewer`
+<img src="press-kit/logo/gito-bot-1_64top.png" align="left"># 🤖 Gito `AI Code Reviewer`
 
 Gito is an open-source AI code review tool that works with any language model provider.
 It detects issues in GitHub pull requests or local changes—instantly, reliably, and without vendor lock-in.
@@ -15,13 +15,13 @@ Get consistent, thorough code reviews in seconds—no waiting for human availabi
 
 ## ✨ Why Gito?
 
-⚡ **Lightning Fast:** Get detailed code reviews in seconds, not days — powered by parallel LLM processing  
-🔧 **Vendor Agnostic:** Works with any language model provider (OpenAI, Anthropic, Google, local models, etc.)  
-🌐 **Universal:** Supports all major programming languages and frameworks  
-🔍 **Comprehensive Analysis:** Detect issues across security, performance, maintainability, best practices, and much more  
-📈 **Consistent Quality:** Never tired, never biased—consistent review quality every time  
-🚀 **Easy Integration:** Automatically reviews pull requests via GitHub Actions and posts results as PR comments  
-🎛️ **Infinitely Flexible:** Adapt to any project's standards—configure review rules, severity levels, and focus areas, build custom workflows 
+- [⚡] **Lightning Fast:** Get detailed code reviews in seconds, not days — powered by parallel LLM processing  
+- [🔧] **Vendor Agnostic:** Works with any language model provider (OpenAI, Anthropic, Google, local models, etc.)  
+- [🌐] **Universal:** Supports all major programming languages and frameworks  
+- [🔍] **Comprehensive Analysis:** Detect issues across security, performance, maintainability, best practices, and much more  
+- [📈] **Consistent Quality:** Never tired, never biased—consistent review quality every time  
+- [🚀] **Easy Integration:** Automatically reviews pull requests via GitHub Actions and posts results as PR comments  
+- [🎛️] **Infinitely Flexible:** Adapt to any project's standards—configure review rules, severity levels, and focus areas, build custom workflows 
 
 ## 🎯 Perfect For
 
