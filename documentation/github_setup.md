@@ -1,7 +1,7 @@
-# GitHub Setup Guide: Integrating AI Code Review with Your Repository
+# GitHub Setup Guide: Integrating Gito with Your Repository
 
 Automate code review for all Pull Requests using AI.  
-This step-by-step guide shows how to connect [AI Code Review](https://pypi.org/project/ai-code-review/) to a GitHub repository for **continuous, automated PR reviews**.
+This step-by-step guide shows how to connect [Gito](https://pypi.org/project/gito.bot/) to a GitHub repository for **continuous, automated PR reviews**.
 
 ---
 
@@ -26,12 +26,12 @@ You may use a secret manager (such as HashiCorp Vault) to fetch keys at runtime,
 
 ---
 
-## 2. Add the AI Code Review GitHub Actions Workflow
+## 2. Add `Gito Code Review` workflow to GitHub Actions
 
-Create a file at `.github/workflows/ai-code-review.yml` in your repo with the following content:
+Create a file at `.github/workflows/gito-code-review.yml` in your repository with the following content:
 
 ```yaml
-name: AI Code Review
+name: "Gito: AI Code Review"
 on: { pull_request: { types: [opened, synchronize, reopened] } }
 jobs:
   review:
@@ -44,7 +44,7 @@ jobs:
         uses: actions/setup-python@v5
         with: { python-version: "3.13" }
       - name: Install AI Code Review tool
-        run: pip install ai-code-review~=1.0
+        run: pip install gito~=2.0
       - name: Run AI code review
         env:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
@@ -52,11 +52,11 @@ jobs:
           MODEL: "gpt-4.1"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ai-code-review
-          ai-code-review github-comment --token "$GITHUB_TOKEN"
+          gito review
+          gito github-comment --token "$GITHUB_TOKEN"
       - uses: actions/upload-artifact@v4
         with:
-          name: ai-code-review-results
+          name: gito-code-review-results
           path: |
             code-review-report.md
             code-review-report.json
@@ -85,7 +85,7 @@ jobs:
 Whenever a PR is opened or updated, you'll see an **AI-generated code review comment** in the PR discussion.
 
 **Tips:**
-- To trigger a review for older existing PRs, merge the `main` branch containing `.github/workflows/ai-code-review.yml`
+- To trigger a review for older existing PRs, merge the `main` branch containing `.github/workflows/gito-code-review.yml`
 - You may close and reopen the PR to trigger the review again.
 - Download full review artifacts from the corresponding GitHub Actions workflow run.
 
@@ -94,7 +94,7 @@ Whenever a PR is opened or updated, you'll see an **AI-generated code review com
 ## Customize Review if Needed
 
 
-- Create a `.ai-code-review.toml` file at your repository root to override [default configuration](https://github.com/Nayjest/ai-code-review/blob/main/ai_code_review/.ai-code-review.toml).
+- Create a `.gito/.ai-code-review.toml` file at your repository root to override [default configuration](https://github.com/Nayjest/ai-code-review/blob/main/gito/config.toml).
 - You can adjust prompts, filtering, report templates, issue criteria, and more.
 
 ## Troubleshooting
