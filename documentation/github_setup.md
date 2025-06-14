@@ -65,7 +65,7 @@ jobs:
 #### Notes
 
 - **Set `LLM_API_TYPE` and `MODEL` as needed** for your chosen LLM provider (see below for links).
-- If you used a different secret name in step 1, update `${{ secrets.GITHUB_TOKEN }}` accordingly.
+- If you used a different secret name in step 1, update `${{ secrets.LLM_API_KEY }}` accordingly.
 - This workflow will:
   - Analyze all pull requests using an LLM,
   - Post a review summary as a PR comment,
