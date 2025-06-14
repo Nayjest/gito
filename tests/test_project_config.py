@@ -23,7 +23,7 @@ def test_prompt_vars_merging(tmp_path):
     toml_path = tmp_path / ".ai-code-review.toml"
     toml_path.write_text(sample)
     logging.info(f"Writing to {toml_path}")
-    cfg = ProjectConfig.load(toml_path)
+    cfg = ProjectConfig.load(config_path=toml_path)
     assert "foo" in cfg.prompt_vars
     assert "self_id" in cfg.prompt_vars
     assert cfg.prompt_vars["foo"] == "bar"

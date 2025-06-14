@@ -1,6 +1,6 @@
 <p align="right">
-<a href="https://pypi.org/project/ai-code-review/" target="_blank"><img src="https://img.shields.io/pypi/v/ai-code-review" alt="PYPI Release"></a>
-<a href="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml" target="_blank"><img src="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml/badge.svg" alt="Pylint"></a>
+<a href="https://pypi.org/project/gito.bot/" target="_blank"><img src="https://img.shields.io/pypi/v/gito.bot" alt="PYPI Release"></a>
+<a href="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml" target="_blank"><img src="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml/badge.svg" alt="PyLint"></a>
 <a href="https://github.com/Nayjest/ai-code-review/actions/workflows/tests.yml" target="_blank"><img src="https://github.com/Nayjest/ai-code-review/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
 <img src="https://github.com/Nayjest/ai-code-review/blob/main/coverage.svg" alt="Code Coverage">
 <a href="https://github.com/Nayjest/ai-code-review/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/static/v1?label=license&message=MIT&color=d08aff" alt="License"></a>
@@ -140,7 +140,7 @@ Change behavior via `.gito/config.toml`:
 You can override the default config by placing `.gito/config.toml` in your repo root.
 
 
-See default configuration [here](https://github.com/Nayjest/ai-code-review/blob/main/ai_code_review/.ai-code-review.toml).
+See default configuration [here](https://github.com/Nayjest/ai-code-review/blob/main/gito/config.toml).
 
 More details can be found in [📖 Configuration Cookbook](https://github.com/Nayjest/ai-code-review/blob/main/documentation/config_cookbook.md)
 
