@@ -107,7 +107,7 @@ class ProjectConfig:
             config["prompt_vars"] = default_prompt_vars | config["prompt_vars"]
         else:
             logging.info(
-                f"No project config found at {mc.ui.blue(config_path)}, using defaults"
+                f"No project config found at {ui.blue(config_path)}, using defaults"
             )
 
         return ProjectConfig(**config)
