@@ -65,7 +65,6 @@ def get_diff(
     )
     diff_content = repo.git.diff(against, what)
     diff = PatchSet.from_string(diff_content)
-    diff = PatchSet.from_string(diff_content)
 
     # Filter out binary files
     non_binary_diff = PatchSet([])
@@ -76,7 +75,9 @@ def get_diff(
             if patched_file.target_file != DEV_NULL
             else patched_file.source_file
         )
-        if file_path == DEV_NULL or is_binary_file(repo, file_path.lstrip("b/")):
+        if file_path == DEV_NULL:
+            continue
+        if is_binary_file(repo, file_path.lstrip("b/")):
             logging.info(f"Skipping binary file: {patched_file.path}")
             continue
         non_binary_diff.append(patched_file)
