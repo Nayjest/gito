@@ -6,7 +6,7 @@
 <a href="https://github.com/Nayjest/ai-code-review/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/static/v1?label=license&message=MIT&color=d08aff" alt="License"></a>
 </p>
 
-<img src="press-kit/logo/gito-bot-1_64top.png" align="left"><h1>Gito</i></h1>
+<img src="press-kit/logo/gito-bot-1_64top.png" align="left"><h1>Gito</h1>
 
 **Gito** is an open-source **AI code review tool** that works with any language model provider.
 It detects issues in GitHub pull requests or local changes—instantly, reliably, and without vendor lock-in.
