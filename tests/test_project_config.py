@@ -1,6 +1,6 @@
 import logging
 import textwrap
-from ai_code_review.project_config import ProjectConfig
+from gito.project_config import ProjectConfig
 
 
 def test_load_defaults(monkeypatch):
@@ -23,7 +23,7 @@ def test_prompt_vars_merging(tmp_path):
     toml_path = tmp_path / ".ai-code-review.toml"
     toml_path.write_text(sample)
     logging.info(f"Writing to {toml_path}")
-    cfg = ProjectConfig.load(custom_config_file=toml_path)
+    cfg = ProjectConfig.load(toml_path)
     assert "foo" in cfg.prompt_vars
     assert "self_id" in cfg.prompt_vars
     assert cfg.prompt_vars["foo"] == "bar"

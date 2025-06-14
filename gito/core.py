@@ -14,6 +14,10 @@ from .report_struct import Report
 from .constants import JSON_REPORT_FILE_NAME
 
 
+def review_subject_is_index(what):
+    return not what or what == 'INDEX'
+
+
 def is_binary_file(repo: Repo, file_path: str) -> bool:
     """
     Check if a file is binary by attempting to read it as text.
@@ -40,11 +44,12 @@ def get_diff(
 ) -> PatchSet | list[PatchedFile]:
     repo = repo or Repo(".")
     if not against:
-        against = repo.remotes.origin.refs.HEAD.reference.name  # origin/main
-    if not what:
+        # 'origin/main', 'origin/master', etc
+        against = repo.remotes.origin.refs.HEAD.reference.name
+    if review_subject_is_index(what):
         what = None  # working copy
     if use_merge_base:
-        if what is None:
+        if review_subject_is_index(what):
             try:
                 current_ref = repo.active_branch.name
             except TypeError:
@@ -103,8 +108,18 @@ def filter_diff(
     return files
 
 
-def file_lines(repo: Repo, file: str, max_tokens: int = None) -> str:
-    text = repo.tree()[file].data_stream.read().decode()
+def file_lines(repo: Repo, file: str, max_tokens: int = None, use_local_files: bool = False) -> str:
+    if use_local_files:
+        file_path = Path(repo.working_tree_dir) / file
+        try:
+            text = file_path.read_text(encoding='utf-8')
+        except (FileNotFoundError, UnicodeDecodeError) as e:
+            logging.warning(f"Could not read file {file} from working directory: {e}")
+            text = repo.tree()[file].data_stream.read().decode('utf-8')
+    else:
+        # Read from HEAD (committed version)
+        text = repo.tree()[file].data_stream.read().decode('utf-8')
+
     lines = [f"{i + 1}: {line}\n" for i, line in enumerate(text.splitlines())]
     if max_tokens:
         lines, removed_qty = mc.tokenizing.fit_to_token_size(lines, max_tokens)
@@ -136,8 +151,8 @@ async def review(
     use_merge_base: bool = True,
     out_folder: str | PathLike | None = None,
 ):
-    cfg = ProjectConfig.load()
     repo = repo or Repo(".")
+    cfg = ProjectConfig.load_for_repo(repo)
     out_folder = Path(out_folder or repo.working_tree_dir)
     diff = get_diff(
         repo=repo, what=what, against=against, use_merge_base=use_merge_base
@@ -153,6 +168,7 @@ async def review(
                 file_diff.path,
                 cfg.max_code_tokens
                 - mc.tokenizing.num_tokens_from_string(str(file_diff)),
+                use_local_files=review_subject_is_index(what)
             )
             if file_diff.target_file != DEV_NULL and not file_diff.is_added_file
             else ""

@@ -6,33 +6,40 @@
 <a href="https://github.com/Nayjest/ai-code-review/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/static/v1?label=license&message=MIT&color=d08aff" alt="License"></a>
 </p>
 
-# 🤖 AI Code Review
+# 🤖 Gito `AI Code Reviewer`
 
-An AI-powered GitHub code review tool that automatically detects issues in pull requests or local changes. Uses language models to provide instant, comprehensive analysis human reviewers may overlook.
+Gito is an open-source AI code review tool that works with any language model provider.
+It detects issues in pull requests or local changes—instantly, reliably, and without vendor lock-in.
 
 Get consistent, thorough code reviews in seconds—no waiting for human availability.
 
-## ✨ Features
+## ✨ Why Gito?
 
-- Automatically reviews pull requests via GitHub Actions
-- Focuses on critical issues (e.g., bugs, security risks, design flaws)
-- Posts review results as a comment on your PR
-- Can be used locally; works with both local and remote Git repositories
-- Optional, fun AI-generated code awards 🏆
-- Easily configurable via [`.ai-code-review.toml`](https://github.com/Nayjest/ai-code-review/blob/main/ai_code_review/.ai-code-review.toml) in your repository root
-- Extremely fast, parallel LLM usage
-- Model-agnostic (OpenAI, Anthropic, Google, local PyTorch inference, etc.)
+⚡ **Lightning Fast:** Get detailed code reviews in seconds, not days — powered by parallel LLM processing  
+🔧 **Vendor Agnostic:** Works with any language model provider (OpenAI, Anthropic, Google, local models, etc.)  
+🌐 **Universal:** Supports all major programming languages and frameworks  
+🔍 **Comprehensive Analysis:** Detect issues across security, performance, maintainability, best practices, and much more  
+📈 **Consistent Quality:** Never tired, never biased—consistent review quality every time  
+🚀 **Easy Integration:** Automatically reviews pull requests via GitHub Actions and posts results as PR comments  
+🎛️ **Infinitely Flexible:** Adapt to any project's standards—configure review rules, severity levels, and focus areas, build custom workflows 
 
-See code review in action: [example](https://github.com/Nayjest/ai-code-review/pull/39#issuecomment-2906968729)
+## 🎯 Perfect For
+
+- Solo developers who want expert-level code review without the wait
+- Teams looking to catch issues before human review
+- Open source projects maintaining high code quality at scale
+- CI/CD pipelines requiring automated quality gates
+
+✨ See [code review in action](https://github.com/Nayjest/ai-code-review/pull/39#issuecomment-2906968729) ✨
 
 ## 🚀 Quickstart
 
 ### 1. Review Pull Requests via GitHub Actions
 
-Create a `.github/workflows/ai-code-review.yml` file:
+Create a `.github/workflows/gito.yml` file:
 
 ```yaml
-name: AI Code Review
+name: "Gito: AI Code Review"
 on: { pull_request: { types: [opened, synchronize, reopened] } }
 jobs:
   review:
@@ -45,7 +52,7 @@ jobs:
       uses: actions/setup-python@v5
       with: { python-version: "3.13" }
     - name: Install AI Code Review tool
-      run: pip install ai-code-review~=1.0
+      run: pip install gito.bot~=2.0
     - name: Run AI code analysis
       env:
         LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
@@ -53,8 +60,8 @@ jobs:
         MODEL: "gpt-4.1"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        ai-code-review
-        ai-code-review github-comment --token ${{ secrets.GITHUB_TOKEN }}
+        gito review
+        gito github-comment --token ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/upload-artifact@v4
       with:
         name: ai-code-review-results
@@ -75,9 +82,9 @@ See [GitHub Setup Guide](https://github.com/Nayjest/ai-code-review/blob/main/doc
 
 **Prerequisites:** [Python](https://www.python.org/downloads/) 3.11 / 3.12 / 3.13  
 
-**Step1:** Install [ai-code-review](https://github.com/Nayjest/ai-code-review) using [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)).
+**Step1:** Install [gito.bot](https://github.com/Nayjest/ai-code-review) using [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)).
 ```bash
-pip install ai-code-review
+pip install gito.bot
 ```
 
 > **Troubleshooting:**  
@@ -87,15 +94,15 @@ pip install ai-code-review
 
 The following command will perform one-time setup using an interactive wizard.
 You will be prompted to enter LLM configuration details (API type, API key, etc).
-Configuration will be saved to ~/.env.ai-code-review.
+Configuration will be saved to `~/.gito/.env`.
 
 ```bash
-ai-code-review setup
+gito setup
 ```
 
 > **Troubleshooting:**  
-> On some systems, `ai-code-review` command may not became available immediately after installation.  
-> Try restarting your terminal or running `python -m ai_code_review` instead.
+> On some systems, `gito` command may not became available immediately after installation.  
+> Try restarting your terminal or running `python -m gito` instead.
 
 
 #### Perform your first AI code review locally
@@ -104,33 +111,33 @@ ai-code-review setup
 **Step2:** Switch to the branch you want to review.  
 **Step3:** Run following command
 ```bash
-ai-code-review
+gito review
 ```
 
 > **Note:** This will analyze the current branch against the repository main branch by default.  
 > Files that are not staged for commit will be ignored.  
-> See `ai-code-review --help` for more options.
+> See `gito --help` for more options.
 
 **Reviewing remote repository**
 
 ```bash
-ai-code-review remote git@github.com:owner/repo.git <FEATURE_BRANCH>..<MAIN_BRANCH>
+gito remote git@github.com:owner/repo.git <FEATURE_BRANCH>..<MAIN_BRANCH>
 ```
 Use interactive help for details:
 ```bash
-ai-code-review remote --help
+gito remote --help
 ```
 
 ## 🔧 Configuration
 
-Change behavior via `.ai-code-review.toml`:
+Change behavior via `.gito/config.toml`:
 
 - Prompt templates, filtering and post-processing using Python code snippets
 - Tagging, severity, and confidence settings
 - Custom AI awards for developer brilliance
 - Output customization
 
-You can override the default config by placing `.ai-code-review.toml` in your repo root.
+You can override the default config by placing `.gito/config.toml` in your repo root.
 
 
 See default configuration [here](https://github.com/Nayjest/ai-code-review/blob/main/ai_code_review/.ai-code-review.toml).

@@ -12,7 +12,7 @@ from git import Repo
 
 from .core import review, get_diff, filter_diff
 from .report_struct import Report
-from .constants import ENV_CONFIG_FILE
+from .constants import HOME_ENV_PATH
 from .bootstrap import bootstrap
 from .project_config import ProjectConfig
 from .utils import no_subcommand, parse_refs_pair
@@ -121,7 +121,7 @@ def cmd_review(
 
 @app.command(help="Configure LLM for local usage interactively")
 def setup():
-    mc.interactive_setup(ENV_CONFIG_FILE)
+    mc.interactive_setup(HOME_ENV_PATH)
 
 
 @app.command()

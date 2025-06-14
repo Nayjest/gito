@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "ai-code-review"
-version = "1.0.1"
+name = "gito.bot"
+version = "2.0.0"
 description = "LLM-agnostic GitHub AI Code Review Tool with integration to GitHub actions"
 authors = ["Nayjest <mail@vitaliy.in>"]
 readme = "README.md"
@@ -16,12 +16,12 @@ classifiers = [
     "Topic :: Software Development",
 ]
 packages = [
-    { include = "ai_code_review" }
+    { include = "gito" }
 ]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-ai-microcore = "4.0.0.dev19"
+ai-microcore = "4.0.0.dev22"
 GitPython = "^3.1.44"
 unidiff = "^0.7.5"
 google-generativeai = "^0.8.5"
@@ -48,7 +48,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-ai-code-review = "ai_code_review.cli:main"
+gito = "gito.cli:main"
 
 [tool.pytest.ini_options]
 minversion = "6.0"

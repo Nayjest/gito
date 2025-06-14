@@ -1,7 +1,7 @@
 import sys
 import typer
 
-from ai_code_review.utils import no_subcommand  # Adjust import as needed
+from gito.utils import no_subcommand  # Adjust import as needed
 
 
 def test_no_subcommand():

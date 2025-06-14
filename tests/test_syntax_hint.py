@@ -1,4 +1,4 @@
-from ai_code_review.utils import syntax_hint
+from gito.utils import syntax_hint
 
 
 def test_extensions():

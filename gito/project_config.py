@@ -4,8 +4,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import microcore as mc
+from microcore import ui
+from git import Repo
 
-from .constants import PROJECT_CONFIG_FILE, PROJECT_CONFIG_DEFAULTS_FILE
+from .constants import PROJECT_CONFIG_BUNDLED_DEFAULTS_FILE, PROJECT_CONFIG_FILE_PATH
 
 
 def _detect_github_env() -> dict:
@@ -79,21 +81,33 @@ class ProjectConfig:
     prompt_vars: dict = field(default_factory=dict)
 
     @staticmethod
-    def load(custom_config_file: str | Path | None = None) -> "ProjectConfig":
-        config_file = Path(custom_config_file or PROJECT_CONFIG_FILE)
-        with open(PROJECT_CONFIG_DEFAULTS_FILE, "rb") as f:
+    def _read_bundled_defaults() -> dict:
+        with open(PROJECT_CONFIG_BUNDLED_DEFAULTS_FILE, "rb") as f:
             config = tomllib.load(f)
+        return config
+
+    @staticmethod
+    def load_for_repo(repo: Repo):
+        return ProjectConfig.load(Path(repo.working_tree_dir) / PROJECT_CONFIG_FILE_PATH)
+
+    @staticmethod
+    def load(config_path: str | Path | None = None) -> "ProjectConfig":
+        config = ProjectConfig._read_bundled_defaults()
         github_env = _detect_github_env()
         config["prompt_vars"] |= github_env | dict(github_env=github_env)
-        if config_file.exists():
+
+        config_path = Path(config_path or PROJECT_CONFIG_FILE_PATH)
+        if config_path.exists():
             logging.info(
-                f"Loading project-specific configuration from {mc.utils.file_link(config_file)}...")
+                f"Loading project-specific configuration from {mc.utils.file_link(config_path)}...")
             default_prompt_vars = config["prompt_vars"]
-            with open(config_file, "rb") as f:
+            with open(config_path, "rb") as f:
                 config.update(tomllib.load(f))
             # overriding prompt_vars config section will not empty default values
             config["prompt_vars"] = default_prompt_vars | config["prompt_vars"]
         else:
-            logging.info(f"Config file {config_file} not found, using defaults")
+            logging.info(
+                f"No project config found at {mc.ui.blue(config_path)}, using defaults"
+            )
 
         return ProjectConfig(**config)
