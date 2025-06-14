@@ -1,4 +1,5 @@
 name: "Gito: AI Code Reviewer"
+icon: "eye"
 on: { pull_request: { types: [opened, synchronize, reopened] } }
 jobs:
   review:
