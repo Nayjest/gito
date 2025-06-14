@@ -44,7 +44,7 @@ jobs:
         LLM_API_TYPE: openai
         MODEL: "gpt-4.1"
       run: |
-        pytest --cov=ai_code_review --cov-report=xml
+        pytest --cov=gito --cov-report=xml
     - name: Generate coverage badge
       if: matrix.python-version == '3.13'  # Run badge generation only once
       uses: tj-actions/coverage-badge-py@v2
