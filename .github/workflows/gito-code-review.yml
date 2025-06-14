@@ -19,12 +19,16 @@ jobs:
         # pip install gito~=2.0
     - name: Run AI code review
       env:
-        LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
-        LLM_API_TYPE: openai
-        MODEL: "gpt-4.1"
+        # OpenAI Setup:
+        # LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+        # LLM_API_TYPE: openai
+        # MODEL: "gpt-4.1"
+        LLM_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        LLM_API_TYPE: anthropic
+        MODEL: "claude-sonnet-4-20250514"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gito review
+        gito --verbose review
         gito github-comment --token "$GITHUB_TOKEN"
     - uses: actions/upload-artifact@v4
       with:
