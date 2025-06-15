@@ -8,7 +8,7 @@
 
 <img src="press-kit/logo/gito-bot-1_64top.png" align="left"><h1>Gito</h1>
 
-**Gito** is an open-source **AI code review tool** that works with any language model provider.
+**Gito** is an open-source **AI code reviewer** that works with any language model provider.
 It detects issues in GitHub pull requests or local changes—instantly, reliably, and without vendor lock-in.
 
 Get consistent, thorough code reviews in seconds—no waiting for human availability.
