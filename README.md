@@ -15,7 +15,7 @@ Get consistent, thorough code reviews in seconds—no waiting for human availabi
 
 ## ✨ Why Gito?
 
-- [⚡] **Lightning Fast:** Get detailed code reviews in seconds, not days — powered by parallel LLM processing  
+- [⚡] **Lightning Fast:** Get detailed code reviews in seconds, not days — powered by parallelized LLM processing  
 - [🔧] **Vendor Agnostic:** Works with any language model provider (OpenAI, Anthropic, Google, local models, etc.)  
 - [🌐] **Universal:** Supports all major programming languages and frameworks  
 - [🔍] **Comprehensive Analysis:** Detect issues across security, performance, maintainability, best practices, and much more  
