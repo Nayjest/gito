@@ -17,7 +17,11 @@
         "package-lock.json",
         "dist",
         "poetry.lock",
-        "storage"
+        "storage",
+        "*.png",
+        "*.svg",
+        "*.zip"
+
     ],
     "bot_personality": ""
 }

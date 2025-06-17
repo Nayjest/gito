@@ -13,11 +13,14 @@ from git import Repo
 from .core import review, get_diff, filter_diff
 from .report_struct import Report
 from .constants import HOME_ENV_PATH
-from .bootstrap import bootstrap
+from .bootstrap import bootstrap, app
 from .project_config import ProjectConfig
 from .utils import no_subcommand, parse_refs_pair
 
-app = typer.Typer(pretty_exceptions_show_locals=False)
+# Import fix command to register it
+from .commands import fix  # noqa
+
+
 app_no_subcommand = typer.Typer(pretty_exceptions_show_locals=False)
 
 
@@ -124,7 +127,6 @@ def setup():
     mc.interactive_setup(HOME_ENV_PATH)
 
 
-@app.command()
 @app.command(name="report", hidden=True)
 def render(
     format: str = typer.Argument(default=Report.Format.CLI),
