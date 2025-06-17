@@ -127,6 +127,7 @@ def setup():
     mc.interactive_setup(HOME_ENV_PATH)
 
 
+@app.command(name="render")
 @app.command(name="report", hidden=True)
 def render(
     format: str = typer.Argument(default=Report.Format.CLI),
