@@ -29,7 +29,20 @@ def is_binary_file(repo: Repo, file_path: str) -> bool:
         # Try decoding as UTF-8; if it fails, it's likely binary
         content.decode("utf-8")
         return False
-    except (UnicodeDecodeError, KeyError):
+    except KeyError:
+        try:
+            fs_path = Path(repo.working_tree_dir) / file_path
+            fs_path.read_text(encoding='utf-8')
+            return False
+        except FileNotFoundError:
+            logging.error(f"File {file_path} not found in the repository.")
+            return True
+        except UnicodeDecodeError:
+            return True
+        except Exception as e:
+            logging.error(f"Error reading file {file_path}: {e}")
+            return True
+    except UnicodeDecodeError:
         return True
     except Exception as e:
         logging.warning(f"Error checking if file {file_path} is binary: {e}")
@@ -203,6 +216,6 @@ async def review(
     report.summary = make_cr_summary(cfg, report, diff)
     report.save(file_name=out_folder / JSON_REPORT_FILE_NAME)
     report_text = report.render(cfg, Report.Format.MARKDOWN)
-    print(report_text)
     text_report_path = out_folder / "code-review-report.md"
     text_report_path.write_text(report_text, encoding="utf-8")
+    report.to_cli()

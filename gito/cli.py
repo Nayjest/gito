@@ -125,8 +125,17 @@ def setup():
 
 
 @app.command()
-def render(format: str = Report.Format.MARKDOWN):
-    print(Report.load().render(format=format))
+@app.command(name="report", hidden=True)
+def render(
+    format: str = typer.Argument(default=Report.Format.CLI),
+    source: str = typer.Option(
+        "",
+        "--src",
+        "--source",
+        help="Source file (json) to load the report from"
+    )
+):
+    Report.load(file_name=source).to_cli(report_format=format)
 
 
 @app.command(help="Review remote code")
@@ -229,7 +238,7 @@ def files(
         f"{mc.ui.yellow(_against or repo.remotes.origin.refs.HEAD.reference.name)}"
         f"{' filtered by '+mc.ui.cyan(filters) if filters else ''}"
     )
-
+    repo.close()
     for patch in patch_set:
         if patch.is_added_file:
             color = mc.ui.green
