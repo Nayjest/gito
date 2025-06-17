@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "ai-code-review"
-version = "1.0.1"
-description = "LLM-agnostic GitHub AI Code Review Tool with integration to GitHub actions"
+name = "gito.bot"
+version = "2.0.0"
+description = "AI code review tool that works with any language model provider. It detects issues in GitHub pull requests or local changes—instantly, reliably, and without vendor lock-in."
 authors = ["Nayjest <mail@vitaliy.in>"]
 readme = "README.md"
 license = "MIT"
-homepage = "https://github.com/Nayjest/github-ai-code-review"
-repository = "https://github.com/Nayjest/github-ai-code-review"
+homepage = "https://github.com/Nayjest/gito"
+repository = "https://github.com/Nayjest/gito"
 keywords = ["static code analysis", "code review", "code quality", "ai", "coding", "assistant", "llm", "github", "automation", "devops", "developer tools", "github actions", "workflows", "git"]
 classifiers = [
     "Environment :: Console",
@@ -16,12 +16,12 @@ classifiers = [
     "Topic :: Software Development",
 ]
 packages = [
-    { include = "ai_code_review" }
+    { include = "gito" }
 ]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-ai-microcore = "4.0.0.dev19"
+ai-microcore = "4.0.0.dev22"
 GitPython = "^3.1.44"
 unidiff = "^0.7.5"
 google-generativeai = "^0.8.5"
@@ -48,7 +48,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-ai-code-review = "ai_code_review.cli:main"
+gito = "gito.cli:main"
 
 [tool.pytest.ini_options]
 minversion = "6.0"

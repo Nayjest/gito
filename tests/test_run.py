@@ -1,12 +1,14 @@
 from typer.testing import CliRunner
 from unittest.mock import AsyncMock
-from ai_code_review.cli import app_no_subcommand, app
+from gito.cli import app_no_subcommand, app
+
+
 runner = CliRunner()
 
 
 def test_review_command_calls_review(monkeypatch):
     mock_review = AsyncMock()
-    monkeypatch.setattr("ai_code_review.cli.review", mock_review)
+    monkeypatch.setattr("gito.cli.review", mock_review)
     result = runner.invoke(
         app,
         ["review", "--what", "HEAD", "--against", "HEAD~1"],
@@ -23,7 +25,7 @@ def test_review_command_calls_review(monkeypatch):
 
 def test_calls_review(monkeypatch):
     mock_review = AsyncMock()
-    monkeypatch.setattr("ai_code_review.cli.review", mock_review)
+    monkeypatch.setattr("gito.cli.review", mock_review)
     result = runner.invoke(
         app_no_subcommand,
         ["HEAD", "--filters", "*.py,*.md"],

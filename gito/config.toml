@@ -1,14 +1,15 @@
 report_template_md = """
-## 🤖 I've Reviewed the Code
+<h2><a href="https://github.com/Nayjest/gito"><img src="https://raw.githubusercontent.com/Nayjest/gito/main/press-kit/logo/gito-bot-1_64top.png" align="left" width=64 height=50></a>I've Reviewed the Code</h2>
 
 {% if report.summary -%}
     {{ report.summary }}
 {%- endif %}
 
-**{%- if report.total_issues > 0 %}⚠️{% endif -%}
-Total issues: `{{ report.total_issues }}`
-{{- ' ' -}}
-in `{{ report.number_of_processed_files }}` files**
+{% if report.total_issues > 0 -%}
+**⚠️ {{ report.total_issues }} issue{{ 's' if report.total_issues != 1 else '' }} found** across {{ report.number_of_processed_files }} file{{ 's' if report.number_of_processed_files != 1 else '' }}
+{%- else -%}
+**✅ No issues found** in {{ report.number_of_processed_files }} file{{ 's' if report.number_of_processed_files != 1 else '' }}
+{%- endif -%}
 
 {%- for issue in report.plain_issues -%}
     {{"\n"}}## `#{{ issue.id}}`  {{ issue.title -}}
@@ -64,7 +65,7 @@ Respond with a valid JSON array of issues in the following format:
         "details": "<issue_description>",
         "tags": ["<issue_tag1>", "<issue_tag2>"],
         "severity": <issue_severity>,
-        "confidence": <confidence_score>
+        "confidence": <confidence_score>,
         "affected_lines": [ // optional; list of affected lines
             {
                 "start_line": <start_line:int>,

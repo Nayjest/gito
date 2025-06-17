@@ -112,5 +112,5 @@ def parse_refs_pair(refs: str) -> tuple[str | None, str | None]:
         return None, None
     if SEPARATOR not in refs:
         return refs, None
-    what, against = refs.split(SEPARATOR)
+    what, against = refs.split(SEPARATOR, 1)
     return what or None, against or None

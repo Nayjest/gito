@@ -1,7 +1,7 @@
 import json
 import os
-from ai_code_review.bootstrap import bootstrap
-from ai_code_review.report_struct import Report, Issue
+from gito.bootstrap import bootstrap
+from gito.report_struct import Report, Issue
 
 
 def test_report_plain_issues():

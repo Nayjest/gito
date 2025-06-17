@@ -1,12 +1,12 @@
 # Configuration Cookbook
 
-This document provides a comprehensive guide on how to configure and tune the [AI Code Review](https://pypi.org/project/ai-code-review/) using project-specific configuration.
+This document provides a comprehensive guide on how to configure and tune [Gito AI Code Reviewer](https://pypi.org/project/gito.bot/) using project-specific configuration.
 
 ## Configuration file
-When run locally or via GitHub actions, [AI Code Review](https://pypi.org/project/ai-code-review/)
-looks for `.ai-code-review.toml` file in the repository root directory.  
+When run locally or via GitHub actions, [Gito](https://pypi.org/project/gito.bot/)
+looks for `.gito/config.toml` file in the repository root directory.  
 Then it merges project-specific configuration (if exists) with the
-[default one](https://github.com/Nayjest/ai-code-review/blob/main/ai_code_review/.ai-code-review.toml).  
+[default one](https://github.com/Nayjest/gito/blob/main/gito/config.toml).  
 This allows you to customize the behavior of the AI code review tool according to your project's needs.
 
 

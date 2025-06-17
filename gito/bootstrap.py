@@ -3,9 +3,9 @@ import os
 from datetime import datetime
 
 import microcore as mc
-from ai_code_review.utils import is_running_in_github_action
 
-from .constants import ENV_CONFIG_FILE
+from .utils import is_running_in_github_action
+from .constants import HOME_ENV_PATH, EXECUTABLE
 
 
 def setup_logging():
@@ -32,7 +32,7 @@ def bootstrap():
     logging.info("Bootstrapping...")
     try:
         mc.configure(
-            DOT_ENV_FILE=ENV_CONFIG_FILE,
+            DOT_ENV_FILE=HOME_ENV_PATH,
             USE_LOGGING=True,
             EMBEDDING_DB_TYPE=mc.EmbeddingDbType.NONE,
         )
@@ -51,7 +51,7 @@ def bootstrap():
             )
         else:
             msg += (
-                "\nPlease run 'ai-code-review setup' "
+                f"\nPlease run '{EXECUTABLE} setup' "
                 "to configure LLM API access (API keys, model, etc)."
             )
         print(mc.ui.red(msg))

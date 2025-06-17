@@ -8,6 +8,7 @@ from pathlib import Path
 import subprocess
 
 NAMES = [
+    ['gito.bot'],
     ["ai-code-review"],
     ["ai-cr"],
     ["github-code-review"],

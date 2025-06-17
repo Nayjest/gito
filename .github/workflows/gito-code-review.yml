@@ -1,4 +1,4 @@
-name: AI Code Review
+name: "Gito: AI Code Reviewer"
 on: { pull_request: { types: [opened, synchronize, reopened] } }
 jobs:
   review:
@@ -10,25 +10,29 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with: { python-version: "3.13" }
-    - name: Install AI Code Review tool
+    - name: Install Gito
       run: |
         pip install poetry
         poetry install
         echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
         # installation from PYPI:
-        # pip install ai-code-review~=1.0
+        # pip install gito.bot~=2.0
     - name: Run AI code review
       env:
-        LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
-        LLM_API_TYPE: openai
-        MODEL: "gpt-4.1"
+        # OpenAI Setup:
+        # LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+        # LLM_API_TYPE: openai
+        # MODEL: "gpt-4.1"
+        LLM_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        LLM_API_TYPE: anthropic
+        MODEL: "claude-sonnet-4-20250514"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        ai-code-review
-        ai-code-review github-comment --token "$GITHUB_TOKEN"
+        gito --verbose review
+        gito github-comment --token "$GITHUB_TOKEN"
     - uses: actions/upload-artifact@v4
       with:
-        name: ai-code-review-results
+        name: gito-code-review-results
         path: |
           code-review-report.md
           code-review-report.json
