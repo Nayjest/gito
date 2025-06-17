@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 
 import microcore as mc
+import typer
 
 from .utils import is_running_in_github_action
 from .constants import HOME_ENV_PATH, EXECUTABLE
@@ -60,3 +61,6 @@ def bootstrap():
         logging.error(f"Unexpected configuration error: {e}")
         raise SystemExit(3)
     mc.logging.LoggingConfig.STRIP_REQUEST_LINES = [300, 15]
+
+
+app = typer.Typer(pretty_exceptions_show_locals=False)

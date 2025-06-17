@@ -191,10 +191,11 @@ summary_prompt = """
 Summarize the code review in one sentence.
 --Reviewed Changes--
 {% for part in diff %}{{ part }}\n{% endfor %}
---Detected Issues--
+--Issues Detected by You--
 {{ issues | tojson(indent=2) }}
 ---
-If code changes contains exceptional achievements, you may additionally present the award in summary text.
+If the code changes include exceptional achievements, you may also present an award to the author in the summary text.
+Note: Awards should only be given to authors of initial codebase changes, not to code reviewers.
 --Available Awards--
 {{ awards }}
 ---
