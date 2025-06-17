@@ -1,14 +1,15 @@
 report_template_md = """
-## 🤖 I've Reviewed the Code
+<h2><img src="https://github.com/Nayjest/gito/blob/gito-rebranding/press-kit/logo/gito-bot-1_64top.png">I've Reviewed the Code</h2>
 
 {% if report.summary -%}
     {{ report.summary }}
 {%- endif %}
 
-**{%- if report.total_issues > 0 %}⚠️{% endif -%}
-Total issues: `{{ report.total_issues }}`
-{{- ' ' -}}
-in `{{ report.number_of_processed_files }}` files**
+{%- if report.total_issues > 0 -%}
+**⚠️ {{ report.total_issues }} issue{{ 's' if report.total_issues != 1 else '' }} found** across {{ report.number_of_processed_files }} file{{ 's' if report.number_of_processed_files != 1 else '' }}
+{%- else -%}
+**✅ No issues found** in {{ report.number_of_processed_files }} file{{ 's' if report.number_of_processed_files != 1 else '' }}
+{%- endif -%}
 
 {%- for issue in report.plain_issues -%}
     {{"\n"}}## `#{{ issue.id}}`  {{ issue.title -}}
