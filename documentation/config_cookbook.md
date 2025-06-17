@@ -6,7 +6,7 @@ This document provides a comprehensive guide on how to configure and tune [Gito 
 When run locally or via GitHub actions, [Gito](https://pypi.org/project/gito.bot/)
 looks for `.gito/config.toml` file in the repository root directory.  
 Then it merges project-specific configuration (if exists) with the
-[default one](https://github.com/Nayjest/gito/blob/main/gito/config.toml).  
+[default one](https://github.com/Nayjest/Gito/blob/main/gito/config.toml).  
 This allows you to customize the behavior of the AI code review tool according to your project's needs.
 
 

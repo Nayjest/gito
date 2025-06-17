@@ -1,5 +1,5 @@
 report_template_md = """
-<h2><a href="https://github.com/Nayjest/gito"><img src="https://raw.githubusercontent.com/Nayjest/gito/main/press-kit/logo/gito-bot-1_64top.png" align="left" width=64 height=50></a>I've Reviewed the Code</h2>
+<h2><a href="https://github.com/Nayjest/Gito"><img src="https://raw.githubusercontent.com/Nayjest/Gito/main/press-kit/logo/gito-bot-1_64top.png" align="left" width=64 height=50></a>I've Reviewed the Code</h2>
 
 {% if report.summary -%}
     {{ report.summary }}

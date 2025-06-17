@@ -5,8 +5,8 @@ description = "AI code review tool that works with any language model provider. 
 authors = ["Nayjest <mail@vitaliy.in>"]
 readme = "README.md"
 license = "MIT"
-homepage = "https://github.com/Nayjest/gito"
-repository = "https://github.com/Nayjest/gito"
+homepage = "https://github.com/Nayjest/Gito"
+repository = "https://github.com/Nayjest/Gito"
 keywords = ["static code analysis", "code review", "code quality", "ai", "coding", "assistant", "llm", "github", "automation", "devops", "developer tools", "github actions", "workflows", "git"]
 classifiers = [
     "Environment :: Console",
