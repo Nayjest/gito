@@ -1,10 +1,10 @@
 <h1 align="center"><a href="#"><img alt="Gito: AI Code Reviewer" src="press-kit/logo/gito-ai-code-reviewer_logo-180.png" align="center" width="180"></a></h1>
 <p align="center">
 <a href="https://pypi.org/project/gito.bot/" target="_blank"><img src="https://img.shields.io/pypi/v/gito.bot" alt="PYPI Release"></a>
-<a href="https://github.com/Nayjest/gito/actions/workflows/code-style.yml" target="_blank"><img src="https://github.com/Nayjest/gito/actions/workflows/code-style.yml/badge.svg" alt="PyLint"></a>
-<a href="https://github.com/Nayjest/gito/actions/workflows/tests.yml" target="_blank"><img src="https://github.com/Nayjest/gito/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
-<img src="https://github.com/Nayjest/gito/blob/main/coverage.svg" alt="Code Coverage">
-<a href="https://github.com/Nayjest/gito/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/static/v1?label=license&message=MIT&color=d08aff" alt="License"></a>
+<a href="https://github.com/Nayjest/Gito/actions/workflows/code-style.yml" target="_blank"><img src="https://github.com/Nayjest/Gito/actions/workflows/code-style.yml/badge.svg" alt="PyLint"></a>
+<a href="https://github.com/Nayjest/Gito/actions/workflows/tests.yml" target="_blank"><img src="https://github.com/Nayjest/Gito/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
+<img src="https://github.com/Nayjest/Gito/blob/main/coverage.svg" alt="Code Coverage">
+<a href="https://github.com/Nayjest/Gito/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/static/v1?label=license&message=MIT&color=d08aff" alt="License"></a>
 </p>
 
 **Gito** is an open-source **AI code reviewer** that works with any language model provider.
@@ -29,7 +29,7 @@ Get consistent, thorough code reviews in seconds—no waiting for human availabi
 - Open source projects maintaining high code quality at scale
 - CI/CD pipelines requiring automated quality gates
 
-✨ See [code review in action](https://github.com/Nayjest/gito/pull/39#issuecomment-2906968729) ✨
+✨ See [code review in action](https://github.com/Nayjest/Gito/pull/39#issuecomment-2906968729) ✨
 
 ## 🚀 Quickstart
 
@@ -73,7 +73,7 @@ jobs:
 
 💪 Done!  
 PRs to your repository will now receive AI code reviews automatically. ✨  
-See [GitHub Setup Guide](https://github.com/Nayjest/gito/blob/main/documentation/github_setup.md) for more details.
+See [GitHub Setup Guide](https://github.com/Nayjest/Gito/blob/main/documentation/github_setup.md) for more details.
 
 ### 2. Running Code Analysis Locally
 
@@ -81,7 +81,7 @@ See [GitHub Setup Guide](https://github.com/Nayjest/gito/blob/main/documentation
 
 **Prerequisites:** [Python](https://www.python.org/downloads/) 3.11 / 3.12 / 3.13  
 
-**Step1:** Install [gito.bot](https://github.com/Nayjest/gito) using [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)).
+**Step1:** Install [gito.bot](https://github.com/Nayjest/Gito) using [pip](https://en.wikipedia.org/wiki/Pip_(package_manager)).
 ```bash
 pip install gito.bot
 ```
@@ -139,9 +139,9 @@ Change behavior via `.gito/config.toml`:
 You can override the default config by placing `.gito/config.toml` in your repo root.
 
 
-See default configuration [here](https://github.com/Nayjest/gito/blob/main/gito/config.toml).
+See default configuration [here](https://github.com/Nayjest/Gito/blob/main/gito/config.toml).
 
-More details can be found in [📖 Configuration Cookbook](https://github.com/Nayjest/gito/blob/main/documentation/config_cookbook.md)
+More details can be found in [📖 Configuration Cookbook](https://github.com/Nayjest/Gito/blob/main/documentation/config_cookbook.md)
 
 ## 💻 Development Setup
 
@@ -168,10 +168,10 @@ pytest
 
 **Looking for a specific feature or having trouble?**  
 Contributions are welcome! ❤️  
-See [CONTRIBUTING.md](https://github.com/Nayjest/gito/blob/main/CONTRIBUTING.md) for details.
+See [CONTRIBUTING.md](https://github.com/Nayjest/Gito/blob/main/CONTRIBUTING.md) for details.
 
 ## 📝 License
 
-Licensed under the [MIT License](https://github.com/Nayjest/gito/blob/main/LICENSE).
+Licensed under the [MIT License](https://github.com/Nayjest/Gito/blob/main/LICENSE).
 
 © 2025 [Vitalii Stepanenko](mailto:mail@vitaliy.in)

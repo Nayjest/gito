@@ -94,7 +94,7 @@ Whenever a PR is opened or updated, you'll see an **AI-generated code review com
 ## Customize Review if Needed
 
 
-- Create a `.gito/config.toml` file at your repository root to override [default configuration](https://github.com/Nayjest/gito/blob/main/gito/config.toml).
+- Create a `.gito/config.toml` file at your repository root to override [default configuration](https://github.com/Nayjest/Gito/blob/main/gito/config.toml).
 - You can adjust prompts, filtering, report templates, issue criteria, and more.
 
 ## Troubleshooting
@@ -113,7 +113,7 @@ Example:
 ## Additional Resources
 
 - More usage documentation: [README.md](../README.md)
-- For help or bug reports, [open an issue](https://github.com/Nayjest/gito/issues)
+- For help or bug reports, [open an issue](https://github.com/Nayjest/Gito/issues)
 
 ---
 
