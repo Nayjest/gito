@@ -1,4 +1,4 @@
-<h1 align="center"><a href="#"><img src="press-kit/logo/gito-ai-code-reviewer_logo-180.png" align="center" width="180"></a></h1>
+<h1 align="center"><a href="#"><img alt="Gito: AI Code Reviewer" src="press-kit/logo/gito-ai-code-reviewer_logo-180.png" align="center" width="180"></a></h1>
 <p align="center">
 <a href="https://pypi.org/project/gito.bot/" target="_blank"><img src="https://img.shields.io/pypi/v/gito.bot" alt="PYPI Release"></a>
 <a href="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml" target="_blank"><img src="https://github.com/Nayjest/ai-code-review/actions/workflows/code-style.yml/badge.svg" alt="PyLint"></a>
