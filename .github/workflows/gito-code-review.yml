@@ -16,7 +16,7 @@ jobs:
         poetry install
         echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
         # installation from PYPI:
-        # pip install gito~=2.0
+        # pip install gito.bot~=2.0
     - name: Run AI code review
       env:
         # OpenAI Setup:

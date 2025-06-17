@@ -59,7 +59,7 @@ jobs:
         MODEL: "gpt-4.1"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gito review
+        gito --verbose review
         gito github-comment --token ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/upload-artifact@v4
       with:

@@ -44,7 +44,7 @@ jobs:
         uses: actions/setup-python@v5
         with: { python-version: "3.13" }
       - name: Install AI Code Review tool
-        run: pip install gito~=2.0
+        run: pip install gito.bot~=2.0
       - name: Run AI code review
         env:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
@@ -52,7 +52,7 @@ jobs:
           MODEL: "gpt-4.1"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gito review
+          gito --verbose review
           gito github-comment --token "$GITHUB_TOKEN"
       - uses: actions/upload-artifact@v4
         with:
