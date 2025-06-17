@@ -1,3 +1,4 @@
+import re
 import logging
 import tomllib
 from dataclasses import dataclass, field
@@ -41,23 +42,26 @@ def _detect_github_env() -> dict:
     }
     # Fallback for local usage: try to get from git
     if not repo:
+        git_repo = None
         try:
-            from git import Repo as GitRepo
-
-            git = GitRepo(".", search_parent_directories=True)
-            origin = git.remotes.origin.url
+            git_repo = Repo(".", search_parent_directories=True)
+            origin = git_repo.remotes.origin.url
             # e.g. git@github.com:Nayjest/ai-code-review.git -> Nayjest/ai-code-review
-            import re
-
             match = re.search(r"[:/]([\w\-]+)/([\w\-\.]+?)(\.git)?$", origin)
             if match:
                 d["github_repo"] = f"{match.group(1)}/{match.group(2)}"
-            d["github_pr_sha"] = git.head.commit.hexsha
+            d["github_pr_sha"] = git_repo.head.commit.hexsha
             d["github_branch"] = (
-                git.active_branch.name if hasattr(git, "active_branch") else ""
+                git_repo.active_branch.name if hasattr(git_repo, "active_branch") else ""
             )
         except Exception:
             pass
+        finally:
+            if git_repo:
+                try:
+                    git_repo.close()
+                except Exception:
+                    pass
     # If branch is not a commit SHA, prefer branch for links
     if d["github_branch"]:
         d["github_pr_sha_or_branch"] = d["github_branch"]
@@ -74,6 +78,8 @@ class ProjectConfig:
     summary_prompt: str = ""
     report_template_md: str = ""
     """Markdown report template"""
+    report_template_cli: str = ""
+    """Report template for CLI output"""
     post_process: str = ""
     retries: int = 3
     """LLM retries for one request"""

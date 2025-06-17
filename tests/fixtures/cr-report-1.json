@@ -1,0 +1,87 @@
+{
+    "issues": {
+        "src/example.py": [
+            {
+                "id": 1,
+                "title": "ISSUE_1 TITLE",
+                "details": "ISSUE_1 DESCR\nLINE_2\nLINE_3",
+                "severity": 2,
+                "confidence": 1,
+                "tags": [
+                    "bug",
+                    "maintainability"
+                ],
+                "file": "src/example.py",
+                "affected_lines": [
+                    {
+                        "start_line": 4,
+                        "end_line": 6,
+                        "file": "src/example.py",
+                        "proposal": "NEW_LINE_4\nNEW_LINE_5",
+                        "affected_code": "4: \nOLD_LINE_4\n5: OLD_LINE_5\n6: OLD_LINE_6"
+                    }
+                ]
+            }
+        ],
+        "src/example2.py": [],
+        "src/example3.py": [
+            {
+                "id": 2,
+                "title": "ISSUE_2 TITLE",
+                "details": "ISSUE_2 DESCR\n",
+                "severity": 3,
+                "confidence": 4,
+                "tags": [
+                    "code_smell"
+                ],
+                "file": "src/example3.py"
+            },
+            {
+                "id": 3,
+                "title": "ISSUE_3 TITLE",
+                "details": "ISSUE_3 DESCR\n",
+                "severity": 1,
+                "confidence": 1,
+                "tags": [],
+                "file": "src/example3.py",
+                "affected_lines": [
+                    {
+                        "start_line": 1,
+                        "end_line": 1,
+                        "file": "src/example3.py",
+                        "affected_code": "1: \nOLD_LINE_1"
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "title": "ISSUE_4 TITLE",
+                "details": "",
+                "severity": 1,
+                "confidence": 1,
+                "tags": [],
+                "file": "src/example3.py",
+                "affected_lines": [
+                    {
+                        "start_line": 4,
+                        "end_line": 4,
+                        "file": "src/example3.py",
+                        "affected_code": "1: \nOLD_LINE_4"
+                    },
+                    {
+                        "start_line": 9,
+                        "end_line": 11,
+                        "file": "src/example3.py",
+                        "affected_code": "9: \nOLD_LINE_9\n10: OLD_LINE_10\n11: OLD_LINE_11",
+                        "proposal": ""
+                    }
+                ]
+            }
+        ]
+    },
+    "summary": "SUMMARY_TEXT",
+    "number_of_processed_files": 555,
+    "total_issues": 4,
+    "created_at": "2025-06-17 14:34:12",
+    "model": "claude-sonnet-4-20250514"
+}

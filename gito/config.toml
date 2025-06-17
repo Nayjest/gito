@@ -33,6 +33,77 @@ report_template_md = """
 {%- endfor -%}
 
 """
+report_template_cli = """
+{{ Back.BLUE }}  +  +  +  ---==<<[ CODE REVIEW{{Style.NORMAL}} ]>>==---  +  +  +  {{Style.RESET_ALL}}
+{% if report.total_issues > 0 -%}
+{{ Style.BRIGHT }}{{Back.RED}} ⚠️ {{ report.total_issues }} issue{{ 's' if report.total_issues != 1 else '' }} {{Back.RESET}} found across {{Back.BLUE}} {{ report.number_of_processed_files }} {{Back.RESET}} file{{ 's' if report.number_of_processed_files != 1 else '' }}{{ Style.RESET_ALL }}
+{%- else -%}
+{{ Style.BRIGHT }}{{Back.GREEN}} ✅  No issues found {{Back.RESET}} in {{Back.BLUE}} {{ report.number_of_processed_files }} {{Back.RESET}} file{{ 's' if report.number_of_processed_files != 1 else '' }}{{ Style.RESET_ALL }}
+{%- endif -%}
+
+{%- if report.summary -%}
+    {{- "\n" }}
+    {{- "\n" }}{{- Style.BRIGHT }}✨  SUMMARY {{ Style.RESET_ALL -}}
+    {{- "\n" }}{{- report.summary -}}
+{%- endif %}
+{% for issue in report.plain_issues -%}
+    {{"\n"}}{{ Style.BRIGHT }}{{Back.RED}}[ {{ issue.id}} ]{{Back.RESET}}  {{ issue.title -}}{{ Style.RESET_ALL -}}
+    {{ "\n"}}{{ file_link(issue.file) -}}
+    {%- if issue.affected_lines -%}:{{issue.affected_lines[0].start_line}}{%- endif -%}
+    {{' '}}
+
+    {%- if issue.affected_lines -%}
+        {% if issue.affected_lines[0].end_line != issue.affected_lines[0].start_line or issue.affected_lines|length > 1 -%}
+            {{ ui.gray }}Lines{{' '}}
+            {{- Fore.RESET -}}
+            {%- for i in issue.affected_lines -%}
+                {{ i.start_line }}{%- if i.end_line != i.start_line -%}{{ ui.gray }}–{{Fore.RESET}}{{ i.end_line }}{%- endif -%}
+                {%- if loop.last == false -%}
+                    {{ ui.gray(', ') }}
+                {%- endif -%}
+            {%- endfor -%}
+        {%- endif -%}
+    {%- endif -%}
+    {{-"\n"-}}
+
+    {% if issue.details -%}
+    {{- "\n" -}}
+    {{- issue.details.strip() -}}
+    {{-"\n" -}}
+    {%- endif -%}
+
+    {%- for tag in issue.tags -%}
+        {{Back.YELLOW}}{{Fore.BLACK}} {{tag}} {{Style.RESET_ALL}}{{ ' ' }}
+    {%- endfor -%}
+    {%- if issue.tags %}{{ "\n" }}{% endif -%}
+
+    {%- for i in issue.affected_lines -%}
+        {%- if i.affected_code -%}
+        {{- "\n"+Fore.RED + " ╭─" + "─"*4 + "[ 💥 Affected Code   ]" + "─"*4 + " ─── ── ─\n" -}}
+        {{- textwrap.indent(i.affected_code.strip(), Fore.RED+' │  ') -}}
+        {{- "\n ╰─"+"─"*2+Style.RESET_ALL -}}
+        {%- endif -%}
+        {%- if i.proposal -%}
+            {%- set maxlen = 100 -%}
+            {%- if not i.affected_code %}{{ Fore.GREEN }} ╭────{% endif -%}
+            {#- Wrap right for one-liner, doesn't prevent copying code -#}
+            {%- if i.proposal.splitlines() | length == 1 and max_line_len(i.proposal)<80 -%}
+                {{- Fore.GREEN + "─"*2 + "[ 💡 Proposed Change ]" + "─"*(max_line_len(i.proposal)-29) + "─╮" +"\n" -}}
+                {{- block_wrap_lr(i.proposal, '', ' │', 60) -}}
+                {{- "\n" + " ╰──"+"─"*(max_line_len(i.proposal)-5+1)+"─╯" -}}
+            {#- Open right side to not prevent multiline code copying -#}
+            {%- else -%}
+                {{- Fore.GREEN + "─"*2 + "[ 💡 Proposed Change ]" + "─"*([max_line_len(i.proposal)-29+2,maxlen-26-2]|min -2) + "─╮" +"\n" -}}
+                {{- i.proposal -}}
+                {{- "\n" + " ╰───"+"─"*([[max_line_len(i.proposal)-29+2,maxlen-29+1]|min - 2 + 29 - 5,29-7+2]|max)+"─╯" -}}
+            {%- endif -%}
+
+            {{- Style.RESET_ALL -}}
+        {% endif -%}
+    {%- endfor -%}
+    {{ "\n" }}
+{%- endfor -%}
+"""
 retries = 3
 prompt = """
 {{ self_id }}
@@ -128,6 +199,7 @@ If code changes contains exceptional achievements, you may additionally present 
 {{ awards }}
 ---
 - Your response will be parsed programmatically, so do not include any additional text.
+- Do not include the issues by itself to the summary, they are already provided in the context.
 - Use Markdown formatting in your response.
 {{ summary_requirements -}}
 """

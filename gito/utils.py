@@ -114,3 +114,19 @@ def parse_refs_pair(refs: str) -> tuple[str | None, str | None]:
         return refs, None
     what, against = refs.split(SEPARATOR, 1)
     return what or None, against or None
+
+
+def max_line_len(text: str) -> int:
+    return max((len(line) for line in text.splitlines()), default=0)
+
+
+def block_wrap_lr(text: str, left: str = "", right: str = "", max_rwrap: int = 60) -> str:
+    ml = max_line_len(text)
+    lines = text.splitlines()
+    wrapped_lines = []
+    for line in lines:
+        ln = left+line
+        if ml <= max_rwrap:
+            ln += ' ' * (ml - len(line)) + right
+        wrapped_lines.append(ln)
+    return "\n".join(wrapped_lines)

@@ -3,12 +3,16 @@ import logging
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from enum import StrEnum
+from pathlib import Path
 
 import microcore as mc
+from colorama import Fore, Style, Back
+from microcore.utils import file_link
+import textwrap
 
 from .constants import JSON_REPORT_FILE_NAME
 from .project_config import ProjectConfig
-from .utils import syntax_hint
+from .utils import syntax_hint, block_wrap_lr, max_line_len
 
 
 @dataclass
@@ -57,6 +61,7 @@ class Issue:
 class Report:
     class Format(StrEnum):
         MARKDOWN = "md"
+        CLI = "cli"
 
     issues: dict = field(default_factory=dict)
     summary: str = field(default="")
@@ -94,15 +99,34 @@ class Report:
         logging.info(f"Report saved to {mc.utils.file_link(file_name)}")
 
     @staticmethod
-    def load(file_name: str = ""):
+    def load(file_name: str | Path = ""):
         with open(file_name or JSON_REPORT_FILE_NAME, "r") as f:
             data = json.load(f)
         data.pop("total_issues", None)
         return Report(**data)
 
     def render(
-        self, cfg: ProjectConfig = None, format: Format = Format.MARKDOWN
+        self,
+        config: ProjectConfig = None,
+        report_format: Format = Format.MARKDOWN,
     ) -> str:
-        cfg = cfg or ProjectConfig.load()
-        template = getattr(cfg, f"report_template_{format}")
-        return mc.prompt(template, report=self, **cfg.prompt_vars)
+        config = config or ProjectConfig.load()
+        template = getattr(config, f"report_template_{report_format}")
+        return mc.prompt(
+            template,
+            report=self,
+            ui=mc.ui,
+            Fore=Fore,
+            Style=Style,
+            Back=Back,
+            file_link=file_link,
+            textwrap=textwrap,
+            block_wrap_lr=block_wrap_lr,
+            max_line_len=max_line_len,
+            **config.prompt_vars
+        )
+
+    def to_cli(self, report_format=Format.CLI):
+        output = self.render(report_format=report_format)
+        print("")
+        print(output)
