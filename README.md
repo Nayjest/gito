@@ -35,7 +35,7 @@ Get consistent, thorough code reviews in seconds—no waiting for human availabi
 
 ### 1. Review Pull Requests via GitHub Actions
 
-Create a `.github/workflows/gito.yml` file:
+Create a `.github/workflows/gito-code-review.yml` file:
 
 ```yaml
 name: "Gito: AI Code Review"
