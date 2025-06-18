@@ -1,0 +1,52 @@
+name: Print PR Comment
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  print-comment:
+    # Only run on pull request comments
+    if: github.event.issue.pull_request
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with: { python-version: "3.13" }
+
+    - name: Create Python script
+      run: |
+        cat > print_comment.py << 'EOF'
+        import os
+        import json
+        
+        def main():
+            # Get the comment body from environment variable
+            comment_body = os.environ.get('COMMENT_BODY', '')
+            comment_author = os.environ.get('COMMENT_AUTHOR', '')
+            pr_number = os.environ.get('PR_NUMBER', '')
+            
+            print("=" * 60)
+            print(f"NEW PR COMMENT ON PR #{pr_number}")
+            print("=" * 60)
+            print(f"Author: {comment_author}")
+            print(f"Comment:")
+            print("-" * 40)
+            print(comment_body)
+            print("-" * 40)
+            print("=" * 60)
+        
+        if __name__ == "__main__":
+            main()
+        EOF
+
+    - name: Print PR comment
+      env:
+        COMMENT_BODY: ${{ github.event.comment.body }}
+        COMMENT_AUTHOR: ${{ github.event.comment.user.login }}
+        PR_NUMBER: ${{ github.event.issue.number }}
+      run: python print_comment.py
