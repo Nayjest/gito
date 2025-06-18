@@ -3,11 +3,13 @@ name: Print PR Comment
 on:
   issue_comment:
     types: [created]
+  pull_request_review_comment:
+    types: [created]
 
 jobs:
   print-comment:
     # Only run on pull request comments
-    if: github.event.issue.pull_request
+    if: github.event.issue.pull_request || github.event_name == 'pull_request_review_comment'
     runs-on: ubuntu-latest
 
     steps:
@@ -15,8 +17,9 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v5
-      with: { python-version: "3.13" }
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
 
     - name: Create Python script
       run: |
@@ -46,7 +49,7 @@ jobs:
 
     - name: Print PR comment
       env:
-        COMMENT_BODY: ${{ github.event.comment.body }}
-        COMMENT_AUTHOR: ${{ github.event.comment.user.login }}
-        PR_NUMBER: ${{ github.event.issue.number }}
+        COMMENT_BODY: ${{ github.event.comment.body || github.event.review_comment.body }}
+        COMMENT_AUTHOR: ${{ github.event.comment.user.login || github.event.review_comment.user.login }}
+        PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
       run: python print_comment.py
