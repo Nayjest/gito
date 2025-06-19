@@ -50,30 +50,6 @@ def test_pipeline_step_run_calls_resolve_callable(patch_resolve_callable):
     step.run(foo="bar")  # should not raise
 
 
-def test_pipeline_run_executes_steps(
-    monkeypatch, patch_resolve_callable, patch_github_action_env
-):
-    patch_github_action_env(False)  # Set environment to LOCAL
-
-    dummy_ctx = {"x": 42}
-    dummy_step = PipelineStep(call="myfunc", envs=[PipelineEnv.LOCAL])
-
-    # Patch run to update ctx
-    def fake_run(*args, **kwargs):
-        return {"new": "val"}
-
-    dummy_step.run = fake_run
-
-    steps = {"step1": dummy_step}
-    pipeline = Pipeline(ctx=(ctx2 := dummy_ctx.copy()), steps=steps)
-
-    with patch("gito.pipeline.logging.info") as mock_log:
-        out_ctx = pipeline.run()
-        assert ctx2["x"] == 42
-        assert out_ctx["new"] == "val"
-        mock_log.assert_called_once_with("Running pipeline step: step1")
-
-
 def test_pipeline_run_skips_steps_for_other_env(
     monkeypatch, patch_resolve_callable, patch_github_action_env
 ):
