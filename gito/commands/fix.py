@@ -42,7 +42,7 @@ def fix(
         raise typer.Exit(code=1)
 
     # Find the issue by number
-    issue: Issue = None
+    issue: Optional[Issue] = None
     for file_issues in report.issues.values():
         for i in file_issues:
             if i.id == issue_number:
