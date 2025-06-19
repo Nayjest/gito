@@ -5,10 +5,10 @@ on:
     types: [created]
 
 permissions:
-  contents: read
+  contents: write  # to make PR
   issues: read
   pull-requests: read
-  actions: read
+  actions: read  # to download the code review artifact
 
 jobs:
   process-comment:
