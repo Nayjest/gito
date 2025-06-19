@@ -16,8 +16,9 @@ def fetch_issue(issue_key, jira_url, username, api_token) -> IssueTrackerIssue |
             description=issue.fields.description or "",
             url=f"{jira_url.rstrip('/')}/browse/{issue_key}"
         )
-    except Exception as e:
-        logging.error(f"Failed to fetch Jira issue {issue_key}: {e}")
+    except requests.HTTPError as e:
+        logging.error(f"Failed to fetch Linear issue {issue_key}: {e}")
+        logging.error(f"Response body: {response.text}")
         return None
 
 
