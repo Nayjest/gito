@@ -133,6 +133,7 @@ def fix(
             commit_message=f"[AI] Fix issue {issue_number}:{issue.title}",
             push=push
         )
+    return changed_files
 
 
 def commit_changes(

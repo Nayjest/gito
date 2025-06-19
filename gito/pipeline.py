@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 from gito.utils import is_running_in_github_action
 from microcore import ui
 from microcore.utils import resolve_callable
-from sympy.physics.control import step_response_plot
 
 
 class PipelineEnv(StrEnum):

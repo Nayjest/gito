@@ -70,7 +70,7 @@ def react_to_comment(
     )
 
     issue_ids = extract_fix_args(comment.body)
-    if not issuse_ids:
+    if not issue_ids:
         ui.error("Can't identify target command in the text.")
         return
     logging.info(f"Extracted issue IDs: {ui.yellow(str(issue_ids))}")

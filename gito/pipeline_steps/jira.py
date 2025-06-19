@@ -6,14 +6,18 @@ from gito.issue_trackers import extract_issue_key, IssueTrackerIssue
 from jira import JIRA
 
 
-def fetch_issue(issue_key, jira_url, username, api_token):
-    jira = JIRA(jira_url, basic_auth=(username, api_token))
-    issue = jira.issue(issue_key)
-    return IssueTrackerIssue(
-        title=issue.fields.summary,
-        description=issue.fields.description or "",
-        url=f"{jira_url.rstrip('/')}/browse/{issue_key}"
-    )
+def fetch_issue(issue_key, jira_url, username, api_token) -> IssueTrackerIssue | None:
+    try:
+        jira = JIRA(jira_url, basic_auth=(username, api_token))
+        issue = jira.issue(issue_key)
+        return IssueTrackerIssue(
+            title=issue.fields.summary,
+            description=issue.fields.description or "",
+            url=f"{jira_url.rstrip('/')}/browse/{issue_key}"
+        )
+    except Exception as e:
+        logging.error(f"Failed to fetch Jira issue {issue_key}: {e}")
+        return None
 
 
 def fetch_associated_issue(
@@ -28,7 +32,7 @@ def fetch_associated_issue(
     """
     try:
         branch_name = repo.active_branch.name
-    except TypeError:
+    except Exception:  # @todo: specify more precise exception
         logging.error("Could not determine the active branch name. Can't fetch Jira issue.")
         return None
 
