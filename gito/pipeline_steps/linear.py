@@ -5,7 +5,7 @@ import requests
 import git
 
 from gito.issue_trackers import IssueTrackerIssue, resolve_issue_key
-
+from gito.constants import DEBUG
 
 def fetch_issue(issue_key, api_key) -> IssueTrackerIssue | None:
     """
