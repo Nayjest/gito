@@ -69,14 +69,14 @@ def react_to_comment(
         out_folder=out_folder
     )
 
-    issuse_ids = extract_fix_args(comment.body)
+    issue_ids = extract_fix_args(comment.body)
     if not issuse_ids:
         ui.error("Can't identify target command in the text.")
         return
-    logging.info(f"Extracted issue IDs: {ui.yellow(str(issuse_ids))}")
+    logging.info(f"Extracted issue IDs: {ui.yellow(str(issue_ids))}")
 
     fix(
-        issuse_ids[0],  # @todo: support multiple IDs
+        issue_ids[0],  # @todo: support multiple IDs
         report_path=Path(out_folder) / JSON_REPORT_FILE_NAME,
         dry_run=dry_run,
         commit=not dry_run,
