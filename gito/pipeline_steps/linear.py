@@ -5,7 +5,7 @@ import requests
 import git
 
 from gito.issue_trackers import IssueTrackerIssue, resolve_issue_key
-from gito.constants import DEBUG
+
 
 def fetch_issue(issue_key, api_key) -> IssueTrackerIssue | None:
     """
@@ -14,56 +14,54 @@ def fetch_issue(issue_key, api_key) -> IssueTrackerIssue | None:
     try:
         url = "https://api.linear.app/graphql"
         headers = {
-            "Authorization": f"Bearer {api_key}",
+            "Authorization": f"{api_key}",
             "Content-Type": "application/json"
         }
 
         query = """
-        query GetIssue($identifier: String!) {
-            issue(identifier: $identifier) {
-                id
-                identifier
-                title
-                description
-                url
+            query Issues($teamKey: String!, $issueNumber: Float) { 
+                issues(filter: {team: {key: {eq: $teamKey}}, number: {eq: $issueNumber}}) {
+                    nodes {
+                        id
+                        identifier
+                        title
+                        description
+                        url
+                    }
+                }
             }
-        }
         """
-
+        team_key, issue_number = issue_key.split("-")
         response = requests.post(
             url,
             json={
                 "query": query,
-                "variables": {"identifier": issue_key}
+                "variables":  {'teamKey': team_key, 'issueNumber': int(issue_number)}
             },
             headers=headers
         )
         response.raise_for_status()
-
         data = response.json()
 
         if "errors" in data:
             logging.error(f"Linear API error: {data['errors']}")
             return None
 
-        issue = data.get("data", {}).get("issue")
-        if not issue:
+        nodes = data.get("data", {}).get("issues", {}).get("nodes", [])
+        if not nodes:
             logging.error(f"Linear issue {issue_key} not found")
             return None
 
+        issue = nodes[0]
         return IssueTrackerIssue(
             title=issue["title"],
             description=issue.get("description") or "",
             url=issue["url"]
         )
 
-    except requests.RequestException as e:
-        logging.error(f"Failed to fetch Linear issue {issue_key}: {e}")
-        return None
     except requests.HTTPError as e:
-        logging.error(f"Failed to fetch Jira issue {issue_key}: {e}")
-        if DEBUG:
-            logging.error(f"Response body: {response.text}")
+        logging.error(f"Failed to fetch Linear issue {issue_key}: {e}")
+        logging.error(f"Response body: {response.text}")
         return None
 
 
