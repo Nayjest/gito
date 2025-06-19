@@ -153,7 +153,7 @@ def make_cr_summary(config: ProjectConfig, report: Report, diff, **kwargs) -> st
             **config.prompt_vars,
             **kwargs,
         ).to_llm()
-        if cfg.summary_prompt
+        if config.summary_prompt
         else ""
     )
 
