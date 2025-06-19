@@ -149,13 +149,3 @@ def extract_fix_args(text: str) -> list[int]:
         issue_numbers = [int(num) for num in numbers]
         return issue_numbers
     return []
-
-
-def process_text_command(text: str, repo: git.Repo = None, api: GhApi = None):
-    issuse_ids = extract_fix_args(text)
-    if not issuse_ids:
-        ui.error("Can't identify target command in the text.")
-        return
-    logging.info(f"Extracted issue IDs: {ui.yellow(str(issuse_ids))}")
-    # load code-review-report.json from the latest .zip artifact in pr code review actions
-    # fix(issuse_ids[0], repo=repo, api=api)
