@@ -94,13 +94,6 @@ def last_code_review_run(
     branch = pr['head']['ref']
 
     runs = api.actions.list_workflow_runs_for_repo(branch=branch)['workflow_runs']
-
-    # Log available runs for debugging
-    logging.info(f"Found {len(runs)} workflow runs on branch {branch}")
-    for run in runs[:5]:  # Log first 5 runs
-        logging.info(
-            f"Run: {run['name']}, SHA: {run['head_sha']}, Status: {run['status']}, Path: {run.get('path', 'N/A')}")
-
     # Find the run for this SHA
     run = next((
         r for r in runs
@@ -128,11 +121,11 @@ def download_latest_code_review_artifact(
         raise Exception("No artifacts found for this workflow run")
 
     latest_artifact = artifacts[0]
-    print(f"Artifact: {latest_artifact['name']}, Download URL: {latest_artifact['archive_download_url']}")
-
-    headers = {"Authorization": f"Bearer {gh_token}"} if gh_token else {}
+    url = latest_artifact['archive_download_url']
+    print(f"Artifact: {latest_artifact['name']}, Download URL: {url}")
+    headers = {"Authorization": f"token {gh_token}"} if gh_token else {}
     zip_path = "artifact.zip"
-    with requests.get(latest_artifact['archive_download_url'], headers=headers, stream=True) as r:
+    with requests.get(url, headers=headers, stream=True) as r:
         r.raise_for_status()
         with open(zip_path, 'wb') as f:
             for chunk in r.iter_content(chunk_size=8192):
