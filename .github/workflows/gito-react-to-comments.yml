@@ -59,7 +59,10 @@ jobs:
         echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
         # installation from PYPI:
         # pip install gito.bot~=2.0
+
     - name: Run Gito react
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        LLM_API_TYPE: none
       run: |
+        gito react-to-comment ${{ github.event.comment.id }} --token "$GITHUB_TOKEN"
