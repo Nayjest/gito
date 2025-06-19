@@ -128,18 +128,21 @@ def download_latest_code_review_artifact(
     print(f"Artifact: {latest_artifact['name']}, Download URL: {url}")
     headers = {"Authorization": f"token {gh_token}"} if gh_token else {}
     zip_path = "artifact.zip"
-    with requests.get(url, headers=headers, stream=True) as r:
-        r.raise_for_status()
-        with open(zip_path, "wb") as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                f.write(chunk)
+    try:
+        with requests.get(url, headers=headers, stream=True) as r:
+            r.raise_for_status()
+            with open(zip_path, "wb") as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    f.write(chunk)
 
-    # Unpack to ./artifact
-    os.makedirs("artifact", exist_ok=True)
-    with zipfile.ZipFile(zip_path, "r") as zip_ref:
-        zip_ref.extractall("artifact")
+        # Unpack to ./artifact
+        os.makedirs("artifact", exist_ok=True)
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            zip_ref.extractall("artifact")
+    finally:
+        if os.path.exists(zip_path):
+            os.remove(zip_path)
 
-    os.remove(zip_path)
     print("Artifact unpacked to ./artifact")
 
 

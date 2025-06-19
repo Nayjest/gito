@@ -86,6 +86,9 @@ def test_pipeline_multiple_steps(monkeypatch, patch_github_action_env):
     assert result["a"] == 1
     assert result["b"] == 2
 
+
 def test_get_callable():
-    callable_fn = PipelineStep(call="gito.pipeline_steps.jira.fetch_associated_issue").get_callable()
+    callable_fn = PipelineStep(
+        call="gito.pipeline_steps.jira.fetch_associated_issue"
+    ).get_callable()
     assert callable(callable_fn), "Expected a callable function"
