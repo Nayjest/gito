@@ -45,6 +45,8 @@ class Pipeline:
                 if isinstance(step_output, dict):
                     self.ctx["pipeline_out"].update(step_output)
                 self.ctx["pipeline_out"][step_name] = step_output
+                if not step_output:
+                    logging.warning(f"Pipeline step \"{step_name}\" returned {repr(step_output)}.")
             else:
                 logging.info(f"Skipping pipeline step: {step_name} [env: {ui.yellow(cur_env)} not in {step.envs}]")
         return self.ctx["pipeline_out"]

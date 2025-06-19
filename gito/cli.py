@@ -40,10 +40,10 @@ def main():
 
 @app.callback(invoke_without_command=True)
 def cli(ctx: typer.Context, verbose: bool = typer.Option(default=False)):
-    if verbose:
-        mc.logging.LoggingConfig.STRIP_REQUEST_LINES = None
     if ctx.invoked_subcommand != "setup":
         bootstrap()
+    if verbose:
+        mc.logging.LoggingConfig.STRIP_REQUEST_LINES = None
 
 
 def args_to_target(refs, what, against) -> tuple[str | None, str | None]:

@@ -15,11 +15,12 @@ def fetch_issue(issue_key, jira_url, username, api_token):
         url=f"{jira_url.rstrip('/')}/browse/{issue_key}"
     )
 
+
 def fetch_associated_issue(
     repo: git.Repo,
-    jira_url = None,
-    jira_username= None,
-    jira_api_token = None,
+    jira_url=None,
+    jira_username=None,
+    jira_api_token=None,
     **kwargs
 ):
     """
@@ -36,7 +37,12 @@ def fetch_associated_issue(
         return None
 
     jira_url = jira_url or os.getenv("JIRA_URL")
-    jira_username = jira_username or os.getenv("JIRA_USERNAME") or os.getenv("JIRA_EMAIL")
+    jira_username = (
+        jira_username
+        or os.getenv("JIRA_USERNAME")
+        or os.getenv("JIRA_USER")
+        or os.getenv("JIRA_EMAIL")
+    )
     jira_token = (
         jira_api_token
         or os.getenv("JIRA_API_TOKEN")
@@ -51,5 +57,5 @@ def fetch_associated_issue(
         logging.error(f"Jira configuration error: {e}")
         return None
     return dict(
-        associated_issue = fetch_issue(issue_key, jira_url, jira_username, jira_token)
+        associated_issue=fetch_issue(issue_key, jira_url, jira_username, jira_token)
     )
