@@ -4,8 +4,7 @@ import os
 import git
 from jira import JIRA
 
-from gito.issue_trackers import extract_issue_key, IssueTrackerIssue
-from gito.utils import is_running_in_github_action
+from gito.issue_trackers import extract_issue_key, IssueTrackerIssue, get_branch
 
 
 def fetch_issue(issue_key, jira_url, username, api_token) -> IssueTrackerIssue | None:
@@ -19,23 +18,6 @@ def fetch_issue(issue_key, jira_url, username, api_token) -> IssueTrackerIssue |
         )
     except Exception as e:
         logging.error(f"Failed to fetch Jira issue {issue_key}: {e}")
-        return None
-
-
-def get_branch(repo: git.Repo):
-    if is_running_in_github_action():
-        branch_name = os.getenv('GITHUB_HEAD_REF')
-        if branch_name:
-            return branch_name
-
-        github_ref = os.getenv('GITHUB_REF', '')
-        if github_ref.startswith('refs/heads/'):
-            return github_ref.replace('refs/heads/', '')
-    try:
-        branch_name = repo.active_branch.name
-        return branch_name
-    except Exception as e:  # @todo: specify more precise exception
-        logging.error("Could not determine the active branch name: %s", e)
         return None
 
 
