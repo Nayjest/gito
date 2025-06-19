@@ -69,6 +69,7 @@ class Report:
     total_issues: int = field(init=False)
     created_at: str = field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     model: str = field(default_factory=lambda: mc.config().MODEL)
+    pipeline_out: dict = field(default_factory=dict)
 
     @property
     def plain_issues(self):

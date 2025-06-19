@@ -9,7 +9,7 @@ from microcore import ui
 from git import Repo
 
 from .constants import PROJECT_CONFIG_BUNDLED_DEFAULTS_FILE, PROJECT_CONFIG_FILE_PATH
-
+from .pipeline import PipelineStep
 
 @dataclass
 class ProjectConfig:
@@ -29,6 +29,13 @@ class ProjectConfig:
     Defines the keyword or mention tag that triggers bot actions
     when referenced in code review comments.
     """
+    pipeline_steps: dict[str, dict | PipelineStep] = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.pipeline_steps = {
+            k: PipelineStep(**v) if isinstance(v, dict) else v
+            for k, v in self.pipeline_steps.items()
+        }
 
     @staticmethod
     def _read_bundled_defaults() -> dict:

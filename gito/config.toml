@@ -204,12 +204,33 @@ Note: Awards should only be given to authors of initial codebase changes, not to
 --Available Awards--
 {{ awards }}
 ---
+{% if pipeline_out.associated_issue and pipeline_out.associated_issue.title %}
+[Subtask]: Include one sentence about how the code changes address the requirements of the associated issue.
+
+Examples:
+
+[ 1 ] In case if the implementation delivers what was requested:
+
+✅ Implementation Satisfies [<ISSUE_KEY>](<ISSUE_URL>).
+
+[ 1 ] In case of any critical concerns:
+
+⚠️ <Your concerns here>.
+
+--Associated Issue--
+# {{ pipeline_out.associated_issue.title }}
+{{ pipeline_out.associated_issue.descriptoin }}
+URL: {{ pipeline_out.associated_issue.url }}
+---
+{% endif -%}
 - Your response will be parsed programmatically, so do not include any additional text.
 - Do not include the issues by itself to the summary, they are already provided in the context.
 - Use Markdown formatting in your response.
 {{ summary_requirements -}}
 """
-
+[pipeline_steps.jira]
+call="gito.pipeline_steps.jira.fetch_branch_issue"
+envs=["local","gh-action"]
 [prompt_vars]
 self_id = """
 You are a subsystem of an AI-powered software platform, specifically tasked with performing expert code reviews.
