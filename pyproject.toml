@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gito.bot"
-version = "2.0.0-dev1"
+version = "2.0.0-dev2"
 description = "AI code review tool that works with any language model provider. It detects issues in GitHub pull requests or local changes—instantly, reliably, and without vendor lock-in."
 authors = ["Nayjest <mail@vitaliy.in>"]
 readme = "README.md"
@@ -27,6 +27,8 @@ unidiff = "^0.7.5"
 google-generativeai = "^0.8.5"
 anthropic = "^0.52.2"
 typer = "^0.16.0"
+ghapi = "~=1.0.6"
+jira = "^3.8.0"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "*"

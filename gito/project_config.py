@@ -1,75 +1,15 @@
-import re
 import logging
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 
 import microcore as mc
+from gito.utils import detect_github_env
 from microcore import ui
 from git import Repo
 
 from .constants import PROJECT_CONFIG_BUNDLED_DEFAULTS_FILE, PROJECT_CONFIG_FILE_PATH
-
-
-def _detect_github_env() -> dict:
-    """
-    Try to detect GitHub repository/PR info from environment variables (for GitHub Actions).
-    Returns a dict with github_repo, github_pr_sha, github_pr_number, github_ref, etc.
-    """
-    import os
-
-    repo = os.environ.get("GITHUB_REPOSITORY", "")
-    pr_sha = os.environ.get("GITHUB_SHA", "")
-    pr_number = os.environ.get("GITHUB_REF", "")
-    branch = ""
-    ref = os.environ.get("GITHUB_REF", "")
-    # Try to resolve PR head SHA if available.
-    # On PRs, GITHUB_HEAD_REF/BASE_REF contain branch names.
-    if "GITHUB_HEAD_REF" in os.environ:
-        branch = os.environ["GITHUB_HEAD_REF"]
-    elif ref.startswith("refs/heads/"):
-        branch = ref[len("refs/heads/"):]
-    elif ref.startswith("refs/pull/"):
-        # for pull_request events
-        branch = ref
-
-    d = {
-        "github_repo": repo,
-        "github_pr_sha": pr_sha,
-        "github_pr_number": pr_number,
-        "github_branch": branch,
-        "github_ref": ref,
-    }
-    # Fallback for local usage: try to get from git
-    if not repo:
-        git_repo = None
-        try:
-            git_repo = Repo(".", search_parent_directories=True)
-            origin = git_repo.remotes.origin.url
-            # e.g. git@github.com:Nayjest/ai-code-review.git -> Nayjest/ai-code-review
-            match = re.search(r"[:/]([\w\-]+)/([\w\-\.]+?)(\.git)?$", origin)
-            if match:
-                d["github_repo"] = f"{match.group(1)}/{match.group(2)}"
-            d["github_pr_sha"] = git_repo.head.commit.hexsha
-            d["github_branch"] = (
-                git_repo.active_branch.name if hasattr(git_repo, "active_branch") else ""
-            )
-        except Exception:
-            pass
-        finally:
-            if git_repo:
-                try:
-                    git_repo.close()
-                except Exception:
-                    pass
-    # If branch is not a commit SHA, prefer branch for links
-    if d["github_branch"]:
-        d["github_pr_sha_or_branch"] = d["github_branch"]
-    elif d["github_pr_sha"]:
-        d["github_pr_sha_or_branch"] = d["github_pr_sha"]
-    else:
-        d["github_pr_sha_or_branch"] = "main"
-    return d
+from .pipeline import PipelineStep
 
 
 @dataclass
@@ -85,6 +25,18 @@ class ProjectConfig:
     """LLM retries for one request"""
     max_code_tokens: int = 32000
     prompt_vars: dict = field(default_factory=dict)
+    mention_triggers: list[str] = field(default_factory=list)
+    """
+    Defines the keyword or mention tag that triggers bot actions
+    when referenced in code review comments.
+    """
+    pipeline_steps: dict[str, dict | PipelineStep] = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.pipeline_steps = {
+            k: PipelineStep(**v) if isinstance(v, dict) else v
+            for k, v in self.pipeline_steps.items()
+        }
 
     @staticmethod
     def _read_bundled_defaults() -> dict:
@@ -99,7 +51,7 @@ class ProjectConfig:
     @staticmethod
     def load(config_path: str | Path | None = None) -> "ProjectConfig":
         config = ProjectConfig._read_bundled_defaults()
-        github_env = _detect_github_env()
+        github_env = detect_github_env()
         config["prompt_vars"] |= github_env | dict(github_env=github_env)
 
         config_path = Path(config_path or PROJECT_CONFIG_FILE_PATH)

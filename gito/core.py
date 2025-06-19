@@ -6,6 +6,7 @@ from pathlib import Path
 
 import microcore as mc
 from git import Repo
+from gito.pipeline import Pipeline
 from unidiff import PatchSet, PatchedFile
 from unidiff.constants import DEV_NULL
 
@@ -143,15 +144,16 @@ def file_lines(repo: Repo, file: str, max_tokens: int = None, use_local_files: b
     return "".join(lines)
 
 
-def make_cr_summary(cfg: ProjectConfig, report: Report, diff):
+def make_cr_summary(config: ProjectConfig, report: Report, diff, **kwargs) -> str:
     return (
         mc.prompt(
-            cfg.summary_prompt,
-            diff=mc.tokenizing.fit_to_token_size(diff, cfg.max_code_tokens)[0],
+            config.summary_prompt,
+            diff=mc.tokenizing.fit_to_token_size(diff, config.max_code_tokens)[0],
             issues=report.issues,
-            **cfg.prompt_vars,
+            **config.prompt_vars,
+            **kwargs,
         ).to_llm()
-        if cfg.summary_prompt
+        if config.summary_prompt
         else ""
     )
 
@@ -213,7 +215,23 @@ async def review(
     exec(cfg.post_process, {"mc": mc, **locals()})
     out_folder.mkdir(parents=True, exist_ok=True)
     report = Report(issues=issues, number_of_processed_files=len(diff))
-    report.summary = make_cr_summary(cfg, report, diff)
+    ctx = dict(
+        report=report,
+        config=cfg,
+        diff=diff,
+        repo=repo,
+        pipeline_out={},
+    )
+    if cfg.pipeline_steps:
+        pipe = Pipeline(
+            ctx=ctx,
+            steps=cfg.pipeline_steps
+        )
+        pipe.run()
+    else:
+        logging.info("No pipeline steps defined, skipping pipeline execution")
+
+    report.summary = make_cr_summary(**ctx)
     report.save(file_name=out_folder / JSON_REPORT_FILE_NAME)
     report_text = report.render(cfg, Report.Format.MARKDOWN)
     text_report_path = out_folder / "code-review-report.md"

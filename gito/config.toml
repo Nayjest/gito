@@ -1,3 +1,8 @@
+# :class: gito.project_config.ProjectConfig
+
+# Defines the keyword or mention tag that triggers bot actions when referenced in code review comments.
+# list of strings, case-insensitive
+mention_triggers = ["gito", "bot", "ai", "/fix"]
 report_template_md = """
 <h2><a href="https://github.com/Nayjest/Gito"><img src="https://raw.githubusercontent.com/Nayjest/Gito/main/press-kit/logo/gito-bot-1_64top.png" align="left" width=64 height=50></a>I've Reviewed the Code</h2>
 
@@ -199,12 +204,37 @@ Note: Awards should only be given to authors of initial codebase changes, not to
 --Available Awards--
 {{ awards }}
 ---
+{% if pipeline_out.associated_issue and pipeline_out.associated_issue.title %}
+----SUBTASK----
+Include one sentence about how the code changes address the requirements of the associated issue listed below.
+
+--Associated Issue--
+# {{ pipeline_out.associated_issue.title }}
+{{ pipeline_out.associated_issue.description }}
+URL: {{ pipeline_out.associated_issue.url }}
+---
+
+Examples:
+
+In case if the implementation delivers what was requested:
+```
+✅  Implementation Satisfies [<ISSUE_KEY>](<ISSUE_URL>).
+```
+In case of any critical concerns:
+```
+⚠️  <Your concern 1 here>.
+⚠️  <Your concern 2 here>.
+```
+--------
+{% endif -%}
 - Your response will be parsed programmatically, so do not include any additional text.
 - Do not include the issues by itself to the summary, they are already provided in the context.
 - Use Markdown formatting in your response.
 {{ summary_requirements -}}
 """
-
+[pipeline_steps.jira]
+call="gito.pipeline_steps.jira.fetch_associated_issue"
+envs=["local","gh-action"]
 [prompt_vars]
 self_id = """
 You are a subsystem of an AI-powered software platform, specifically tasked with performing expert code reviews.

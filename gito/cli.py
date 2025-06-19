@@ -18,7 +18,7 @@ from .project_config import ProjectConfig
 from .utils import no_subcommand, parse_refs_pair
 
 # Import fix command to register it
-from .commands import fix  # noqa
+from .commands import fix, gh_comment  # noqa
 
 
 app_no_subcommand = typer.Typer(pretty_exceptions_show_locals=False)
@@ -40,10 +40,10 @@ def main():
 
 @app.callback(invoke_without_command=True)
 def cli(ctx: typer.Context, verbose: bool = typer.Option(default=False)):
-    if verbose:
-        mc.logging.LoggingConfig.STRIP_REQUEST_LINES = None
     if ctx.invoked_subcommand != "setup":
         bootstrap()
+    if verbose:
+        mc.logging.LoggingConfig.STRIP_REQUEST_LINES = None
 
 
 def args_to_target(refs, what, against) -> tuple[str | None, str | None]:
@@ -104,6 +104,7 @@ def arg_against() -> typer.Option:
 
 @app_no_subcommand.command(name="review", help="Perform code review")
 @app.command(name="review", help="Perform code review")
+@app.command(name="run", hidden=True)
 def cmd_review(
     refs: str = arg_refs(),
     what: str = arg_what(),
