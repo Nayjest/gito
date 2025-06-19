@@ -29,9 +29,14 @@ class PipelineStep:
     call: str
     envs: list[PipelineEnv] = field(default_factory=PipelineEnv.all)
 
+    def get_callable(self):
+        """
+        Resolve the callable from the string representation.
+        """
+        return resolve_callable(self.call)
+
     def run(self, *args, **kwargs):
-        fn = resolve_callable(self.call)
-        return fn(*args, **kwargs)
+        return self.get_callable()(*args, **kwargs)
 
 
 @dataclass
