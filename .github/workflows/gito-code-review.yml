@@ -27,6 +27,9 @@ jobs:
         LLM_API_TYPE: anthropic
         MODEL: "claude-sonnet-4-20250514"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+        JIRA_URL: ${{ secrets.JIRA_URL }}
+        JIRA_USER: ${{ secrets.JIRA_USER }}
       run: |
         gito --verbose review
         gito github-comment --token "$GITHUB_TOKEN"
