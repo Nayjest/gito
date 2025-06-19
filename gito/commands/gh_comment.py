@@ -94,6 +94,13 @@ def last_code_review_run(
     branch = pr['head']['ref']
 
     runs = api.actions.list_workflow_runs_for_repo(branch=branch)['workflow_runs']
+
+    # Log available runs for debugging
+    logging.info(f"Found {len(runs)} workflow runs on branch {branch}")
+    for run in runs[:5]:  # Log first 5 runs
+        logging.info(
+            f"Run: {run['name']}, SHA: {run['head_sha']}, Status: {run['status']}, Path: {run.get('path', 'N/A')}")
+
     # Find the run for this SHA
     run = next((
         r for r in runs
