@@ -9,7 +9,7 @@ from microcore.utils import resolve_callable
 
 class PipelineEnv(StrEnum):
     LOCAL = "local"
-    GH_ACTION = "gh_action"
+    GH_ACTION = "gh-action"
 
     @staticmethod
     def all():
