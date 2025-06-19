@@ -228,6 +228,8 @@ async def review(
             cfg.pipeline_steps
         )
         pipe.run()
+    else:
+        logging.info("No pipeline steps defined, skipping pipeline execution")
 
     report.summary = make_cr_summary(**ctx)
     report.save(file_name=out_folder / JSON_REPORT_FILE_NAME)
