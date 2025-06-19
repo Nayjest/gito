@@ -53,8 +53,10 @@ def react_to_comment(
     if not any(trigger.lower() in comment.body.lower() for trigger in cfg.mention_triggers):
         ui.error(f"No mention trigger found in comment, no reaction added.")
         return
-    logging.info(f"Comment contains mention trigger, reacting with 'eyes'.")
-    api.reactions.create_for_issue_comment(comment_id=comment_id, content="eyes")
+    if not is_running_in_github_action():
+        # @todo: need service account to react to comments
+        logging.info(f"Comment contains mention trigger, reacting with 'eyes'.")
+        api.reactions.create_for_issue_comment(comment_id=comment_id, content="eyes")
 
     pr = int(comment.issue_url.split('/')[-1])
     print(f"Processing comment for PR #{pr}...")
