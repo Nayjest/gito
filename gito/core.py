@@ -220,6 +220,7 @@ async def review(
         config=cfg,
         diff=diff,
         repo=repo,
+        pipeline_out={},
     )
     if cfg.pipeline_steps:
         pipe = Pipeline(
