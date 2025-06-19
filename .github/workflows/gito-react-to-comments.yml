@@ -5,10 +5,10 @@ on:
     types: [created]
 
 permissions:
-  contents: read
+  contents: write  # to make PR
   issues: read
   pull-requests: read
-  actions: read
+  actions: read  # to download the code review artifact
 
 jobs:
   process-comment:
@@ -45,7 +45,7 @@ jobs:
       with:
         repository: ${{ github.repository }}
         token: ${{ secrets.GITHUB_TOKEN }}
-        ref: ${{ fromJson(steps.pr.outputs.result).head_sha }}
+        ref: ${{ fromJson(steps.pr.outputs.result).head_ref }}
         fetch-depth: 0
 
     - name: Set up Python
