@@ -219,7 +219,7 @@ Examples:
 
 --Associated Issue--
 # {{ pipeline_out.associated_issue.title }}
-{{ pipeline_out.associated_issue.descriptoin }}
+{{ pipeline_out.associated_issue.description }}
 URL: {{ pipeline_out.associated_issue.url }}
 ---
 {% endif -%}

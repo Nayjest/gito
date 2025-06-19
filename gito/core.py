@@ -224,8 +224,8 @@ async def review(
     )
     if cfg.pipeline_steps:
         pipe = Pipeline(
-
-            cfg.pipeline_steps
+            ctx=ctx,
+            steps=cfg.pipeline_steps
         )
         pipe.run()
     else:

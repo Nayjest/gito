@@ -104,6 +104,7 @@ def arg_against() -> typer.Option:
 
 @app_no_subcommand.command(name="review", help="Perform code review")
 @app.command(name="review", help="Perform code review")
+@app.command(name="run", hidden=True)
 def cmd_review(
     refs: str = arg_refs(),
     what: str = arg_what(),

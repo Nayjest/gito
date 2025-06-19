@@ -1,6 +1,7 @@
 import logging
 import os
 
+import git
 from gito.issue_trackers import extract_issue_key, IssueTrackerIssue
 from jira import JIRA
 
@@ -15,6 +16,7 @@ def fetch_issue(issue_key, jira_url, username, api_token):
     )
 
 def fetch_associated_issue(
+    repo: git.Repo,
     jira_url = None,
     jira_username= None,
     jira_api_token = None,
