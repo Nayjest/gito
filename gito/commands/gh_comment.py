@@ -126,7 +126,7 @@ def download_latest_code_review_artifact(
     headers = {"Authorization": f"token {gh_token}"} if gh_token else {}
     zip_path = "artifact.zip"
     # temp
-    url = "https://github.com/Nayjest/Gito/actions/runs/15747799969/artifacts/3359754157"
+    print('TOK:'+gh_token[:4]+'...')
     with requests.get(url, headers=headers, stream=True) as r:
         r.raise_for_status()
         with open(zip_path, 'wb') as f:
