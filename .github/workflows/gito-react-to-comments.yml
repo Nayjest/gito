@@ -8,7 +8,6 @@ permissions:
   contents: read
   issues: read
   pull-requests: read
-  reactions: write
 
 jobs:
   process-comment:
