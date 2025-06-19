@@ -33,6 +33,7 @@ def get_branch(repo: git.Repo):
             return github_ref.replace('refs/heads/', '')
     try:
         branch_name = repo.active_branch.name
+        return branch_name
     except Exception as e:  # @todo: specify more precise exception
         logging.error("Could not determine the active branch name: %s", e)
         return None

@@ -216,15 +216,15 @@ URL: {{ pipeline_out.associated_issue.url }}
 
 Examples:
 
-[ 1 ] In case if the implementation delivers what was requested:
-
+In case if the implementation delivers what was requested:
+```
 ✅  Implementation Satisfies [<ISSUE_KEY>](<ISSUE_URL>).
-
-[ 1 ] In case of any critical concerns:
-
+```
+In case of any critical concerns:
+```
 ⚠️  <Your concern 1 here>.
 ⚠️  <Your concern 2 here>.
-
+```
 --------
 {% endif -%}
 - Your response will be parsed programmatically, so do not include any additional text.
