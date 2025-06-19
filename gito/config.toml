@@ -235,6 +235,9 @@ In case of any critical concerns:
 [pipeline_steps.jira]
 call="gito.pipeline_steps.jira.fetch_associated_issue"
 envs=["local","gh-action"]
+[pipeline_steps.linear]
+call="gito.pipeline_steps.linear.fetch_associated_issue"
+envs=["local","gh-action"]
 [prompt_vars]
 self_id = """
 You are a subsystem of an AI-powered software platform, specifically tasked with performing expert code reviews.

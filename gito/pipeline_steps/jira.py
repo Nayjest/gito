@@ -4,7 +4,7 @@ import os
 import git
 from jira import JIRA
 
-from gito.issue_trackers import extract_issue_key, IssueTrackerIssue, get_branch
+from gito.issue_trackers import IssueTrackerIssue, resolve_issue_key
 
 
 def fetch_issue(issue_key, jira_url, username, api_token) -> IssueTrackerIssue | None:
@@ -31,15 +31,6 @@ def fetch_associated_issue(
     """
     Pipeline step to fetch a Jira issue based on the current branch name.
     """
-    branch_name = get_branch(repo)
-    if not branch_name:
-        logging.error("No active branch found in the repository, cannot determine Jira issue key.")
-        return None
-
-    if not (issue_key := extract_issue_key(branch_name)):
-        logging.error(f"No Jira issue key found in branch name: {branch_name}")
-        return None
-
     jira_url = jira_url or os.getenv("JIRA_URL")
     jira_username = (
         jira_username
@@ -60,6 +51,7 @@ def fetch_associated_issue(
     except AssertionError as e:
         logging.error(f"Jira configuration error: {e}")
         return None
+    issue_key = resolve_issue_key()
     return dict(
         associated_issue=fetch_issue(issue_key, jira_url, jira_username, jira_token)
-    )
+    ) if issue_key else None
