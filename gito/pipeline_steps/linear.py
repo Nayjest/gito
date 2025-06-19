@@ -81,5 +81,5 @@ def fetch_associated_issue(
 
     issue_key = resolve_issue_key(repo)
     return dict(
-        associated_issue=fetch_issue(issue_key, jira_url, jira_username, jira_token)
+        associated_issue=fetch_issue(issue_key, api_key)
     ) if issue_key else None
