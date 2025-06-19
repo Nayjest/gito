@@ -18,10 +18,9 @@ def fetch_issue(issue_key, api_key) -> IssueTrackerIssue | None:
             "Content-Type": "application/json"
         }
 
-        # GraphQL query to fetch issue by identifier
         query = """
-        query GetIssue($id: String!) {
-            issue(id: $id) {
+        query GetIssue($identifier: String!) {
+            issue(identifier: $identifier) {
                 id
                 identifier
                 title
@@ -35,7 +34,7 @@ def fetch_issue(issue_key, api_key) -> IssueTrackerIssue | None:
             url,
             json={
                 "query": query,
-                "variables": {"id": issue_key}
+                "variables": {"identifier": issue_key}
             },
             headers=headers
         )
