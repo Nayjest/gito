@@ -37,7 +37,7 @@ def get_branch(repo: git.Repo):
         return None
 
 
-def resolve_issue_key():
+def resolve_issue_key(repo: git.Repo):
     branch_name = get_branch(repo)
     if not branch_name:
         logging.error("No active branch found in the repository, cannot determine issue key.")
