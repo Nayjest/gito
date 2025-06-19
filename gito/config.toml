@@ -205,23 +205,27 @@ Note: Awards should only be given to authors of initial codebase changes, not to
 {{ awards }}
 ---
 {% if pipeline_out.associated_issue and pipeline_out.associated_issue.title %}
-[Subtask]: Include one sentence about how the code changes address the requirements of the associated issue.
-
-Examples:
-
-[ 1 ] In case if the implementation delivers what was requested:
-
-✅ Implementation Satisfies [<ISSUE_KEY>](<ISSUE_URL>).
-
-[ 1 ] In case of any critical concerns:
-
-⚠️ <Your concerns here>.
+----SUBTASK----
+Include one sentence about how the code changes address the requirements of the associated issue listed below.
 
 --Associated Issue--
 # {{ pipeline_out.associated_issue.title }}
 {{ pipeline_out.associated_issue.description }}
 URL: {{ pipeline_out.associated_issue.url }}
 ---
+
+Examples:
+
+[ 1 ] In case if the implementation delivers what was requested:
+
+✅  Implementation Satisfies [<ISSUE_KEY>](<ISSUE_URL>).
+
+[ 1 ] In case of any critical concerns:
+
+⚠️  <Your concern 1 here>.
+⚠️  <Your concern 2 here>.
+
+--------
 {% endif -%}
 - Your response will be parsed programmatically, so do not include any additional text.
 - Do not include the issues by itself to the summary, they are already provided in the context.
