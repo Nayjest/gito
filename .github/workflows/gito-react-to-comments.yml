@@ -42,5 +42,6 @@ jobs:
     - name: Run Gito react
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        LLM_API_TYPE: none
       run: |
         gito react-to-comment ${{ github.event.comment.id }}
