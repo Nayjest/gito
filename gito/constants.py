@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 PROJECT_GITO_FOLDER = ".gito"
@@ -7,3 +8,4 @@ PROJECT_CONFIG_BUNDLED_DEFAULTS_FILE = Path(__file__).resolve().parent / PROJECT
 HOME_ENV_PATH = Path("~/.gito/.env").expanduser()
 JSON_REPORT_FILE_NAME = "code-review-report.json"
 EXECUTABLE = "gito"
+DEBUG = os.getenv("GITO_DEBUG", "0") in ("1", "true", "yes", "on")

@@ -60,8 +60,10 @@ def fetch_issue(issue_key, api_key) -> IssueTrackerIssue | None:
     except requests.RequestException as e:
         logging.error(f"Failed to fetch Linear issue {issue_key}: {e}")
         return None
-    except Exception as e:
-        logging.error(f"Failed to fetch Linear issue {issue_key}: {e}")
+    except requests.HTTPError as e:
+        logging.error(f"Failed to fetch Jira issue {issue_key}: {e}")
+        if DEBUG:
+            logging.error(f"Response body: {response.text}")
         return None
 
 
