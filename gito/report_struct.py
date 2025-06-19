@@ -63,7 +63,7 @@ class Report:
         MARKDOWN = "md"
         CLI = "cli"
 
-    issues: dict = field(default_factory=dict)
+    issues: dict[str,list[Issue]] = field(default_factory=dict)
     summary: str = field(default="")
     number_of_processed_files: int = field(default=0)
     total_issues: int = field(init=False)

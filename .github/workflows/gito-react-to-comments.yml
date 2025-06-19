@@ -1,11 +1,46 @@
-name: Test PR Comment
+name: "Gito: React to GitHub comment"
 
 on:
-  issue_comment
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
 
 jobs:
-  test:
+  process-comment:
+    if: |
+      github.event.issue.pull_request &&
+      (
+        github.event.comment.author_association == 'OWNER' ||
+        github.event.comment.author_association == 'COLLABORATOR'
+      ) &&
+      (
+        contains(github.event.comment.body, 'gito fix')
+      )
     runs-on: ubuntu-latest
+
     steps:
-    - name: Test
-      run: echo "Comment detected from ${{ github.event.comment.user.login }}"
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ github.repository }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with: { python-version: "3.13" }
+    - name: Install Gito
+      run: |
+        pip install poetry
+        poetry install
+        echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+        # installation from PYPI:
+        # pip install gito.bot~=2.0
+    - name: Run Gito react
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gito react-to-comment ${{ github.event.comment.id }}

@@ -1,3 +1,8 @@
+# :class: gito.project_config.ProjectConfig
+
+# Defines the keyword or mention tag that triggers bot actions when referenced in code review comments.
+# list of strings, case-insensitive
+mention_triggers = ["gito", "bot", "ai", "/fix"]
 report_template_md = """
 <h2><a href="https://github.com/Nayjest/Gito"><img src="https://raw.githubusercontent.com/Nayjest/Gito/main/press-kit/logo/gito-bot-1_64top.png" align="left" width=64 height=50></a>I've Reviewed the Code</h2>
 
