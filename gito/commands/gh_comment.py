@@ -23,6 +23,7 @@ from ..bootstrap import app
 from ..constants import JSON_REPORT_FILE_NAME
 from ..report_struct import Report
 from .fix import fix
+from ..utils import is_running_in_github_action
 
 
 @app.command()
