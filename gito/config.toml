@@ -229,7 +229,7 @@ URL: {{ pipeline_out.associated_issue.url }}
 {{ summary_requirements -}}
 """
 [pipeline_steps.jira]
-call="gito.pipeline_steps.jira.fetch_branch_issue"
+call="gito.pipeline_steps.jira.fetch_associated_issue"
 envs=["local","gh-action"]
 [prompt_vars]
 self_id = """

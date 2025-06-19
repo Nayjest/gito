@@ -27,7 +27,7 @@ class PipelineStep:
 
     def run(self, *args, **kwargs):
         fn = resolve_callable(self.call)
-        fn(*args, **kwargs)
+        return fn(*args, **kwargs)
 
 @dataclass
 class Pipeline:
