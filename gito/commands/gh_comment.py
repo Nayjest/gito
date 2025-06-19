@@ -43,6 +43,9 @@ def react_to_comment(
     logging.info(f"Using repository: {ui.yellow}{owner}/{repo_name}{ui.reset}")
     gh_token = gh_token or os.getenv("GIHTUB_TOKEN", None) or os.getenv("GH_TOKEN", None)
     api = GhApi(owner=owner, repo=repo_name, token=gh_token)
+    # temp
+    print('TOK:'+gh_token[:4]+'...')
+    exit()
     comment = api.issues.get_comment(comment_id=comment_id)
     logging.info(
         f"Comment by {ui.yellow('@' + comment.user.login)}: "
@@ -125,8 +128,6 @@ def download_latest_code_review_artifact(
     print(f"Artifact: {latest_artifact['name']}, Download URL: {url}")
     headers = {"Authorization": f"token {gh_token}"} if gh_token else {}
     zip_path = "artifact.zip"
-    # temp
-    print('TOK:'+gh_token[:4]+'...')
     with requests.get(url, headers=headers, stream=True) as r:
         r.raise_for_status()
         with open(zip_path, 'wb') as f:
