@@ -104,8 +104,8 @@ def last_code_review_run(
     # Find the run for this SHA
     run = next((
         r for r in runs
-        if r['head_sha'] == sha
-           and (
+        if # r['head_sha'] == sha and
+           (
                any(marker in r['path'].lower() for marker in ['code-review', 'code_review', 'cr'])
                or 'gito.yml' in r['name'].lower()
            )
