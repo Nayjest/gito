@@ -30,6 +30,7 @@ jobs:
         JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
         JIRA_URL: ${{ secrets.JIRA_URL }}
         JIRA_USER: ${{ secrets.JIRA_USER }}
+        LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
       run: |
         gito --verbose review
         gito github-comment --token "$GITHUB_TOKEN"

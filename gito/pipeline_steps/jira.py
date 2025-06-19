@@ -51,7 +51,7 @@ def fetch_associated_issue(
     except AssertionError as e:
         logging.error(f"Jira configuration error: {e}")
         return None
-    issue_key = resolve_issue_key()
+    issue_key = resolve_issue_key(repo)
     return dict(
         associated_issue=fetch_issue(issue_key, jira_url, jira_username, jira_token)
     ) if issue_key else None

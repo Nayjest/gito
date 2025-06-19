@@ -7,14 +7,14 @@ import git
 from gito.issue_trackers import IssueTrackerIssue, resolve_issue_key
 
 
-def fetch_issue(issue_key, api_token) -> IssueTrackerIssue | None:
+def fetch_issue(issue_key, api_key) -> IssueTrackerIssue | None:
     """
     Fetch a Linear issue using GraphQL API.
     """
     try:
         url = "https://api.linear.app/graphql"
         headers = {
-            "Authorization": f"Bearer {api_token}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         }
 
@@ -68,23 +68,18 @@ def fetch_issue(issue_key, api_token) -> IssueTrackerIssue | None:
 
 def fetch_associated_issue(
     repo: git.Repo,
-    linear_api_token=None,
+    api_key=None,
     **kwargs
 ):
     """
     Pipeline step to fetch a Linear issue based on the current branch name.
     """
-    linear_token = (
-        linear_api_token
-        or os.getenv("LINEAR_API_TOKEN")
-        or os.getenv("LINEAR_TOKEN")
-        or os.getenv("LINEAR_API_KEY")
-    )
-    if not linear_token:
-        logging.error("LINEAR_API_TOKEN environment variable is not set")
+    api_key = api_key or os.getenv("LINEAR_API_KEY")
+    if not api_key:
+        logging.error("LINEAR_API_KEY environment variable is not set")
         return
 
-    issue_key = resolve_issue_key()
+    issue_key = resolve_issue_key(repo)
     return dict(
         associated_issue=fetch_issue(issue_key, jira_url, jira_username, jira_token)
     ) if issue_key else None
