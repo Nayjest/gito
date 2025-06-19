@@ -19,7 +19,13 @@ jobs:
         github.event.comment.author_association == 'COLLABORATOR'
       ) &&
       (
-        contains(github.event.comment.body, 'gito fix')
+        startsWith(toLower(github.event.comment.body), '/') ||
+        startsWith(toLower(github.event.comment.body), 'gito') ||
+        startsWith(toLower(github.event.comment.body), 'ai') ||
+        startsWith(toLower(github.event.comment.body), 'bot') ||
+        contains(toLower(github.event.comment.body), '@gito')
+        contains(toLower(github.event.comment.body), '@ai')
+        contains(toLower(github.event.comment.body), '@bot')
       )
     runs-on: ubuntu-latest
 
