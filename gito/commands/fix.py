@@ -126,7 +126,7 @@ def fix(
 
     print(f"\n{ui.green('✓')} Issue #{issue_number} fixed successfully")
 
-    changed_files =  [file_path.as_posix()]
+    changed_files = [file_path.as_posix()]
     if commit:
         commit_changes(
             changed_files,

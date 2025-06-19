@@ -5,6 +5,7 @@ from gito.pipeline import Pipeline, PipelineStep, PipelineEnv
 
 # --- Fixtures and helpers ---
 
+
 @pytest.fixture
 def dummy_callable():
     def _callable(*args, **kwargs):
@@ -23,12 +24,15 @@ def patch_resolve_callable(dummy_callable):
 def patch_github_action_env(monkeypatch):
     # Monkeypatch is_running_in_github_action to return True (GH_ACTION) or False (LOCAL)
     def _patch(is_gh_action):
-        monkeypatch.setattr("gito.pipeline.is_running_in_github_action", lambda: is_gh_action)
+        monkeypatch.setattr(
+            "gito.pipeline.is_running_in_github_action", lambda: is_gh_action
+        )
 
     return _patch
 
 
 # --- Tests ---
+
 
 def test_pipelineenv_current_local(patch_github_action_env):
     patch_github_action_env(False)
@@ -46,7 +50,9 @@ def test_pipeline_step_run_calls_resolve_callable(patch_resolve_callable):
     step.run(foo="bar")  # should not raise
 
 
-def test_pipeline_run_executes_steps(monkeypatch, patch_resolve_callable, patch_github_action_env):
+def test_pipeline_run_executes_steps(
+    monkeypatch, patch_resolve_callable, patch_github_action_env
+):
     patch_github_action_env(False)  # Set environment to LOCAL
 
     dummy_ctx = {"x": 42}
@@ -68,7 +74,9 @@ def test_pipeline_run_executes_steps(monkeypatch, patch_resolve_callable, patch_
         mock_log.assert_called_once_with("Running pipeline step: step1")
 
 
-def test_pipeline_run_skips_steps_for_other_env(monkeypatch, patch_resolve_callable, patch_github_action_env):
+def test_pipeline_run_skips_steps_for_other_env(
+    monkeypatch, patch_resolve_callable, patch_github_action_env
+):
     patch_github_action_env(False)  # LOCAL
 
     dummy_step = PipelineStep(call="myfunc", envs=[PipelineEnv.GH_ACTION])
@@ -86,6 +94,7 @@ def test_pipeline_step_envs_default(patch_resolve_callable):
 
 
 # --- Optional: test multiple steps and context updates ---
+
 
 def test_pipeline_multiple_steps(monkeypatch, patch_github_action_env):
     patch_github_action_env(False)  # LOCAL

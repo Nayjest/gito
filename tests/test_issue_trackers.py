@@ -1,5 +1,6 @@
 from gito.issue_trackers import extract_issue_key
 
+
 def test_extract_issue_key():
     assert extract_issue_key("feature/PROJ-123") == "PROJ-123"
     assert extract_issue_key("hotfix/AA-99") == "AA-99"

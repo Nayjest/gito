@@ -17,7 +17,12 @@ class PipelineEnv(StrEnum):
 
     @staticmethod
     def current():
-        return PipelineEnv.GH_ACTION if is_running_in_github_action() else PipelineEnv.LOCAL
+        return (
+            PipelineEnv.GH_ACTION
+            if is_running_in_github_action()
+            else PipelineEnv.LOCAL
+        )
+
 
 @dataclass
 class PipelineStep:
@@ -27,6 +32,7 @@ class PipelineStep:
     def run(self, *args, **kwargs):
         fn = resolve_callable(self.call)
         return fn(*args, **kwargs)
+
 
 @dataclass
 class Pipeline:
@@ -46,9 +52,14 @@ class Pipeline:
                         self.ctx["pipeline_out"].update(step_output)
                     self.ctx["pipeline_out"][step_name] = step_output
                     if not step_output:
-                        logging.warning(f"Pipeline step \"{step_name}\" returned {repr(step_output)}.")
+                        logging.warning(
+                            f'Pipeline step "{step_name}" returned {repr(step_output)}.'
+                        )
                 except Exception as e:
-                    logging.error(f"Error in pipeline step \"{step_name}\": {e}")
+                    logging.error(f'Error in pipeline step "{step_name}": {e}')
             else:
-                logging.info(f"Skipping pipeline step: {step_name} [env: {ui.yellow(cur_env)} not in {step.envs}]")
+                logging.info(
+                    f"Skipping pipeline step: {step_name}"
+                    f" [env: {ui.yellow(cur_env)} not in {step.envs}]"
+                )
         return self.ctx["pipeline_out"]

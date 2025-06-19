@@ -134,6 +134,7 @@ def block_wrap_lr(text: str, left: str = "", right: str = "", max_rwrap: int = 6
         wrapped_lines.append(ln)
     return "\n".join(wrapped_lines)
 
+
 def extract_gh_owner_repo(repo: git.Repo) -> tuple[str, str]:
     """
     Extracts the GitHub owner and repository name.

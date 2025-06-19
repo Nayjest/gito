@@ -11,6 +11,7 @@ from git import Repo
 from .constants import PROJECT_CONFIG_BUNDLED_DEFAULTS_FILE, PROJECT_CONFIG_FILE_PATH
 from .pipeline import PipelineStep
 
+
 @dataclass
 class ProjectConfig:
     prompt: str = ""
