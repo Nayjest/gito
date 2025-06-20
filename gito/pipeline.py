@@ -43,6 +43,7 @@ class PipelineStep:
 class Pipeline:
     ctx: dict = field(default_factory=dict)
     steps: dict[str, PipelineStep] = field(default_factory=dict)
+    verbose: bool = False
 
     def run(self, *args, **kwargs):
         cur_env = PipelineEnv.current()
@@ -56,6 +57,10 @@ class Pipeline:
                     if isinstance(step_output, dict):
                         self.ctx["pipeline_out"].update(step_output)
                     self.ctx["pipeline_out"][step_name] = step_output
+                    if self.verbose and step_output:
+                        logging.info(
+                            f"Pipeline step {step_name} output: {repr(step_output)}"
+                        )
                     if not step_output:
                         logging.warning(
                             f'Pipeline step "{step_name}" returned {repr(step_output)}.'

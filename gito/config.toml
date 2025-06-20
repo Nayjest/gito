@@ -94,8 +94,8 @@ report_template_cli = """
             {#- Wrap right for one-liner, doesn't prevent copying code -#}
             {%- if i.proposal.splitlines() | length == 1 and max_line_len(i.proposal)<80 -%}
                 {{- Fore.GREEN + "─"*2 + "[ 💡 Proposed Change ]" + "─"*(max_line_len(i.proposal)-29) + "─╮" +"\n" -}}
-                {{- block_wrap_lr(i.proposal, '', ' │', 60) -}}
-                {{- "\n" + " ╰──"+"─"*(max_line_len(i.proposal)-5+1)+"─╯" -}}
+                {{- block_wrap_lr(i.proposal, '', ' │', 60, 30) -}}
+                {{- "\n" + " ╰──"+"─"*([max_line_len(i.proposal)-5+1,26]|max)+"─╯" -}}
             {#- Open right side to not prevent multiline code copying -#}
             {%- else -%}
                 {{- Fore.GREEN + "─"*2 + "[ 💡 Proposed Change ]" + "─"*([max_line_len(i.proposal)-29+2,maxlen-26-2]|min -2) + "─╮" +"\n" -}}
@@ -216,14 +216,14 @@ URL: {{ pipeline_out.associated_issue.url }}
 
 Examples:
 
-In case if the implementation delivers what was requested:
+If the implementation fully delivers the requested functionality:
 ```
 ✅  Implementation Satisfies [<ISSUE_KEY>](<ISSUE_URL>).
 ```
-In case of any critical concerns:
+If there are concerns about how thoroughly the code covers the requirements and technical description from the associated issue:
 ```
-⚠️  <Your concern 1 here>.
-⚠️  <Your concern 2 here>.
+⚠️ <Describe specific gap or concern>.
+⚠️ <Describe additional limitation or missing feature>.
 ```
 --------
 {% endif -%}
@@ -234,6 +234,9 @@ In case of any critical concerns:
 """
 [pipeline_steps.jira]
 call="gito.pipeline_steps.jira.fetch_associated_issue"
+envs=["local","gh-action"]
+[pipeline_steps.linear]
+call="gito.pipeline_steps.linear.fetch_associated_issue"
 envs=["local","gh-action"]
 [prompt_vars]
 self_id = """

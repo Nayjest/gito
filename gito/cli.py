@@ -18,7 +18,7 @@ from .project_config import ProjectConfig
 from .utils import no_subcommand, parse_refs_pair
 
 # Import fix command to register it
-from .commands import fix, gh_comment  # noqa
+from .commands import fix, gh_comment, repl  # noqa
 
 
 app_no_subcommand = typer.Typer(pretty_exceptions_show_locals=False)

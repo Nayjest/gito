@@ -123,8 +123,14 @@ def max_line_len(text: str) -> int:
     return max((len(line) for line in text.splitlines()), default=0)
 
 
-def block_wrap_lr(text: str, left: str = "", right: str = "", max_rwrap: int = 60) -> str:
-    ml = max_line_len(text)
+def block_wrap_lr(
+    text: str,
+    left: str = "",
+    right: str = "",
+    max_rwrap: int = 60,
+    min_wrap: int = 0,
+) -> str:
+    ml = max(max_line_len(text), min_wrap)
     lines = text.splitlines()
     wrapped_lines = []
     for line in lines:
