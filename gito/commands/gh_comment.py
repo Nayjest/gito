@@ -21,7 +21,6 @@ import git
 from ..bootstrap import app
 from ..constants import JSON_REPORT_FILE_NAME
 from .fix import fix
-from ..utils import is_running_in_github_action
 
 
 @app.command()
@@ -59,11 +58,11 @@ def react_to_comment(
     ):
         ui.error("No mention trigger found in comment, no reaction added.")
         return
-    if not is_running_in_github_action():
-        # @todo: need service account to react to comments
+    try:
         logging.info("Comment contains mention trigger, reacting with 'eyes'.")
         api.reactions.create_for_issue_comment(comment_id=comment_id, content="eyes")
-
+    except Exception as e:
+        logging.error("Error reacting to comment with emoji: %s", str(e))
     pr = int(comment.issue_url.split("/")[-1])
     print(f"Processing comment for PR #{pr}...")
     out_folder = "artifact"
