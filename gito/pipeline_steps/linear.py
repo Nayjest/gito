@@ -19,7 +19,7 @@ def fetch_issue(issue_key, api_key) -> IssueTrackerIssue | None:
         }
 
         query = """
-            query Issues($teamKey: String!, $issueNumber: Float) { 
+            query Issues($teamKey: String!, $issueNumber: Float) {
                 issues(filter: {team: {key: {eq: $teamKey}}, number: {eq: $issueNumber}}) {
                     nodes {
                         id

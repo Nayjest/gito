@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 PROJECT_GITO_FOLDER = ".gito"

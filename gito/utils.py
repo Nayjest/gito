@@ -128,7 +128,7 @@ def block_wrap_lr(
     left: str = "",
     right: str = "",
     max_rwrap: int = 60,
-    min_wrap = 0
+    min_wrap: int = 0,
 ) -> str:
     ml = max(max_line_len(text), min_wrap)
     lines = text.splitlines()
