@@ -59,7 +59,7 @@ def react_to_comment(
     ):
         ui.error("No mention trigger found in comment, no reaction added.")
         return
-    if not is_running_in_github_action():
+    if not is_running_in_github_action() or True:
         # @todo: need service account to react to comments
         logging.info("Comment contains mention trigger, reacting with 'eyes'.")
         api.reactions.create_for_issue_comment(comment_id=comment_id, content="eyes")
