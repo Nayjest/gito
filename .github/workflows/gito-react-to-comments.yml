@@ -6,8 +6,8 @@ on:
 
 permissions:
   contents: write  # to make PR
-  issues: read
-  pull-requests: read
+  issues: write
+  pull-requests: write
   actions: read  # to download the code review artifact
 
 jobs:
@@ -16,16 +16,17 @@ jobs:
       github.event.issue.pull_request &&
       (
         github.event.comment.author_association == 'OWNER' ||
+        github.event.comment.author_association == 'MEMBER' ||
         github.event.comment.author_association == 'COLLABORATOR'
       ) &&
       (
-        startsWith(toLower(github.event.comment.body), '/') ||
-        startsWith(toLower(github.event.comment.body), 'gito') ||
-        startsWith(toLower(github.event.comment.body), 'ai') ||
-        startsWith(toLower(github.event.comment.body), 'bot') ||
-        contains(toLower(github.event.comment.body), '@gito')
-        contains(toLower(github.event.comment.body), '@ai')
-        contains(toLower(github.event.comment.body), '@bot')
+        startsWith(github.event.comment.body, '/') ||
+        startsWith(github.event.comment.body, 'gito') ||
+        startsWith(github.event.comment.body, 'ai') ||
+        startsWith(github.event.comment.body, 'bot') ||
+        contains(github.event.comment.body, '@gito') ||
+        contains(github.event.comment.body, '@ai') ||
+        contains(github.event.comment.body, '@bot')
       )
     runs-on: ubuntu-latest
 
