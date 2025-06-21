@@ -23,7 +23,7 @@ from ..constants import JSON_REPORT_FILE_NAME
 from .fix import fix
 
 
-@app.command()
+@app.command(hidden=True)
 def react_to_comment(
     comment_id: int = typer.Argument(),
     gh_token: str = typer.Option(
@@ -38,6 +38,14 @@ def react_to_comment(
         False, "--dry-run", "-d", help="Only print changes without applying them"
     ),
 ):
+    """
+    Handles direct agent instructions from pull request comments.
+
+    Note: Not for local usage. Designed for execution within GitHub Actions workflows.
+
+    Fetches the PR comment by ID, parses agent directives, and executes the requested
+    actions automatically to enable seamless code review workflow integration.
+    """
     repo = git.Repo(".")  # Current directory
     owner, repo_name = extract_gh_owner_repo(repo)
     logging.info(f"Using repository: {ui.yellow}{owner}/{repo_name}{ui.reset}")

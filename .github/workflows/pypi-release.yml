@@ -1,0 +1,39 @@
+name: Publish Gito to PyPI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  call-tests:
+    uses: ./.github/workflows/tests.yml
+
+  build-and-publish:
+    needs: call-tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install Poetry
+      run: pip install poetry
+
+    - name: Install dependencies
+      run: poetry install
+
+    - name: Add Poetry venv to PATH
+      run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+
+    - name: Build dist
+      run: make build
+
+    - name: Publish to PyPI
+      env:
+        PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+      run: make upload
