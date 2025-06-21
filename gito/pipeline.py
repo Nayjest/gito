@@ -28,6 +28,7 @@ class PipelineEnv(StrEnum):
 class PipelineStep:
     call: str
     envs: list[PipelineEnv] = field(default_factory=PipelineEnv.all)
+    enabled: bool = field(default=True)
 
     def get_callable(self):
         """
@@ -45,11 +46,17 @@ class Pipeline:
     steps: dict[str, PipelineStep] = field(default_factory=dict)
     verbose: bool = False
 
+    @property
+    def enabled_steps(self):
+        return {
+            k:v for k, v in self.steps.items() if v.enabled
+        }
+
     def run(self, *args, **kwargs):
         cur_env = PipelineEnv.current()
         logging.info("Running pipeline... [env: %s]", ui.yellow(cur_env))
         self.ctx["pipeline_out"] = self.ctx.get("pipeline_out", {})
-        for step_name, step in self.steps.items():
+        for step_name, step in self.enabled_steps.items():
             if cur_env in step.envs:
                 logging.info(f"Running pipeline step: {step_name}")
                 try:
