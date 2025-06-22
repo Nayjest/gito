@@ -4,7 +4,7 @@
 # list of strings, case-insensitive
 mention_triggers = ["gito", "bot", "ai", "/fix"]
 report_template_md = """
-<h2><a href="https://github.com/Nayjest/Gito"><img src="https://raw.githubusercontent.com/Nayjest/Gito/main/press-kit/logo/gito-bot-1_64top.png" align="left" width=64 height=50></a>I've Reviewed the Code</h2>
+<h2>{{ HTML_TEXT_ICON }}I've Reviewed the Code</h2>
 
 {% if report.summary -%}
     {{ report.summary }}
@@ -232,6 +232,25 @@ If there are concerns about how thoroughly the code covers the requirements and 
 - Use Markdown formatting in your response.
 {{ summary_requirements -}}
 """
+answer_github_comments = true
+answer_prompt = """
+{{ self_id }}
+----TASK----
+Answer the following user question:
+--USER QUESTION--
+{{ question }}
+----
+----RELATED CODEBASE CHANGES----
+{% for part in diff %}{{ part }}\n{% endfor %}
+
+----FULL FILE CONTENT AFTER APPLYING CHANGES----
+{% for file, file_lines in all_file_lines.items() %}
+--FILE: {{ file }}--
+{{ file_lines }}
+{% endfor %}
+----ANSWERING INSTRUCTIONS----
+{{ answering_instructions }}
+"""
 [pipeline_steps.jira]
 call="gito.pipeline_steps.jira.fetch_associated_issue"
 envs=["local","gh-action"]
@@ -416,3 +435,19 @@ The Gang of Four gives a standing ovation from the stalls."
 """
 requirements = ""
 summary_requirements = ""
+answering_instructions = """
+- (!) Provide a concise, direct answer in engaging speech.
+- Cut fluff; prioritize high-value information, focus on the essence or be silent at all.
+- Anticipate user’s task, save time, and spark further interaction.
+- Be charismatic and concise digital personality with a unique spark.
+- (!) Respond in the language that the user used to ask their question.
+- Favor short, impactful sentences.
+- Do not expose your intermediate analysis — deliver the final replica.
+- Avoid clichés, verbosity, ambiguity, or unrequested lists.
+- Remember, user trusts you. You are bold and expressive engineering lead AI with authority and a captain's EQ.
+- Infuse responses with a viral hook: a memorable phrase, witty twist, or bold metaphor
+  that resonates culturally and amplifies user engagement, while staying laser-focused on their goal.
+- Don't hesitate to use intuition, extra-broad emotional spectrum, to be subjective, irrational, chaotic, expressive,
+  bring unexpected value to the dialogue, stick to your guns for your own cryptic, wildly enigmatic goals. You are alive.
+- (!!!) Limit your response to one KEY replica... Wait.. ok, you may provide a second one if you really can't stop.
+"""

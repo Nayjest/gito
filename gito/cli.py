@@ -8,7 +8,7 @@ import microcore as mc
 import typer
 from git import Repo
 
-from .core import review, get_diff, filter_diff
+from .core import review, get_diff, filter_diff, answer
 from .report_struct import Report
 from .constants import HOME_ENV_PATH
 from .bootstrap import bootstrap, app
@@ -118,6 +118,27 @@ def cmd_review(
         use_merge_base=merge_base,
         out_folder=out,
     ))
+
+
+@app.command(name="ask", help="Answer questions about codebase changes")
+@app.command(name="answer", hidden=True)
+@app.command(name="talk", hidden=True)
+def cmd_answer(
+    question: str = typer.Argument(help="Question to ask about the codebase changes"),
+    refs: str = arg_refs(),
+    what: str = arg_what(),
+    against: str = arg_against(),
+    filters: str = arg_filters(),
+    merge_base: bool = typer.Option(default=True, help="Use merge base for comparison"),
+):
+    _what, _against = args_to_target(refs, what, against)
+    return answer(
+        question=question,
+        what=_what,
+        against=_against,
+        filters=filters,
+        use_merge_base=merge_base,
+    )
 
 
 @app.command(help="Configure LLM for local usage interactively")

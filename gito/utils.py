@@ -6,6 +6,8 @@ from pathlib import Path
 import typer
 import git
 from git import Repo
+from microcore import ui
+
 
 _EXT_TO_HINT: dict[str, str] = {
     # scripting & languages
@@ -218,3 +220,7 @@ def detect_github_env() -> dict:
     else:
         d["github_pr_sha_or_branch"] = "main"
     return d
+
+
+def stream_to_cli(text):
+    print(ui.blue(text), end='')

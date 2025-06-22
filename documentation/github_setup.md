@@ -32,7 +32,14 @@ Create a file at `.github/workflows/gito-code-review.yml` in your repository wit
 
 ```yaml
 name: "Gito: AI Code Review"
-on: { pull_request: { types: [opened, synchronize, reopened] } }
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull Request number"
+        required: true
 jobs:
   review:
     runs-on: ubuntu-latest
@@ -51,6 +58,7 @@ jobs:
           LLM_API_TYPE: openai
           MODEL: "gpt-4.1"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER_FROM_WORKFLOW_DISPATCH: ${{ github.event.inputs.pr_number }}
         run: |
           gito --verbose review
           gito github-comment --token "$GITHUB_TOKEN"
