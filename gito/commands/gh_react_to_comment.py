@@ -180,6 +180,7 @@ def extract_fix_args(text: str) -> list[int]:
         return issue_numbers
     return []
 
+
 def is_review_request(text: str) -> list[int]:
     trigger_words = ['review', 'run', 'code-review']
     if any(f"/{word}" in text.lower() for word in trigger_words):
