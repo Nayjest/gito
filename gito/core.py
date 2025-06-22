@@ -13,6 +13,7 @@ from unidiff.constants import DEV_NULL
 from .project_config import ProjectConfig
 from .report_struct import Report
 from .constants import JSON_REPORT_FILE_NAME
+from .utils import stream_to_cli
 
 
 def review_subject_is_index(what):
@@ -158,24 +159,27 @@ def make_cr_summary(config: ProjectConfig, report: Report, diff, **kwargs) -> st
     )
 
 
-async def review(
+class NoChangesInContextError(Exception):
+    """
+    Exception raised when there are no changes in the context to review /answer questions.
+    """
+
+
+def _prepare(
     repo: Repo = None,
     what: str = None,
     against: str = None,
     filters: str | list[str] = "",
     use_merge_base: bool = True,
-    out_folder: str | PathLike | None = None,
 ):
     repo = repo or Repo(".")
     cfg = ProjectConfig.load_for_repo(repo)
-    out_folder = Path(out_folder or repo.working_tree_dir)
     diff = get_diff(
         repo=repo, what=what, against=against, use_merge_base=use_merge_base
     )
     diff = filter_diff(diff, filters)
     if not diff:
-        logging.error("Nothing to review")
-        return
+        raise NoChangesInContextError()
     lines = {
         file_diff.path: (
             file_lines(
@@ -190,6 +194,24 @@ async def review(
         )
         for file_diff in diff
     }
+    return repo, cfg, diff, lines
+
+
+async def review(
+    repo: Repo = None,
+    what: str = None,
+    against: str = None,
+    filters: str | list[str] = "",
+    use_merge_base: bool = True,
+    out_folder: str | PathLike | None = None,
+):
+    try:
+        repo, cfg, diff, lines = _prepare(
+            repo=repo, what=what, against=against, filters=filters, use_merge_base=use_merge_base
+        )
+    except NoChangesInContextError:
+        logging.error("No changes to review")
+        return
     responses = await mc.llm_parallel(
         [
             mc.prompt(
@@ -213,6 +235,7 @@ async def review(
                         f_lines[i["start_line"]: i["end_line"] + 1]
                     )
     exec(cfg.post_process, {"mc": mc, **locals()})
+    out_folder = Path(out_folder or repo.working_tree_dir)
     out_folder.mkdir(parents=True, exist_ok=True)
     report = Report(issues=issues, number_of_processed_files=len(diff))
     ctx = dict(
@@ -237,3 +260,29 @@ async def review(
     text_report_path = out_folder / "code-review-report.md"
     text_report_path.write_text(report_text, encoding="utf-8")
     report.to_cli()
+
+
+def answer(
+    question: str,
+    repo: Repo = None,
+    what: str = None,
+    against: str = None,
+    filters: str | list[str] = "",
+    use_merge_base: bool = True,
+) -> str | None:
+    try:
+        repo, cfg, diff, lines = _prepare(
+            repo=repo, what=what, against=against, filters=filters, use_merge_base=use_merge_base
+        )
+    except NoChangesInContextError:
+        logging.error("No changes to review")
+        return
+    response = mc.llm(mc.prompt(
+        cfg.answer_prompt,
+        question=question,
+        diff=diff,
+        all_file_lines=lines,
+        **cfg.prompt_vars,
+        callback=stream_to_cli
+    ))
+    return response

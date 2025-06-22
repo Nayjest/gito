@@ -16,6 +16,7 @@ from .pipeline import PipelineStep
 class ProjectConfig:
     prompt: str = ""
     summary_prompt: str = ""
+    answer_prompt: str = ""
     report_template_md: str = ""
     """Markdown report template"""
     report_template_cli: str = ""
@@ -26,6 +27,7 @@ class ProjectConfig:
     max_code_tokens: int = 32000
     prompt_vars: dict = field(default_factory=dict)
     mention_triggers: list[str] = field(default_factory=list)
+    answer_github_comments: bool = field(default=True)
     """
     Defines the keyword or mention tag that triggers bot actions
     when referenced in code review comments.

@@ -12,14 +12,16 @@ import zipfile
 import requests
 import typer
 from fastcore.basics import AttrDict
-from gito.project_config import ProjectConfig
-from gito.utils import extract_gh_owner_repo
 from microcore import ui
 from ghapi.all import GhApi
 import git
 
 from ..bootstrap import app
-from ..constants import JSON_REPORT_FILE_NAME
+from ..constants import JSON_REPORT_FILE_NAME, HTML_TEXT_ICON
+from ..core import answer
+from ..gh_api import post_gh_comment
+from ..project_config import ProjectConfig
+from ..utils import extract_gh_owner_repo
 from .fix import fix
 
 
@@ -73,25 +75,29 @@ def react_to_comment(
         logging.error("Error reacting to comment with emoji: %s", str(e))
     pr = int(comment.issue_url.split("/")[-1])
     print(f"Processing comment for PR #{pr}...")
-    out_folder = "artifact"
-    download_latest_code_review_artifact(
-        api, pr_number=pr, gh_token=gh_token, out_folder=out_folder
-    )
 
     issue_ids = extract_fix_args(comment.body)
-    if not issue_ids:
-        ui.error("Can't identify target command in the text.")
-        return
-    logging.info(f"Extracted issue IDs: {ui.yellow(str(issue_ids))}")
-
-    fix(
-        issue_ids[0],  # @todo: support multiple IDs
-        report_path=Path(out_folder) / JSON_REPORT_FILE_NAME,
-        dry_run=dry_run,
-        commit=not dry_run,
-        push=not dry_run,
-    )
-    logging.info("Fix applied successfully.")
+    if issue_ids:
+        logging.info(f"Extracted issue IDs: {ui.yellow(str(issue_ids))}")
+        out_folder = "artifact"
+        download_latest_code_review_artifact(
+            api, pr_number=pr, gh_token=gh_token, out_folder=out_folder
+        )
+        fix(
+            issue_ids[0],  # @todo: support multiple IDs
+            report_path=Path(out_folder) / JSON_REPORT_FILE_NAME,
+            dry_run=dry_run,
+            commit=not dry_run,
+            push=not dry_run,
+        )
+        logging.info("Fix applied successfully.")
+    else:
+        if cfg.answer_github_comments:
+            response = answer(comment.body, repo=repo)
+            post_gh_comment(f"{owner}/{repo_name}", pr, HTML_TEXT_ICON+response, gh_token)
+        else:
+            ui.error("Can't identify target command in the text.")
+            return
 
 
 def last_code_review_run(api: GhApi, pr_number: int) -> AttrDict | None:

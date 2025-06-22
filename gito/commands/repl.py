@@ -4,7 +4,7 @@ Python REPL
 # flake8: noqa: F401
 import code
 
-# Imports for usage in REPL
+# Wildcard imports are preferred to capture most of functionality for usage in REPL
 import os
 import sys
 from dataclasses import dataclass
@@ -17,6 +17,10 @@ import microcore as mc
 from microcore import ui
 
 from ..cli import app
+from ..constants import *
+from ..core import *
+from ..utils import *
+
 
 @app.command(help="python REPL")
 def repl():
