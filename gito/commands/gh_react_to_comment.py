@@ -91,6 +91,12 @@ def react_to_comment(
             push=not dry_run,
         )
         logging.info("Fix applied successfully.")
+    elif is_review_request(comment.body):
+        logging.info("Triggering code-review workflow...")
+        api.actions.create_workflow_dispatch(
+            workflow_id="gito-code-review.yml",
+            ref=cfg.prompt_vars.get("github_branch"),
+        )
     else:
         if cfg.answer_github_comments:
             response = answer(comment.body, repo=repo)
@@ -173,3 +179,12 @@ def extract_fix_args(text: str) -> list[int]:
         issue_numbers = [int(num) for num in numbers]
         return issue_numbers
     return []
+
+def is_review_request(text: str) -> list[int]:
+    trigger_words = ['review', 'run', 'code-review']
+    if any(f"/{word}" in text.lower() for word in trigger_words):
+        return True
+    parts = text.split()
+    if len(parts) == 2 and parts[1].lower() in trigger_words:
+        return True
+    return False

@@ -1,5 +1,8 @@
 name: "Gito: AI Code Reviewer"
-on: { pull_request: { types: [opened, synchronize, reopened] } }
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
 jobs:
   review:
     runs-on: ubuntu-latest
