@@ -49,7 +49,7 @@ class Pipeline:
     @property
     def enabled_steps(self):
         return {
-            k:v for k, v in self.steps.items() if v.enabled
+            k: v for k, v in self.steps.items() if v.enabled
         }
 
     def run(self, *args, **kwargs):
