@@ -183,7 +183,7 @@ def extract_fix_args(text: str) -> list[int]:
     return []
 
 
-def is_review_request(text: str) -> list[int]:
+def is_review_request(text: str) -> bool:
     text = text.lower().strip()
     trigger_words = ['review', 'run', 'code-review']
     if any(f"/{word}" in text for word in trigger_words):
