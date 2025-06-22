@@ -94,7 +94,12 @@ def react_to_comment(
     else:
         if cfg.answer_github_comments:
             response = answer(comment.body, repo=repo)
-            post_gh_comment(f"{owner}/{repo_name}", pr, HTML_TEXT_ICON+response, gh_token)
+            post_gh_comment(
+                gh_repository=f"{owner}/{repo_name}",
+                pr_or_issue_number=pr,
+                gh_token=gh_token,
+                comment=HTML_TEXT_ICON+response,
+            )
         else:
             ui.error("Can't identify target command in the text.")
             return
