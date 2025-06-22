@@ -97,6 +97,7 @@ def react_to_comment(
         api.actions.create_workflow_dispatch(
             workflow_id="gito-code-review.yml",
             ref=ref,
+            inputs={"pr_number": str(pr)},
         )
     else:
         if cfg.answer_github_comments:

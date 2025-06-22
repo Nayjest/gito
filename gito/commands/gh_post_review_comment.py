@@ -50,6 +50,10 @@ def github_comment(
         except Exception:
             pass
     if not pr:
+        pr = os.getenv("PR_NUMBER_FROM_WORKFLOW_DISPATCH")
+        if pr:
+            pr = int(pr)
+    if not pr:
         logging.error("Could not resolve PR number from environment variables.")
         raise typer.Exit(3)
 

@@ -3,6 +3,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull Request number"
+        required: true
 jobs:
   review:
     runs-on: ubuntu-latest
@@ -35,6 +39,7 @@ jobs:
         JIRA_USER: ${{ secrets.JIRA_USER }}
         LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
         GITO_DEBUG: "1"
+        PR_NUMBER_FROM_WORKFLOW_DISPATCH: ${{ github.event.inputs.pr_number }}
       run: |
         gito --verbose review
         gito github-comment --token "$GITHUB_TOKEN"
