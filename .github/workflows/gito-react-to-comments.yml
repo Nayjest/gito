@@ -69,7 +69,11 @@ jobs:
 
     - name: Run Gito react
       env:
+        # LLM config is needed only if answer_github_comments = true
+        # Othwerwise, use LLM_API_TYPE: none
+        LLM_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        LLM_API_TYPE: anthropic
+        MODEL: "claude-sonnet-4-20250514"
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        LLM_API_TYPE: none
       run: |
         gito react-to-comment ${{ github.event.comment.id }} --token "$GITHUB_TOKEN"
