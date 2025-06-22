@@ -50,12 +50,12 @@ jobs:
       run: |
         pytest --cov=gito --cov-report=xml
     - name: Generate coverage badge
-      if: matrix.python-version == '3.13'  # Run badge generation only once
+      if: matrix.python-version == '3.13' && github.event_name != 'workflow_call'
       uses: tj-actions/coverage-badge-py@v2
       with:
         output: 'coverage.svg'
     - name: Commit coverage badge
-      if: matrix.python-version == '3.13'  # Commit only once
+      if: matrix.python-version == '3.13' && github.event_name != 'workflow_call'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
