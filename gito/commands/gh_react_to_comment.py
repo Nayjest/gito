@@ -183,10 +183,11 @@ def extract_fix_args(text: str) -> list[int]:
 
 
 def is_review_request(text: str) -> list[int]:
+    text = text.lower().strip()
     trigger_words = ['review', 'run', 'code-review']
-    if any(f"/{word}" in text.lower() for word in trigger_words):
+    if any(f"/{word}" in text for word in trigger_words):
         return True
     parts = text.split()
-    if len(parts) == 2 and parts[1].lower() in trigger_words:
+    if len(parts) == 2 and parts[1] in trigger_words:
         return True
     return False
