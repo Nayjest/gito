@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_call:  # for triggering from pypi-release.yml
+    secrets:
+      LLM_API_KEY:
+        required: false # or true if you always need it
 
 permissions:
   contents: write
