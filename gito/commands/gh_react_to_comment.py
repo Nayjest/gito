@@ -92,7 +92,8 @@ def react_to_comment(
         )
         logging.info("Fix applied successfully.")
     elif is_review_request(comment.body):
-        logging.info("Triggering code-review workflow...")
+        ref = cfg.prompt_vars.get("github_branch")
+        logging.info(f"Triggering code-review workflow, ref='{ref}'")
         api.actions.create_workflow_dispatch(
             workflow_id="gito-code-review.yml",
             ref=cfg.prompt_vars.get("github_branch"),
