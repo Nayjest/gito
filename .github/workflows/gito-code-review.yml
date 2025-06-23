@@ -33,7 +33,6 @@ jobs:
         LLM_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         LLM_API_TYPE: anthropic
         MODEL: "claude-sonnet-4-20250514"
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
         JIRA_URL: ${{ secrets.JIRA_URL }}
         JIRA_USER: ${{ secrets.JIRA_USER }}
@@ -42,7 +41,7 @@ jobs:
         PR_NUMBER_FROM_WORKFLOW_DISPATCH: ${{ github.event.inputs.pr_number }}
       run: |
         gito --verbose review
-        gito github-comment --token "$GITHUB_TOKEN"
+        gito github-comment --token ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/upload-artifact@v4
       with:
         name: gito-code-review-results
