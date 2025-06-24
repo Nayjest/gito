@@ -29,7 +29,7 @@ Get consistent, thorough code reviews in seconds—no waiting for human availabi
 - Open source projects maintaining high code quality at scale
 - CI/CD pipelines requiring automated quality gates
 
-✨ See [code review in action](https://github.com/Nayjest/Gito/pull/39#issuecomment-2906968729) ✨
+✨ See [code review in action](https://github.com/Nayjest/Gito/pull/99) ✨
 
 ## 🚀 Quickstart
 
