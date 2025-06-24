@@ -7,10 +7,11 @@ import git
 from gito.issue_trackers import IssueTrackerIssue, resolve_issue_key
 
 
-def fetch_issue(issue_key, api_key) -> IssueTrackerIssue | None:
+def fetch_issue(issue_key: str, api_key: str = None) -> IssueTrackerIssue | None:
     """
     Fetch a Linear issue using GraphQL API.
     """
+    api_key = api_key or os.getenv("LINEAR_API_KEY")
     try:
         url = "https://api.linear.app/graphql"
         headers = {
@@ -36,7 +37,7 @@ def fetch_issue(issue_key, api_key) -> IssueTrackerIssue | None:
             url,
             json={
                 "query": query,
-                "variables":  {'teamKey': team_key, 'issueNumber': int(issue_number)}
+                "variables": {'teamKey': team_key, 'issueNumber': int(issue_number)}
             },
             headers=headers
         )
