@@ -16,7 +16,7 @@ clear-dist:
 clr-dist: clear-dist
 
 publish:
-	python -c "import os;t=os.getenv('PYPI_TOKEN');__import__('subprocess').run(f'python -m twine upload dist/* -u __token__ -p {t}',shell=True,check=True)"
+	python -c "import os,subprocess;t=os.getenv('PYPI_TOKEN');subprocess.run(['python', '-m', 'twine', 'upload', 'dist/*', '-u', '__token__', '-p', t], check=True)"
 
 upload: publish
 test:
