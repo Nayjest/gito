@@ -1,0 +1,40 @@
+name: "Gito: AI Code Reviewer"
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull Request number"
+        required: true
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions: { contents: read, pull-requests: write } # 'write' for leaving the summary comment
+    steps:
+    - uses: actions/checkout@v4
+      with: { fetch-depth: 0 }
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with: { python-version: "3.13" }
+    - name: Install Gito
+      run: pip install gito.bot~=2.0
+    - name: Run AI code review
+      env:
+        LLM_API_TYPE: anthropic
+        LLM_API_KEY: ${{ secrets.ANTHROPIC_API_KEY}}
+        MODEL: claude-sonnet-4-20250514
+        JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+        JIRA_URL: ${{ secrets.JIRA_URL }}
+        JIRA_USER: ${{ secrets.JIRA_USER }}
+        LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+        PR_NUMBER_FROM_WORKFLOW_DISPATCH: ${{ github.event.inputs.pr_number }}
+      run: |
+        gito --verbose review
+        gito github-comment --token ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/upload-artifact@v4
+      with:
+        name: gito-code-review-results
+        path: |
+          code-review-report.md
+          code-review-report.json
