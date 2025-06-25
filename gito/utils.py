@@ -2,6 +2,7 @@ import re
 import sys
 import os
 from pathlib import Path
+import importlib.metadata
 
 import typer
 import git
@@ -224,3 +225,7 @@ def detect_github_env() -> dict:
 
 def stream_to_cli(text):
     print(ui.blue(text), end='')
+
+
+def vesion() -> str:
+    return importlib.metadata.version("gito.bot")

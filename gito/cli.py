@@ -15,7 +15,7 @@ from .bootstrap import bootstrap, app
 from .utils import no_subcommand, parse_refs_pair
 
 # Import fix command to register it
-from .commands import fix, gh_post_review_comment, gh_react_to_comment, repl  # noqa
+from .commands import fix, gh_post_review_comment, gh_react_to_comment, repl, deploy  # noqa
 
 
 app_no_subcommand = typer.Typer(pretty_exceptions_show_locals=False)
