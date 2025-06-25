@@ -3,7 +3,7 @@
 <a href="https://pypi.org/project/gito.bot/" target="_blank"><img src="https://img.shields.io/pypi/v/gito.bot" alt="PYPI Release"></a>
 <a href="https://github.com/Nayjest/Gito/actions/workflows/code-style.yml" target="_blank"><img src="https://github.com/Nayjest/Gito/actions/workflows/code-style.yml/badge.svg" alt="PyLint"></a>
 <a href="https://github.com/Nayjest/Gito/actions/workflows/tests.yml" target="_blank"><img src="https://github.com/Nayjest/Gito/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
-<img src="https://raw.githubusercontent.com/Nayjest/Gito/blob/main/coverage.svg" alt="Code Coverage">
+<img src="https://raw.githubusercontent.com/Nayjest/Gito/main/coverage.svg" alt="Code Coverage">
 <a href="https://github.com/Nayjest/Gito/blob/main/LICENSE" target="_blank"><img src="https://img.shields.io/static/v1?label=license&message=MIT&color=d08aff" alt="License"></a>
 </p>
 
@@ -29,7 +29,7 @@ Get consistent, thorough code reviews in seconds—no waiting for human availabi
 - Open source projects maintaining high code quality at scale
 - CI/CD pipelines requiring automated quality gates
 
-✨ See [code review in action](https://github.com/Nayjest/Gito/pull/39#issuecomment-2906968729) ✨
+✨ See [code review in action](https://github.com/Nayjest/Gito/pull/99) ✨
 
 ## 🚀 Quickstart
 
