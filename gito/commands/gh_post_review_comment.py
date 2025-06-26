@@ -70,4 +70,4 @@ def github_comment(
 
     if config.collapse_previous_code_review_comments:
         sleep(1)
-        collapse_gh_cr_comments(repo, pr, token)
+        collapse_gh_outdated_cr_comments(repo, pr, token)
