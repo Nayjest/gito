@@ -72,9 +72,10 @@ def collapse_gh_outdated_cr_comments(
         logging.info(f"Collapsing comment {comment.id}...")
         new_body = f"<details>\n<summary>{collapsed_title}</summary>\n\n{comment.body}\n</details>"
         api.issues.update_comment(comment.id, new_body)
-        api._request(
+        root_api = GhApi(token=token)
+        root_api._request(
             "PUT",
-            f"/repos/{owner}/{repo}/pulls/comments/{comment_id}/hidden",
+            f"/repos/{owner}/{repo}/pulls/comments/{comment.id}/hidden",
             data={
                 "message": "Hidden as outdated by automation.",
                 "reason": "OUTDATED"
