@@ -61,10 +61,16 @@ class ProjectConfig:
             logging.info(
                 f"Loading project-specific configuration from {mc.utils.file_link(config_path)}...")
             default_prompt_vars = config["prompt_vars"]
+            default_pipeline_steps = config["pipeline_steps"]
             with open(config_path, "rb") as f:
                 config.update(tomllib.load(f))
             # overriding prompt_vars config section will not empty default values
             config["prompt_vars"] = default_prompt_vars | config["prompt_vars"]
+            # merge individual pipeline steps
+            for k, v in config["pipeline_steps"].items():
+                config["pipeline_steps"][k] = default_pipeline_steps.get(k, {}) | v
+            # merge pipeline steps dict
+            config["pipeline_steps"] = default_pipeline_steps | config["pipeline_steps"]
         else:
             logging.info(
                 f"No project config found at {ui.blue(config_path)}, using defaults"
