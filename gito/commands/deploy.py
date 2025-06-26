@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import microcore as mc
@@ -8,17 +7,18 @@ from git import Repo
 from ..utils import version, extract_gh_owner_repo
 from ..bootstrap import app
 
+
 @app.command(name="deploy", help="Deploy Gito workflows to GitHub Actions")
 @app.command(name="init", hidden=True)
 def deploy(api_type: ApiType = None, commit: bool = None, rewrite: bool = False):
     repo = Repo(".")
     workflow_files = dict(
-        code_review = Path(".github/workflows/gito-code-review.yml"),
-        react_to_comments = Path(".github/workflows/gito-react-to-comments.yml")
+        code_review=Path(".github/workflows/gito-code-review.yml"),
+        react_to_comments=Path(".github/workflows/gito-react-to-comments.yml")
     )
     for file in workflow_files.values():
         if file.exists():
-            message = f"Gito workflow already exists at { utils.file_link(file) }."
+            message = f"Gito workflow already exists at {utils.file_link(file)}."
             if rewrite:
                 ui.warning(message)
             else:
@@ -55,8 +55,14 @@ def deploy(api_type: ApiType = None, commit: bool = None, rewrite: bool = False)
         ApiType=ApiType,
         remove_indent=True,
     )
-    gito_code_review_yml = mc.tpl("github_workflows/gito-code-review.yml.jinja2", **template_vars)
-    gito_react_to_comments_yml = mc.tpl("github_workflows/gito-react-to-comments.yml.jinja2", **template_vars)
+    gito_code_review_yml = mc.tpl(
+        "github_workflows/gito-code-review.yml.jinja2",
+        **template_vars
+    )
+    gito_react_to_comments_yml = mc.tpl(
+        "github_workflows/gito-react-to-comments.yml.jinja2",
+        **template_vars
+    )
 
     workflow_files["code_review"].parent.mkdir(parents=True, exist_ok=True)
     workflow_files["code_review"].write_text(gito_code_review_yml)
@@ -92,6 +98,3 @@ def deploy(api_type: ApiType = None, commit: bool = None, rewrite: bool = False)
         f"https://github.com/{owner}/{repo_name}/settings/secrets/actions"
     )
     return True
-
-
-
