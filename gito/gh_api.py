@@ -72,4 +72,9 @@ def collapse_gh_outdated_cr_comments(
         logging.info(f"Collapsing comment {comment.id}...")
         new_body = f"<details>\n<summary>{collapsed_title}</summary>\n\n{comment.body}\n</details>"
         api.issues.update_comment(comment.id, new_body)
+        api.issues.hide_review_comment(
+            comment.id,
+            message="Hidden as outdated by automation.",
+            reason="OUTDATED"
+        )
     logging.info("All outdated comments collapsed successfully.")
