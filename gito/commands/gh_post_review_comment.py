@@ -1,17 +1,22 @@
 import logging
 import os
+from time import sleep
 
 import typer
-from gito.bootstrap import app
-from gito.constants import GITHUB_MD_REPORT_FILE_NAME
-from gito.gh_api import post_gh_comment
-from gito.project_config import ProjectConfig
+from ..bootstrap import app
+from ..constants import GITHUB_MD_REPORT_FILE_NAME
+from ..gh_api import (
+    post_gh_comment,
+    collapse_gh_outdated_cr_comments,
+    resolve_gh_token,
+)
+from ..project_config import ProjectConfig
 
 
 @app.command(help="Leave a GitHub PR comment with the review.")
 def github_comment(
     token: str = typer.Option(
-        os.environ.get("GITHUB_TOKEN", ""), help="GitHub token (or set GITHUB_TOKEN env var)"
+        "", help="GitHub token (or set GITHUB_TOKEN env var)"
     ),
 ):
     """
@@ -25,11 +30,12 @@ def github_comment(
     with open(file, "r", encoding="utf-8") as f:
         body = f.read()
 
+    token = resolve_gh_token(token)
     if not token:
         print("GitHub token is required (--token or GITHUB_TOKEN env var).")
         raise typer.Exit(1)
-
-    github_env = ProjectConfig.load().prompt_vars["github_env"]
+    config = ProjectConfig.load()
+    github_env = config.prompt_vars["github_env"]
     repo = github_env.get("github_repo", "")
     pr_env_val = github_env.get("github_pr_number", "")
     logging.info(f"github_pr_number = {pr_env_val}")
@@ -61,3 +67,7 @@ def github_comment(
 
     if not post_gh_comment(repo, pr, token, body):
         raise typer.Exit(5)
+
+    if config.collapse_previous_code_review_comments:
+        sleep(1)
+        collapse_gh_cr_comments(repo, pr, token)

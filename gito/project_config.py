@@ -33,6 +33,11 @@ class ProjectConfig:
     when referenced in code review comments.
     """
     pipeline_steps: dict[str, dict | PipelineStep] = field(default_factory=dict)
+    collapse_previous_code_review_comments: bool = field(default=True)
+    """
+    If True, previously added code review comments in the pull request
+    will be collapsed automatically when a new comment is added.
+    """
 
     def __post_init__(self):
         self.pipeline_steps = {

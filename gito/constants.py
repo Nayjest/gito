@@ -10,3 +10,4 @@ GITHUB_MD_REPORT_FILE_NAME = "code-review-report.md"
 EXECUTABLE = "gito"
 TEXT_ICON_URL = 'https://raw.githubusercontent.com/Nayjest/Gito/main/press-kit/logo/gito-bot-1_64top.png'  # noqa: E501
 HTML_TEXT_ICON = f'<a href="https://github.com/Nayjest/Gito"><img src="{TEXT_ICON_URL}" align="left" width=64 height=50 /></a>'  # noqa: E501
+HTML_CR_COMMENT_MARKER = '<!-- GITO_COMMENT:CODE_REVIEW_REPORT -->'

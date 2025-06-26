@@ -3,6 +3,7 @@
 # Defines the keyword or mention tag that triggers bot actions when referenced in code review comments.
 # list of strings, case-insensitive
 mention_triggers = ["gito", "bot", "ai", "/fix"]
+collapse_previous_code_review_comments = true
 report_template_md = """
 <h2>{{ HTML_TEXT_ICON }}I've Reviewed the Code</h2>
 
@@ -36,7 +37,7 @@ report_template_md = """
     {%- endfor -%}
     {{ "\n" }}
 {%- endfor -%}
-
+{{- HTML_CR_COMMENT_MARKER -}}
 """
 report_template_cli = """
 {{ Back.BLUE }}  +  +  +  ---==<<[ CODE REVIEW{{Style.NORMAL}} ]>>==---  +  +  +  {{Style.RESET_ALL}}

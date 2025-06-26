@@ -20,6 +20,7 @@ from ..cli import app
 from ..constants import *
 from ..core import *
 from ..utils import *
+from ..gh_api import *
 
 
 @app.command(help="python REPL")
