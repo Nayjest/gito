@@ -94,7 +94,8 @@ def deploy(api_type: ApiType = None, commit: bool = None, rewrite: bool = False)
 
     print(
         "(!IMPORTANT):\n"
-        f"Add {mc.ui.cyan(secret_names[api_type])} with actual API_KEY to your repository secrets here:\n"
+        f"Add {mc.ui.cyan(secret_names[api_type])} with actual API_KEY "
+        "to your repository secrets here:\n"
         f"https://github.com/{owner}/{repo_name}/settings/secrets/actions"
     )
     return True
