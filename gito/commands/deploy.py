@@ -5,7 +5,7 @@ import microcore as mc
 from microcore import ApiType, ui, utils
 from git import Repo
 
-from ..utils import vesion, extract_gh_owner_repo
+from ..utils import version, extract_gh_owner_repo
 from ..bootstrap import app
 
 @app.command(name="deploy", help="Deploy Gito workflows to GitHub Actions")
@@ -45,7 +45,7 @@ def deploy(api_type: ApiType = None, commit: bool = None, rewrite: bool = False)
     elif api_type not in api_types:
         mc.ui.error(f"Unsupported API type: {api_type}")
         return False
-    major, minor, *_ = vesion().split(".")
+    major, minor, *_ = version().split(".")
     template_vars = dict(
         model=default_models[api_type],
         api_type=api_type,
@@ -56,7 +56,7 @@ def deploy(api_type: ApiType = None, commit: bool = None, rewrite: bool = False)
         remove_indent=True,
     )
     gito_code_review_yml = mc.tpl("github_workflows/gito-code-review.yml.jinja2", **template_vars)
-    gito_react_to_comments_yml = mc.tpl("github_workflows/git-react-to-comments.yml.jinja2", **template_vars)
+    gito_react_to_comments_yml = mc.tpl("github_workflows/gito-react-to-comments.yml.jinja2", **template_vars)
 
     workflow_files["code_review"].parent.mkdir(parents=True, exist_ok=True)
     workflow_files["code_review"].write_text(gito_code_review_yml)
@@ -66,7 +66,7 @@ def deploy(api_type: ApiType = None, commit: bool = None, rewrite: bool = False)
         + f"  - {mc.utils.file_link(workflow_files['code_review'])}\n"
         + f"  - {mc.utils.file_link(workflow_files['react_to_comments'])}\n"
     )
-
+    owner, repo_name = extract_gh_owner_repo(repo)
     if commit is True or commit is None and mc.ui.ask_yn(
         "Do you want to commit and push created GitHub workflows to a new branch?"
     ):
@@ -86,7 +86,6 @@ def deploy(api_type: ApiType = None, commit: bool = None, rewrite: bool = False)
             "Now you can commit and push created GitHub workflows to your main repository branch.\n"
         )
 
-    owner, repo_name = extract_gh_owner_repo(repo)
     print(
         "(!IMPORTANT):\n"
         f"Add {mc.ui.cyan(secret_names[api_type])} with actual API_KEY to your repository secrets here:\n"

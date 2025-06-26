@@ -227,5 +227,5 @@ def stream_to_cli(text):
     print(ui.blue(text), end='')
 
 
-def vesion() -> str:
+def version() -> str:
     return importlib.metadata.version("gito.bot")
