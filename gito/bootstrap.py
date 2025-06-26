@@ -1,12 +1,13 @@
 import logging
 import os
 from datetime import datetime
+from pathlib import Path
 
 import microcore as mc
 import typer
 
 from .utils import is_running_in_github_action
-from .constants import HOME_ENV_PATH, EXECUTABLE
+from .constants import HOME_ENV_PATH, EXECUTABLE, PROJECT_GITO_FOLDER
 
 
 def setup_logging():
@@ -36,6 +37,10 @@ def bootstrap():
             DOT_ENV_FILE=HOME_ENV_PATH,
             USE_LOGGING=True,
             EMBEDDING_DB_TYPE=mc.EmbeddingDbType.NONE,
+            PROMPT_TEMPLATES_PATH=[
+                PROJECT_GITO_FOLDER,
+                Path(__file__).parent / "tpl"
+            ],
         )
     except mc.LLMConfigError as e:
         msg = str(e)
