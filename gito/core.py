@@ -5,8 +5,9 @@ from typing import Iterable
 from pathlib import Path
 
 import microcore as mc
-from git import Repo
-from gito.pipeline import Pipeline
+from microcore import ui
+from git import Repo, Commit
+from git.exc import GitCommandError
 from unidiff import PatchSet, PatchedFile
 from unidiff.constants import DEV_NULL
 
@@ -14,6 +15,7 @@ from .project_config import ProjectConfig
 from .report_struct import Report
 from .constants import JSON_REPORT_FILE_NAME
 from .utils import stream_to_cli
+from .pipeline import Pipeline
 
 
 def review_subject_is_index(what):
@@ -51,6 +53,16 @@ def is_binary_file(repo: Repo, file_path: str) -> bool:
         return True  # Conservatively treat errors as binary to avoid issues
 
 
+def commit_in_branch(repo: Repo, commit: Commit, target_branch: str) -> bool:
+    try:
+        # exit code 0 if commit is ancestor of branch
+        repo.git.merge_base('--is-ancestor', commit.hexsha, target_branch)
+        return True
+    except GitCommandError:
+        pass
+    return False
+
+
 def get_diff(
     repo: Repo = None,
     what: str = None,
@@ -76,12 +88,52 @@ def get_diff(
         else:
             current_ref = what
         merge_base = repo.merge_base(current_ref or repo.active_branch.name, against)[0]
-        against = merge_base.hexsha
-        logging.info(
-            f"Using merge base: {mc.ui.cyan(merge_base.hexsha[:8])} ({merge_base.summary})"
-        )
+
+        # if branch is already an ancestor of "against", merge_base == branch ⇒ it’s been merged
+        if merge_base.hexsha == repo.commit(current_ref).hexsha:
+            # @todo: check case: reviewing working copy index in main branch #103
+            logging.info(f"Branch is already merged. ({ui.green(current_ref)} vs {ui.yellow(against)})")
+            merge_sha = repo.git.log(
+                '--merges',
+                '--ancestry-path',
+                f'{current_ref}..{against}',
+                '-n','1',
+                '--pretty=format:%H'
+            ).strip()
+            if merge_sha:
+                merge_commit = repo.commit(merge_sha)
+
+                other_merge_parent = None
+                for parent in merge_commit.parents:
+                    if parent.hexsha == merge_base.hexsha:
+                        continue
+                    if not commit_in_branch(repo, parent, against):
+                        logging.warning(f"merge parent is not in {against}, skipping")
+                        continue
+                    other_merge_parent = parent
+                    break
+                if other_merge_parent:
+                    first_common_ancestor = repo.merge_base(other_merge_parent, merge_base)[0]
+                    logging.info(
+                        f"Codebase will be compared to first common ancestor of {what} and {against}: "
+                        f"{ui.cyan(first_common_ancestor.hexsha[:8])}"
+                    )
+                    against = first_common_ancestor.hexsha
+                else:
+                    logging.error(f"Can't find other merge parent for {merge_sha}")
+            else:
+                logging.error(
+                    f"No merge‐commit found for {current_ref!r}→{against!r}; "
+                    "falling back to merge‐base diff"
+                )
+        else:
+            # normal case: branch not yet merged
+            against = merge_base.hexsha
+            logging.info(
+                f"Using merge base: {ui.cyan(merge_base.hexsha[:8])} ({merge_base.summary})"
+            )
     logging.info(
-        f"Making diff: {mc.ui.green(what or 'INDEX')} vs {mc.ui.yellow(against)}"
+        f"Making diff: {ui.green(what or 'INDEX')} vs {ui.yellow(against)}"
     )
     diff_content = repo.git.diff(against, what)
     diff = PatchSet.from_string(diff_content)
