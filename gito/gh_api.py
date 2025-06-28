@@ -72,7 +72,8 @@ def collapse_gh_outdated_cr_comments(
         logging.info(f"Collapsing comment {comment.id}...")
         new_body = f"<details>\n<summary>{collapsed_title}</summary>\n\n{comment.body}\n</details>"
         api.issues.update_comment(comment.id, new_body)
-        # @todo
+        hide_review_comment(api, comment_node_id=comment.node_id)
+        # @todo looks like the only way to hide a comment is using GitHub GraphQL API
         # root_api = GhApi(token=token)
         # root_api._request(
         #     "PUT",
@@ -83,3 +84,29 @@ def collapse_gh_outdated_cr_comments(
         #     }
         # )
     logging.info("All outdated comments collapsed successfully.")
+
+
+def hide_review_comment(api: GhApi, comment_node_id: str):
+    """
+    Hide (minimize) a Pull Request review comment using GraphQL.
+    Arguments:
+      api                – an authenticated GhApi instance
+      comment_node_id    – the GraphQL Node ID of the PR review comment
+    """
+    mutation = """
+    mutation HidePullRequestReviewComment($id: ID!) {
+      hidePullRequestReviewComment(
+        input: {
+          pullRequestReviewCommentId: $id,
+          reason: OUTDATED
+        }
+      ) {
+        pullRequestReviewComment {
+          id
+          isMinimized
+          minimizedReason
+        }
+      }
+    }
+    """
+    api.graphql(mutation, {"id": comment_node_id})
