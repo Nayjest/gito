@@ -109,7 +109,13 @@ def hide_gh_comment(
             "variables": {"commentId": comment_node_id, "reason": reason}
         }
     )
-    return (
+    success = (
         response.status_code == 200
         and response.json().get("data", {}).get("minimizeComment") is not None
     )
+    if not success:
+        logging.error(
+            f"Failed to hide comment {comment_node_id}: "
+            f"{response.status_code} {response.reason}\n{response.text}"
+        )
+    return success
