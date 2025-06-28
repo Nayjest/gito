@@ -3,6 +3,7 @@ import logging
 
 import requests
 from ghapi.all import GhApi
+from fastcore.basics import AttrDict  # objects returned by ghapi
 
 from .constants import HTML_CR_COMMENT_MARKER
 
@@ -72,41 +73,41 @@ def collapse_gh_outdated_cr_comments(
         logging.info(f"Collapsing comment {comment.id}...")
         new_body = f"<details>\n<summary>{collapsed_title}</summary>\n\n{comment.body}\n</details>"
         api.issues.update_comment(comment.id, new_body)
-        hide_review_comment(api, comment_node_id=comment.node_id)
-        # @todo looks like the only way to hide a comment is using GitHub GraphQL API
-        # root_api = GhApi(token=token)
-        # root_api._request(
-        #     "PUT",
-        #     f"/repos/{owner}/{repo}/pulls/comments/{comment.id}/hidden",
-        #     data={
-        #         "message": "Hidden as outdated by automation.",
-        #         "reason": "OUTDATED"
-        #     }
-        # )
+        hide_gh_comment(comment.node_id)
     logging.info("All outdated comments collapsed successfully.")
 
 
-def hide_review_comment(api: GhApi, comment_node_id: str):
+def hide_gh_comment(
+    comment: dict | str,
+    token: str = None,
+    reason: str = "OUTDATED"
+) -> bool:
     """
-    Hide (minimize) a Pull Request review comment using GraphQL.
-    Arguments:
-      api                – an authenticated GhApi instance
-      comment_node_id    – the GraphQL Node ID of the PR review comment
+    Hide a GitHub comment using GraphQL API with specified reason.
+    Args:
+        comment (dict | str):
+            The comment to hide,
+            either as a object returned from ghapi or a string node ID.
+            note: comment.id is not the same as node_id.
+        token (str): GitHub personal access token with permissions to minimize comments.
+        reason (str): The reason for hiding the comment, e.g., "OUTDATED".
     """
+    if isinstance(comment, AttrDict):
+        comment = comment.node_id
+    token = resolve_gh_token(token)
     mutation = """
-    mutation HidePullRequestReviewComment($id: ID!) {
-      hidePullRequestReviewComment(
-        input: {
-          pullRequestReviewCommentId: $id,
-          reason: OUTDATED
+    mutation($commentId: ID!, $reason: ReportedContentClassifiers!) {
+        minimizeComment(input: {subjectId: $commentId, classifier: $reason}) {
+            minimizedComment { isMinimized }
         }
-      ) {
-        pullRequestReviewComment {
-          id
-          isMinimized
-          minimizedReason
+    }"""
+
+    response = requests.post(
+        "https://api.github.com/graphql",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "query": mutation,
+            "variables": {"commentId": comment_id, "reason": reason}
         }
-      }
-    }
-    """
-    api.graphql(mutation, {"id": comment_node_id})
+    )
+    return response.status_code == 200 and response.json().get("data", {}).get("minimizeComment") is not None
