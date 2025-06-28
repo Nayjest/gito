@@ -73,7 +73,7 @@ def collapse_gh_outdated_cr_comments(
         logging.info(f"Collapsing comment {comment.id}...")
         new_body = f"<details>\n<summary>{collapsed_title}</summary>\n\n{comment.body}\n</details>"
         api.issues.update_comment(comment.id, new_body)
-        hide_gh_comment(comment.node_id)
+        hide_gh_comment(comment.node_id, token)
     logging.info("All outdated comments collapsed successfully.")
 
 
