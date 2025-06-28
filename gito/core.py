@@ -90,14 +90,17 @@ def get_diff(
         merge_base = repo.merge_base(current_ref or repo.active_branch.name, against)[0]
 
         # if branch is already an ancestor of "against", merge_base == branch ⇒ it’s been merged
-        if merge_base.hexsha == repo.commit(current_ref).hexsha:
+        if merge_base.hexsha == repo.commit(current_ref or repo.active_branch.name).hexsha:
             # @todo: check case: reviewing working copy index in main branch #103
-            logging.info(f"Branch is already merged. ({ui.green(current_ref)} vs {ui.yellow(against)})")
+            logging.info(
+                f"Branch is already merged. ({ui.green(current_ref)} vs {ui.yellow(against)})"
+            )
             merge_sha = repo.git.log(
                 '--merges',
                 '--ancestry-path',
                 f'{current_ref}..{against}',
-                '-n','1',
+                '-n',
+                '1',
                 '--pretty=format:%H'
             ).strip()
             if merge_sha:
@@ -115,7 +118,8 @@ def get_diff(
                 if other_merge_parent:
                     first_common_ancestor = repo.merge_base(other_merge_parent, merge_base)[0]
                     logging.info(
-                        f"Codebase will be compared to first common ancestor of {what} and {against}: "
+                        f"{what} will be compared to "
+                        f"first common ancestor of {what} and {against}: "
                         f"{ui.cyan(first_common_ancestor.hexsha[:8])}"
                     )
                     against = first_common_ancestor.hexsha
