@@ -109,4 +109,7 @@ def hide_gh_comment(
             "variables": {"commentId": comment_node_id, "reason": reason}
         }
     )
-    return response.status_code == 200 and response.json().get("data", {}).get("minimizeComment") is not None
+    return (
+        response.status_code == 200
+        and response.json().get("data", {}).get("minimizeComment") is not None
+    )
