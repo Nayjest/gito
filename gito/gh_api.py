@@ -92,8 +92,7 @@ def hide_gh_comment(
         token (str): GitHub personal access token with permissions to minimize comments.
         reason (str): The reason for hiding the comment, e.g., "OUTDATED".
     """
-    if isinstance(comment, AttrDict):
-        comment = comment.node_id
+    comment_node_id = comment.node_id if isinstance(comment, AttrDict) else comment
     token = resolve_gh_token(token)
     mutation = """
     mutation($commentId: ID!, $reason: ReportedContentClassifiers!) {
@@ -107,7 +106,7 @@ def hide_gh_comment(
         headers={"Authorization": f"Bearer {token}"},
         json={
             "query": mutation,
-            "variables": {"commentId": comment_id, "reason": reason}
+            "variables": {"commentId": comment_node_id, "reason": reason}
         }
     )
     return response.status_code == 200 and response.json().get("data", {}).get("minimizeComment") is not None
