@@ -197,6 +197,41 @@ def _prepare(
     return repo, cfg, diff, lines
 
 
+def get_affected_code_block(repo: Repo, file: str, start_line: int, end_line: int) -> str | None:
+    if not start_line or not end_line:
+        return None
+    try:
+        if isinstance(start_line, str):
+            start_line = int(start_line)
+        if isinstance(end_line, str):
+            end_line = int(end_line)
+        lines = file_lines(repo, file, max_tokens=None, use_local_files=True)
+        if lines:
+            lines = [""] + lines.splitlines()
+            return "\n".join(
+                lines[start_line: end_line + 1]
+            )
+    except Exception as e:
+        logging.error(
+            f"Error getting affected code block for {file} from {start_line} to {end_line}: {e}"
+        )
+    return None
+
+
+def provide_affected_code_blocks(issues: dict, repo: Repo):
+    for file, file_issues in issues.items():
+        for issue in file_issues:
+            for i in issue.get("affected_lines", []):
+                file_name = i.get("file", issue.get("file", file))
+                if block := get_affected_code_block(
+                    repo,
+                    file_name,
+                    i.get("start_line"),
+                    i.get("end_line")
+                ):
+                    i["affected_code"] = block
+
+
 async def review(
     repo: Repo = None,
     what: str = None,
@@ -226,14 +261,7 @@ async def review(
         parse_json=True,
     )
     issues = {file.path: issues for file, issues in zip(diff, responses) if issues}
-    for file, file_issues in issues.items():
-        for issue in file_issues:
-            for i in issue.get("affected_lines", []):
-                if lines[file]:
-                    f_lines = [""] + lines[file].splitlines()
-                    i["affected_code"] = "\n".join(
-                        f_lines[i["start_line"]: i["end_line"] + 1]
-                    )
+    provide_affected_code_blocks(issues, repo)
     exec(cfg.post_process, {"mc": mc, **locals()})
     out_folder = Path(out_folder or repo.working_tree_dir)
     out_folder.mkdir(parents=True, exist_ok=True)

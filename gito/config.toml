@@ -3,6 +3,7 @@
 # Defines the keyword or mention tag that triggers bot actions when referenced in code review comments.
 # list of strings, case-insensitive
 mention_triggers = ["gito", "bot", "ai", "/fix"]
+collapse_previous_code_review_comments = true
 report_template_md = """
 <h2>{{ HTML_TEXT_ICON }}I've Reviewed the Code</h2>
 
@@ -36,7 +37,7 @@ report_template_md = """
     {%- endfor -%}
     {{ "\n" }}
 {%- endfor -%}
-
+{{- HTML_CR_COMMENT_MARKER -}}
 """
 report_template_cli = """
 {{ Back.BLUE }}  +  +  +  ---==<<[ CODE REVIEW{{Style.NORMAL}} ]>>==---  +  +  +  {{Style.RESET_ALL}}
@@ -134,18 +135,18 @@ Review the provided code diff carefully and identify *only* highly confident iss
 {{ requirements -}}
 {{ json_requirements }}
 
-Respond with a valid JSON array of issues in the following format:
+Respond with a valid JSON array of issues following this schema:
 [
     {
         "title": "<issue_title>",
         "details": "<issue_description>",
-        "tags": ["<issue_tag1>", "<issue_tag2>"],
-        "severity": <issue_severity>,
-        "confidence": <confidence_score>,
-        "affected_lines": [ // optional; list of affected lines
+        "tags": ["<issue_tag1>", "<issue_tag2>", ...],
+        "severity": <issue_severity:int>,
+        "confidence": <confidence_score:int>,
+        "affected_lines": [ // optional;
             {
-                "start_line": <start_line:int>,
-                "end_line": <end_line:int>,
+                "start_line": <int>,
+                "end_line": <int>,
                 "proposal": "<proposed code to replace the affected lines (optional)>"
             },
             ...
@@ -153,6 +154,10 @@ Respond with a valid JSON array of issues in the following format:
     },
     ...
 ]
+
+- if present, `proposal` blocks must match the indentation of the original code
+  and apply cleanly to lines `start_line`..`end_line`. It is designed for programmatical substitution.
+
 Available issue tags:
 - bug
 - security

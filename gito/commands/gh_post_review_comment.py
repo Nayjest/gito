@@ -1,17 +1,24 @@
 import logging
 import os
+from time import sleep
 
 import typer
-from gito.bootstrap import app
-from gito.constants import GITHUB_MD_REPORT_FILE_NAME
-from gito.gh_api import post_gh_comment
-from gito.project_config import ProjectConfig
+from ghapi.core import GhApi
+
+from ..bootstrap import app
+from ..constants import GITHUB_MD_REPORT_FILE_NAME, HTML_CR_COMMENT_MARKER
+from ..gh_api import (
+    post_gh_comment,
+    resolve_gh_token,
+    hide_gh_comment,
+)
+from ..project_config import ProjectConfig
 
 
 @app.command(help="Leave a GitHub PR comment with the review.")
 def github_comment(
     token: str = typer.Option(
-        os.environ.get("GITHUB_TOKEN", ""), help="GitHub token (or set GITHUB_TOKEN env var)"
+        "", help="GitHub token (or set GITHUB_TOKEN env var)"
     ),
 ):
     """
@@ -25,13 +32,14 @@ def github_comment(
     with open(file, "r", encoding="utf-8") as f:
         body = f.read()
 
+    token = resolve_gh_token(token)
     if not token:
         print("GitHub token is required (--token or GITHUB_TOKEN env var).")
         raise typer.Exit(1)
-
-    github_env = ProjectConfig.load().prompt_vars["github_env"]
-    repo = github_env.get("github_repo", "")
-    pr_env_val = github_env.get("github_pr_number", "")
+    config = ProjectConfig.load()
+    gh_env = config.prompt_vars["github_env"]
+    gh_repo = gh_env.get("github_repo", "")
+    pr_env_val = gh_env.get("github_pr_number", "")
     logging.info(f"github_pr_number = {pr_env_val}")
 
     pr = None
@@ -59,5 +67,42 @@ def github_comment(
         logging.error("Could not resolve PR number from environment variables.")
         raise typer.Exit(3)
 
-    if not post_gh_comment(repo, pr, token, body):
+    if not post_gh_comment(gh_repo, pr, token, body):
         raise typer.Exit(5)
+
+    if config.collapse_previous_code_review_comments:
+        sleep(1)
+        collapse_gh_outdated_cr_comments(gh_repo, pr, token)
+
+
+def collapse_gh_outdated_cr_comments(
+    gh_repository: str,
+    pr_or_issue_number: int,
+    token: str = None
+):
+    """
+    Collapse outdated code review comments in a GitHub pull request or issue.
+    """
+    logging.info(f"Collapsing outdated comments in {gh_repository} #{pr_or_issue_number}...")
+
+    token = resolve_gh_token(token)
+    owner, repo = gh_repository.split('/')
+    api = GhApi(owner, repo, token=token)
+
+    comments = api.issues.list_comments(pr_or_issue_number)
+    review_marker = HTML_CR_COMMENT_MARKER
+    collapsed_title = "🗑️ Outdated Code Review by Gito"
+    collapsed_marker = f"<summary>{collapsed_title}</summary>"
+    outdated_comments = [
+        c for c in comments
+        if c.body and review_marker in c.body and collapsed_marker not in c.body
+    ][:-1]
+    if not outdated_comments:
+        logging.info("No outdated comments found")
+        return
+    for comment in outdated_comments:
+        logging.info(f"Collapsing comment {comment.id}...")
+        new_body = f"<details>\n<summary>{collapsed_title}</summary>\n\n{comment.body}\n</details>"
+        api.issues.update_comment(comment.id, new_body)
+        hide_gh_comment(comment.node_id, token)
+    logging.info("All outdated comments collapsed successfully.")
