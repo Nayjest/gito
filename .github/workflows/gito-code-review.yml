@@ -25,6 +25,7 @@ jobs:
     - name: Run AI code review
       env:
         # OpenAI Setup:
+        #
         # LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
         # LLM_API_TYPE: openai
         # MODEL: "gpt-4.1"
