@@ -28,8 +28,7 @@ jobs:
         key: pip-gito-${{ steps.fetch-gito-version.outputs.hash }}
 
     - name: Install Gito
-      run: |
-        pip install gito.bot~=2.0
+      run: pip install gito.bot~=2.0
 
     - name: Run AI code review
       env:
