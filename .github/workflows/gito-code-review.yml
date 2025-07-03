@@ -10,6 +10,7 @@ on:
 jobs:
   review:
     runs-on: ubuntu-latest
+    container: python:3.13-slim
     permissions: { contents: read, pull-requests: write } # 'write' for leaving the summary comment
     steps:
     - uses: actions/checkout@v4
