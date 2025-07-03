@@ -25,8 +25,8 @@ jobs:
     - uses: actions/cache@v3
       id: cache
       with:
-        path: ~/.local/lib/python3.13/site-packages
-        key: ${{ runner.os }}-gito-${{ env.GITO_VERSION }}
+        path: ${{ env.pythonLocation }}
+        key: ${{ runner.os }}-gito-c1-${{ env.GITO_VERSION }}
 
     - name: Install Gito
       if: steps.cache.outputs.cache-hit != 'true'
