@@ -21,7 +21,7 @@ jobs:
 
     - name: Fetch Latest Gito Version
       id: gito-version
-      run: echo "version=$(pip index versions gito.bot | head -1 | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+      run: pip index versions gito.bot 2>/dev/null | head -1 | sed -n 's/.* (\([^)]*\)).*/version=\1/p' >> $GITHUB_OUTPUT
 
     - uses: actions/cache@v3
       id: cache
@@ -29,7 +29,7 @@ jobs:
         path: |
           ${{ env.pythonLocation }}/lib/python3.13/site-packages
           ${{ env.pythonLocation }}/bin
-        key: ${{ runner.os }}-gito-c3-${{ steps.gito-version.outputs.version }}
+        key: gito_v${{ steps.gito-version.outputs.version }}
 
     - name: Install Gito
       if: steps.cache.outputs.cache-hit != 'true'
@@ -39,7 +39,6 @@ jobs:
     - name: Run AI code review
       env:
         # OpenAI Setup:
-        #
         # LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
         # LLM_API_TYPE: openai
         # MODEL: "gpt-4.1"
