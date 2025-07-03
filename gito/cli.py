@@ -208,31 +208,6 @@ def render(
     Report.load(file_name=source).to_cli(report_format=format)
 
 
-@app.command(help="Review remote code")
-def remote(
-    url: str = typer.Argument(..., help="Git repository URL"),
-    refs: str = arg_refs(),
-    what: str = arg_what(),
-    against: str = arg_against(),
-    filters: str = arg_filters(),
-    merge_base: bool = typer.Option(default=True, help="Use merge base for comparison"),
-    out: str = arg_out()
-):
-    _what, _against = args_to_target(refs, what, against)
-    with tempfile.TemporaryDirectory() as temp_dir:
-        logging.info(f"Cloning [{mc.ui.green(url)}] to {mc.utils.file_link(temp_dir)} ...")
-        repo = Repo.clone_from(url, branch=_what, to_path=temp_dir)
-        asyncio.run(review(
-            repo=repo,
-            what=_what,
-            against=_against,
-            filters=filters,
-            use_merge_base=merge_base,
-            out_folder=out or '.',
-        ))
-        repo.close()
-
-
 @app.command(help="List files in the diff. Might be useful to check what will be reviewed.")
 def files(
     refs: str = arg_refs(),
