@@ -17,12 +17,19 @@ jobs:
 
     - name: Set up Python
       uses: actions/setup-python@v5
-      with: { python-version: "3.13", cache: "pip" }
+      with: { python-version: "3.13"}
 
-    - name: Install Gito
-      run: pip install gito.bot~=2.0
-      env:
-        PIP_DISABLE_PIP_VERSION_CHECK: 1
+    - name: Fetch Gito Version
+      run: echo "GITO_VERSION=$(pip index versions gito.bot | head -1 | cut -d' ' -f2)" >> $GITHUB_ENV
+
+    - uses: actions/cache@v3
+      id: cache
+      with:
+        path: ~/.local/lib/python3.13/site-packages
+        key: ${{ runner.os }}-gito.bot-${{ env.GITO_VERSION }}
+
+    - run: pip install --user gito.bot~=2.0
+      if: steps.cache.outputs.cache-hit != 'true'
 
     - name: Run AI code review
       env:
