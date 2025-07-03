@@ -21,12 +21,7 @@ jobs:
       with: { python-version: "3.13" }
 
     - name: Install Gito
-      run: |
-        # pip install poetry
-        # poetry install
-        # echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
-        # installation from PYPI:
-        pip install gito.bot~=2.0
+      run: pip install gito.bot~=2.0
     - name: Run AI code review
       env:
         # OpenAI Setup:
