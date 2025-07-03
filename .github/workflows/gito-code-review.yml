@@ -33,7 +33,6 @@ jobs:
       run: |
         pip install --user gito.bot~=2.0
         echo "${HOME}/.local/bin" >> $GITHUB_PATH
-      
 
     - name: Run AI code review
       env:
