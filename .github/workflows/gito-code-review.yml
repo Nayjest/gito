@@ -21,6 +21,8 @@ jobs:
 
     - name: Install Gito
       run: pip install gito.bot~=2.0
+      env:
+        PIP_DISABLE_PIP_VERSION_CHECK: 1
 
     - name: Run AI code review
       env:
