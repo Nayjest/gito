@@ -17,15 +17,7 @@ jobs:
 
     - name: Set up Python
       uses: actions/setup-python@v5
-      with: { python-version: "3.13" }
-
-    - id: fetch-gito-version
-      run: echo "hash=$(pip index versions gito.bot | head -1 | cut -d' ' -f2)" >> $GITHUB_OUTPUT
-
-    - uses: actions/cache@v4
-      with:
-        path: ~/.cache/pip
-        key: pip-gito-${{ steps.fetch-gito-version.outputs.hash }}
+      with: { python-version: "3.13", cache: "pip" }
 
     - name: Install Gito
       run: pip install gito.bot~=2.0
