@@ -31,8 +31,7 @@ jobs:
     - name: Install Gito
       if: steps.cache.outputs.cache-hit != 'true'
       run: |
-        pip install --user gito.bot~=2.0
-        echo "${HOME}/.local/bin" >> $GITHUB_PATH
+        pip install gito.bot~=2.0
 
     - name: Run AI code review
       env:
