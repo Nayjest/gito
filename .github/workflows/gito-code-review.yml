@@ -20,13 +20,14 @@ jobs:
       with: { python-version: "3.13"}
 
     - name: Fetch Latest Gito Version
-      run: echo "GITO_VERSION=$(pip index versions gito.bot | head -1 | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')" >> $GITHUB_ENV
+      id: gito-version
+      run: echo "version=$(pip index versions gito.bot | head -1 | cut -d' ' -f2)" >> $GITHUB_OUTPUT
 
     - uses: actions/cache@v3
       id: cache
       with:
         path: ${{ env.pythonLocation }}
-        key: ${{ runner.os }}-gito-c1-${{ env.GITO_VERSION }}
+        key: ${{ runner.os }}-gito-c2-${{ steps.gito-version.outputs.version }}
 
     - name: Install Gito
       if: steps.cache.outputs.cache-hit != 'true'
