@@ -88,7 +88,10 @@ def get_diff(
         else:
             current_ref = what
         merge_base = repo.merge_base(current_ref or repo.active_branch.name, against)[0]
-        logging.info(f"Merge base({ui.green(current_ref)},{ui.yellow(against)})={ui.cyan(merge_base.hexsha)}")
+        logging.info(
+            f"Merge base({ui.green(current_ref)},{ui.yellow(against)})"
+            f"-->{ui.cyan(merge_base.hexsha)}"
+        )
         # if branch is already an ancestor of "against", merge_base == branch ⇒ it’s been merged
         if merge_base.hexsha == repo.commit(current_ref or repo.active_branch.name).hexsha:
             # @todo: check case: reviewing working copy index in main branch #103
@@ -124,7 +127,9 @@ def get_diff(
                     # for gito remote (feature_branch vs origin/main)
                     # the same merge base appears in first_common_ancestor again
                     if first_common_ancestor.hexsha == merge_base.hexsha:
-                        first_common_ancestor = repo.merge_base(other_merge_parent, merge_base.parents[0])[0]
+                        first_common_ancestor = repo.merge_base(
+                            other_merge_parent, merge_base.parents[0]
+                        )[0]
                     logging.info(
                         f"{what} will be compared to "
                         f"first common ancestor of {what} and {against}: "

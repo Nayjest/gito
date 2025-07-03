@@ -3,6 +3,7 @@ import logging
 import sys
 import textwrap
 import tempfile
+import contextlib
 
 import microcore as mc
 import typer
@@ -10,13 +11,14 @@ from git import Repo
 
 from .core import review, get_diff, filter_diff, answer
 from .report_struct import Report
-from .constants import HOME_ENV_PATH
+from .constants import HOME_ENV_PATH, GITHUB_MD_REPORT_FILE_NAME
 from .bootstrap import bootstrap, app
-from .utils import no_subcommand, parse_refs_pair
+from .utils import no_subcommand, parse_refs_pair, extract_gh_owner_repo
+from .gh_api import resolve_gh_token
 
 # Import fix command to register it
-from .commands import fix, gh_post_review_comment, gh_react_to_comment, repl, deploy  # noqa
-
+from .commands import fix, gh_react_to_comment, repl, deploy  # noqa
+from .commands.gh_post_review_comment import post_github_cr_comment
 
 app_no_subcommand = typer.Typer(pretty_exceptions_show_locals=False)
 
@@ -99,6 +101,25 @@ def arg_against() -> typer.Option:
     )
 
 
+@contextlib.contextmanager
+def get_repo_context(url: str, branch: str):
+    """Context manager for handling both local and remote repositories."""
+    if url:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            logging.info(f"Cloning [{mc.ui.green(url)}] to {mc.utils.file_link(temp_dir)} ...")
+            repo = Repo.clone_from(url, branch=branch, to_path=temp_dir)
+            try:
+                yield repo, temp_dir
+            finally:
+                repo.close()
+    else:
+        repo = Repo(".")
+        try:
+            yield repo, "."
+        finally:
+            repo.close()
+
+
 @app_no_subcommand.command(name="review", help="Perform code review")
 @app.command(name="review", help="Perform code review")
 @app.command(name="run", hidden=True)
@@ -108,16 +129,43 @@ def cmd_review(
     against: str = arg_against(),
     filters: str = arg_filters(),
     merge_base: bool = typer.Option(default=True, help="Use merge base for comparison"),
+    url: str = typer.Option("", "--url", help="Git repository URL"),
+    post_comment: bool = typer.Option(default=False, help="Post review comment to GitHub"),
+    pr: int = typer.Option(
+        default=None,
+        help=textwrap.dedent("""\n
+        GitHub Pull Request number to post the comment to
+        (for logal usage togather with --post-comment,
+        in the github actions PR is resolved from the environment)
+        """)
+    ),
     out: str = arg_out()
 ):
     _what, _against = args_to_target(refs, what, against)
-    asyncio.run(review(
-        what=_what,
-        against=_against,
-        filters=filters,
-        use_merge_base=merge_base,
-        out_folder=out,
-    ))
+    with get_repo_context(url, _what) as (repo, out_folder):
+        asyncio.run(review(
+            repo=repo,
+            what=_what,
+            against=_against,
+            filters=filters,
+            use_merge_base=merge_base,
+            out_folder=out or out_folder,
+        ))
+        if post_comment:
+            try:
+                owner, repo_name = extract_gh_owner_repo(repo)
+            except ValueError as e:
+                logging.error(
+                    "Error posting comment:\n"
+                    "Could not extract GitHub owner and repository name from the local repository."
+                )
+                raise typer.Exit(code=1) from e
+            post_github_cr_comment(
+                md_report_file=(out or out_folder) + "/" + GITHUB_MD_REPORT_FILE_NAME,
+                pr=pr,
+                gh_repo=f"{owner}/{repo_name}",
+                token=resolve_gh_token()
+            )
 
 
 @app.command(name="ask", help="Answer questions about codebase changes")
@@ -202,7 +250,7 @@ def files(
         f"Changed files: "
         f"{mc.ui.green(_what or 'INDEX')} vs "
         f"{mc.ui.yellow(_against or repo.remotes.origin.refs.HEAD.reference.name)}"
-        f"{' filtered by '+mc.ui.cyan(filters) if filters else ''}"
+        f"{' filtered by ' + mc.ui.cyan(filters) if filters else ''}"
     )
     repo.close()
     for patch in patch_set:

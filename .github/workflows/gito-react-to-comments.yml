@@ -67,7 +67,7 @@ jobs:
         poetry install
         echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
         # installation from PYPI:
-        # pip install gito.bot~=2.0
+        # pip install gito.bot~=3.0
 
     - name: Run Gito react
       env:
