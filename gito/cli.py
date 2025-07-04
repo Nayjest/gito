@@ -1,3 +1,4 @@
+import os
 import asyncio
 import logging
 import sys
@@ -135,7 +136,7 @@ def cmd_review(
         default=None,
         help=textwrap.dedent("""\n
         GitHub Pull Request number to post the comment to
-        (for logal usage togather with --post-comment,
+        (for local usage together with --post-comment,
         in the github actions PR is resolved from the environment)
         """)
     ),
@@ -161,7 +162,7 @@ def cmd_review(
                 )
                 raise typer.Exit(code=1) from e
             post_github_cr_comment(
-                md_report_file=(out or out_folder) + "/" + GITHUB_MD_REPORT_FILE_NAME,
+                md_report_file=os.path.join(out or out_folder, GITHUB_MD_REPORT_FILE_NAME),
                 pr=pr,
                 gh_repo=f"{owner}/{repo_name}",
                 token=resolve_gh_token()
@@ -219,22 +220,25 @@ def files(
 ):
     _what, _against = args_to_target(refs, what, against)
     repo = Repo(".")
-    patch_set = get_diff(repo=repo, what=_what, against=_against, use_merge_base=merge_base)
-    patch_set = filter_diff(patch_set, filters)
-    print(
-        f"Changed files: "
-        f"{mc.ui.green(_what or 'INDEX')} vs "
-        f"{mc.ui.yellow(_against or repo.remotes.origin.refs.HEAD.reference.name)}"
-        f"{' filtered by ' + mc.ui.cyan(filters) if filters else ''}"
-    )
-    repo.close()
-    for patch in patch_set:
-        if patch.is_added_file:
-            color = mc.ui.green
-        elif patch.is_removed_file:
-            color = mc.ui.red
-        else:
-            color = mc.ui.blue
-        print(f"- {color(patch.path)}")
-        if diff:
-            print(mc.ui.gray(textwrap.indent(str(patch), "  ")))
+    try:
+        patch_set = get_diff(repo=repo, what=_what, against=_against, use_merge_base=merge_base)
+        patch_set = filter_diff(patch_set, filters)
+        print(
+            f"Changed files: "
+            f"{mc.ui.green(_what or 'INDEX')} vs "
+            f"{mc.ui.yellow(_against or repo.remotes.origin.refs.HEAD.reference.name)}"
+            f"{' filtered by ' + mc.ui.cyan(filters) if filters else ''}"
+        )
+
+        for patch in patch_set:
+            if patch.is_added_file:
+                color = mc.ui.green
+            elif patch.is_removed_file:
+                color = mc.ui.red
+            else:
+                color = mc.ui.blue
+            print(f"- {color(patch.path)}")
+            if diff:
+                print(mc.ui.gray(textwrap.indent(str(patch), "  ")))
+    finally:
+        repo.close()

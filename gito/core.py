@@ -127,9 +127,15 @@ def get_diff(
                     # for gito remote (feature_branch vs origin/main)
                     # the same merge base appears in first_common_ancestor again
                     if first_common_ancestor.hexsha == merge_base.hexsha:
-                        first_common_ancestor = repo.merge_base(
-                            other_merge_parent, merge_base.parents[0]
-                        )[0]
+                        if merge_base.parents:
+                            first_common_ancestor = repo.merge_base(
+                                other_merge_parent, merge_base.parents[0]
+                            )[0]
+                        else:
+                            logging.error(
+                                "merge_base has no parents, "
+                                "using merge_base as first_common_ancestor"
+                            )
                     logging.info(
                         f"{what} will be compared to "
                         f"first common ancestor of {what} and {against}: "
