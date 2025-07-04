@@ -88,7 +88,10 @@ def get_diff(
         else:
             current_ref = what
         merge_base = repo.merge_base(current_ref or repo.active_branch.name, against)[0]
-
+        logging.info(
+            f"Merge base({ui.green(current_ref)},{ui.yellow(against)})"
+            f"-->{ui.cyan(merge_base.hexsha)}"
+        )
         # if branch is already an ancestor of "against", merge_base == branch ⇒ it’s been merged
         if merge_base.hexsha == repo.commit(current_ref or repo.active_branch.name).hexsha:
             # @todo: check case: reviewing working copy index in main branch #103
@@ -104,19 +107,35 @@ def get_diff(
                 '--pretty=format:%H'
             ).strip()
             if merge_sha:
+                logging.info(f"Merge commit is {ui.cyan(merge_sha)}")
                 merge_commit = repo.commit(merge_sha)
 
                 other_merge_parent = None
                 for parent in merge_commit.parents:
+                    logging.info(f"Checking merge parent: {parent.hexsha[:8]}")
                     if parent.hexsha == merge_base.hexsha:
+                        logging.info(f"merge parent is {ui.cyan(parent.hexsha[:8])}, skipping")
                         continue
                     if not commit_in_branch(repo, parent, against):
                         logging.warning(f"merge parent is not in {against}, skipping")
                         continue
+                    logging.info(f"Found other merge parent: {ui.cyan(parent.hexsha[:8])}")
                     other_merge_parent = parent
                     break
                 if other_merge_parent:
                     first_common_ancestor = repo.merge_base(other_merge_parent, merge_base)[0]
+                    # for gito remote (feature_branch vs origin/main)
+                    # the same merge base appears in first_common_ancestor again
+                    if first_common_ancestor.hexsha == merge_base.hexsha:
+                        if merge_base.parents:
+                            first_common_ancestor = repo.merge_base(
+                                other_merge_parent, merge_base.parents[0]
+                            )[0]
+                        else:
+                            logging.error(
+                                "merge_base has no parents, "
+                                "using merge_base as first_common_ancestor"
+                            )
                     logging.info(
                         f"{what} will be compared to "
                         f"first common ancestor of {what} and {against}: "

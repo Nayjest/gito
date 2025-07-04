@@ -17,15 +17,25 @@ jobs:
 
     - name: Set up Python
       uses: actions/setup-python@v5
-      with: { python-version: "3.13" }
+      with: { python-version: "3.13"}
+
+    - name: Fetch Latest Gito Version
+      id: gito-version
+      run: pip index versions gito.bot 2>/dev/null | head -1 | sed -n 's/.* (\([^)]*\)).*/version=\1/p' >> $GITHUB_OUTPUT
+
+    - uses: actions/cache@v3
+      id: cache
+      with:
+        path: |
+          ${{ env.pythonLocation }}/lib/python3.13/site-packages
+          ${{ env.pythonLocation }}/bin
+        key: gito_v${{ steps.gito-version.outputs.version }}
 
     - name: Install Gito
+      if: steps.cache.outputs.cache-hit != 'true'
       run: |
-        pip install poetry
-        poetry install
-        echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
-        # installation from PYPI:
-        # pip install gito.bot~=2.0
+        pip install gito.bot~=2.0
+
     - name: Run AI code review
       env:
         # OpenAI Setup:
